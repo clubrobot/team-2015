@@ -109,16 +109,14 @@ void server_add_client(Client client) {
 }
 
 void server_rm_client(Client client) {
-	if(Server.nbclients) {
-		int i;
-		for(i=0; i < Server.nbclients; i++) {
-			if(Server.clients[i].clientFD == client.clientFD) {
-				close(client.clientFD);
+	int i;
+	for(i=0; i < Server.nbclients; i++) {
+		if(Server.clients[i].clientFD == client.clientFD) {
+			close(client.clientFD);
 
-				for(; i <Server.nbclients-1; i++) Server.clients[i] = Server.clients[i+1];
-				Server.nbclients--;
-				break;
-			}
+			for(; i <Server.nbclients-1; i++) Server.clients[i] = Server.clients[i+1];
+			Server.nbclients--;
+			break;
 		}
 	}
 }

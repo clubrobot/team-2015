@@ -12,7 +12,6 @@
 #include "Clock.h"
 
 #define MAXCLIENTS 10
-#define BUFSIZE 64
 
 typedef struct Server_s {
 	SOCKET serverFD;	//File descriptor du serveur
@@ -20,8 +19,6 @@ typedef struct Server_s {
 
 	Client clients[MAXCLIENTS];
 	int nbclients;
-
-	char bufferIO[BUFSIZE];
 } Server_s;
 
 Server_s Server; //Structure globale (un seul serveur pour le process).
