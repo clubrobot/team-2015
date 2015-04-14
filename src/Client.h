@@ -19,11 +19,13 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+#include "Clock.h"
+
 #define ADDRESS 0
 #define REQUEST 1
 
 //Resquests
-#define RQ_ANSWER 1
+#define RQ_ASK 1 // Ping le client pour savoir s'il est toujours connecté
 
 #define SERVER_SLOT 0
 #define MBOARD_SLOT1 1
@@ -46,24 +48,32 @@ typedef struct Client {
 	struct sockaddr_in info;
 	char name[NAMESIZE];
 
-	char buffer_in[BUFSIZE];
-	char buffer_out[BUFSIZE];
+	uint8_t buffer_in[BUFSIZE];
+	uint8_t size_in;
+	uint8_t buffer_out[BUFSIZE];
+
+	Clock out_of_sync;
+	int check_sync;
 
 	int output_buf_ready;
 } Client;
 
+//Crée un client initialisé
 Client client_create(SOCKET socket, struct sockaddr_in info, const char* name);
 
+//Affiche les infos d'un client
 void client_print_info(Client *client);
 
+//Récupère le msg d'un client
 int client_receive(Client* client);
 
-void client_handle_server_msg(Client* client, unsigned int length);
+//Prépare le buffer de sortie d'un client
+void client_prepare_send(Client* client, unsigned int length, uint8_t address, ...);
 
-void client_prepare_send(Client* client, unsigned int length, char address, char request, ...);
+//Envoie le contenu du buffer de sortie d'un client
+int client_send(Client* client);
 
-void client_send(Client* client);
-
-void client_answer(Client* client);
+//Questionne un client pour détecter une déconnection
+int client_ask(Client* client);
 
 #endif /* CLIENT_H_ */

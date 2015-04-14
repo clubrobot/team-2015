@@ -52,18 +52,35 @@ void server_close() {
 void server_run() {
 	int i;
 	int fdmax = Server.serverFD; //File descriptor ayant le plus grand numéro.
-	fd_set fdwatched; //Stocke les files descriptors (FDs) prêts à être lus.
-	struct timeval timeout;
-	timeout.tv_usec = 20000; //20ms
+	fd_set fdwatched; //Stocke les files descriptors (FDs) à survveiller.
+	struct timeval timeout; //Timeout instantanée
+	timeout.tv_usec = 0;
 	timeout.tv_sec = 0;
 
 	while(1) {
-		//On charge les FDs à surveiller.
+			//On charge les FDs (Files Descriptors) à surveiller.
+		//On remet à zéro
 		FD_ZERO(&fdwatched);
+		//On veut surveiller le serveur
 		FD_SET(Server.serverFD, &fdwatched);
+		//On veut surveiller tous les clients
 		for(i=0; i < Server.nbclients; i++) FD_SET(Server.clients[i].clientFD, &fdwatched);
 
-		//TODO : Documenter par là
+		/* int select (int nfds, fd_set *read-fds, fd_set *write-fds, fd_set *except-fds, struct timeval *timeout)
+		 *
+		 * Gros conseil pour mieux comprendre : "man select" dans la console linux.
+		 * Select permet de détecter quand des FDs sont prêts à être lus.
+		 * Intérêt : On évite d'utilisé une fct bloquante comme send et recv alors qu'il n'y en a pas besoin.
+		 *
+		 * Il faut lui envoyer en premier paramètre (nfds) le FD avec le plus grand numéro plus un.
+		 * Pas d'explication à ça, le manuel n'en dit pas plus.
+		 * read-fds : FDs qu'on veut surveiller.
+		 * write-fds : J'en sais rien.
+		 * except-fds : J'en sais rien.
+		 * timeout : Structure contenant le temps que va attendre select avant de trouver un FD prêt.
+		 * Si on met NULL, il attendra indéfiniment un FD. Il faut donc lui envoyé une structure initialisiée
+		 * à 0 seconde et 0 useconde.
+		 */
 		if(select(fdmax + 1, &fdwatched, NULL, NULL, &timeout) == -1) {
 			perror("select() : Cannot watch FDs");
 			exit(EXIT_FAILURE);
@@ -72,40 +89,55 @@ void server_run() {
 		//Si le serveur reçoit une requête, alors il s'agit d'une nouvelle connection client.
 		if(FD_ISSET(Server.serverFD, &fdwatched)) {
 			printf("New client connected.\n");
+
+			//Préparation des éléments à récupérer
 			struct sockaddr_in info = {0};
 			char name[NAMESIZE];
 			socklen_t infosize = sizeof(info);
+
+			//On accepte la connection entrante
 			SOCKET clientFD = accept(Server.serverFD, (struct sockaddr*)&info, &infosize);
 			if(clientFD == -1) {
 				perror("accept() : Cannot accept new client.");
 			}
 			else {
+				//Récupération du nom du process client
 				int n = recv(clientFD, name, NAMESIZE, 0);
 				if(n == -1) {
 					perror("Cannot get process name");
 				}
+				name[NAMESIZE-1]=0;
 
+				//Ajout du client à la liste des clients
 				server_add_client(client_create(clientFD, info, name));
 				server_print_clients();
-				fdmax = fdmax < clientFD ? fdmax : clientFD;
+
+				//Mise à jour du plus grand FD
+				fdmax = fdmax > clientFD ? fdmax : clientFD;
 			}
 		}
 
 		//On vérifie si les clients ont envoyé des infos
 		for(i=0; i < Server.nbclients; i++) {
 			SOCKET clientFD = Server.clients[i].clientFD;
-			server_check_client(Server.clients[i]);
 
 			if(FD_ISSET(clientFD, &fdwatched)) {
-
+				//Données réçues
+				Server.clients[i].size_in = client_receive(&(Server.clients[i]));
 			}
+			else {
+				//Pas de donnée réçue
+				Server.clients[i].size_in = 0;
+			}
+			//Vérification de la connection des clients
+			server_check_client(&(Server.clients[i]), timeout, fdmax);
 		}
 	}
 }
 
 void server_add_client(Client client) {
 	if(Server.nbclients < MAXCLIENTS - 1) Server.clients[Server.nbclients++] = client;
-	else perror("Can't add new client ! Max client limit reached.");
+	else perror("Can't add new client ! Clients limit reached.");
 }
 
 void server_rm_client(Client client) {
@@ -119,20 +151,32 @@ void server_rm_client(Client client) {
 			break;
 		}
 	}
+	printf("Client %s disconnected\n", client.name);
+	server_print_clients();
 }
 
-void server_check_client(Client client) {
-	char msg = 1, answer = 0, n = 0;
-
-	send(client.clientFD, &msg, 1, 0);
-
-	n = recv(client.clientFD, &answer, 1, 0);
-	if(answer != 1 && n != 1) {
-		server_rm_client(client);
-		printf("Client %s disconnected\n", client.name);
-		server_print_clients();
+void server_check_client(Client* client, struct timeval timeout, int max) {
+	//On envoie une requête au client
+	if(client->check_sync){
+		if(client_ask(client) == -1) {
+			server_rm_client(*client);
+			return;
+		}
 	}
 
+	if(client->size_in) {
+		//Si le message est bon
+		if(client->buffer_in[ADDRESS] == SERVER_SLOT && client->buffer_in[REQUEST] == RQ_ASK) {
+			clock_reset(&(client->out_of_sync));
+			client->check_sync = 1;
+		}
+	}
+
+	double time;
+	//Timeout de 200 ms dépassé : Client déconnecté
+	if((time = clock_getTime(&(client->out_of_sync))) > 0.2) {
+		server_rm_client(*client);
+	}
 }
 
 void server_print_clients() {

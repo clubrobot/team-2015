@@ -9,7 +9,6 @@
 #define SERVER_H_
 
 #include "Client.h"
-#include "Clock.h"
 
 #define MAXCLIENTS 10
 
@@ -33,7 +32,7 @@ void server_add_client(Client client);
 
 void server_rm_client(Client client);
 
-void server_check_client(Client client);
+void server_check_client(Client* client, struct timeval timeout, int max);
 
 void server_print_clients();
 
