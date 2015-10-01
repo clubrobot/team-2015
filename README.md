@@ -1,2 +1,2 @@
 # arietta-robot
-library wich groups all the robot functionnalities 
+library which groups all the robot functionalities 
