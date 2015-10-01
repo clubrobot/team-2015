@@ -9,10 +9,11 @@
 #define MESSAGE_H_
 
 #include <stdint.h>
+#include <arietta-comlib/Serial/UARTServer.h>
 
-#define start 0x55
-#define stop 0xAA
-#define TAILLEMAX_DATA 255
+#define START 0x55
+#define STOP 0xAA
+#define TAILLEMAX_DATA 255 //todo faire allocation memoire a la place
 #define TAILLEMAX_TRAME TAILLEMAX_DATA+4
 
 class Message {
@@ -48,6 +49,10 @@ public:
 
 	uint8_t checksum(uint8_t tab[TAILLEMAX_TRAME]);
 	int recopie();
+
+	void set_emitter();
+	void set_slot();
+
 
 private:
 protected:
