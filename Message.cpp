@@ -15,7 +15,7 @@ Message::Message() {
 	mslot_adress=0;
 	memitter=0;
 	mdlc=0;
-	mdatas[TAILLEMAX_DATA]= {};
+	mdatas = nullptr;
 	mchecksum=0;
 	mstop = 0xAA;
 
