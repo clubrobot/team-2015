@@ -8,8 +8,14 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 #include "Message.h"
+#include <list>
 
-class Parser {
+struct objectList{
+	void* ptr;
+	int nb;
+};
+
+class Parser{
 public:
 	Parser();
 	virtual ~Parser();
@@ -22,6 +28,12 @@ public:
 	void commit();
 	void open(Message* msg);
 
+protected:
+	Message* mmesg;
+	std::list<objectList> mlist;//liste d'objecttList
+
 };
+
+
 
 #endif /* PARSER_H_ */

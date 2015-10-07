@@ -63,10 +63,9 @@ protected:
 	uint8_t mslot_adress;//adresse de destination
 	uint8_t memitter; //adresse d'envoi
 	uint8_t mdlc;//dlc: data length code taille des donnees (de 0 a 8 octets inclus)
-    uint8_t* mdatas;
+	uint8_t* mdatas;
 	uint8_t mchecksum;
 	uint8_t mstop; //octet de stop = 0xAA
-
 };
 
 #endif /* MESSAGE_H_ */
