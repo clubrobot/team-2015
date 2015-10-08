@@ -21,14 +21,14 @@ public:
 
 	void launch();
 
-	virtual void onClientConnected(TCPSocket* client) const;
-	virtual void onClientDisconnected(TCPSocket* client) const;
-	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) const;
+	virtual void onClientConnected(TCPSocket* client);
+	virtual void onClientDisconnected(TCPSocket* client);
+	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len);
 
-	virtual void onConnected() const;
-	virtual void onDisconnected() const;
-	virtual void onConnectionFailed() const;
-	virtual void onMessageReceived(uint8_t buffer[], uint8_t len) const;
+	virtual void onConnected();
+	virtual void onDisconnected();
+	virtual void onConnectionFailed();
+	virtual void onMessageReceived(uint8_t buffer[], uint8_t len);
 private:
 	void serverMessage(TCPSocket* client, uint8_t data[], uint8_t len);
 
