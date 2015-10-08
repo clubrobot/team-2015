@@ -37,6 +37,18 @@ void DeamonServer::onClientConnected(TCPSocket* client) {
 }
 
 void DeamonServer::onClientDisconnected(TCPSocket* client) {
+	for (int i = 0; i < NB_SLOTS ; i++){//Loop on the slots
+		std::vector< TCPSocket* >::iterator it = mmapping[i].begin();
+		std::vector< TCPSocket* >::iterator end = mmapping[i].end();
+		while(it != end) {
+			if(*it != client){//Client not found
+				it++;
+			}
+			else{//Client found : we erase him from the mapping
+				it = mmapping[i].erase(it);
+			}
+		}
+	}
 	std::cout << "A client has disconnected" << std::endl;
 }
 
@@ -44,10 +56,11 @@ void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 	std::cout << "New message ! Length : " << (int)len << std::endl;
 
 	const void* bufferptr = buffer;
-	//Etape 1 : lecture trame -> recupère l'adresse
+	//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
 	int address = 0;
-	//Etape 2 : Décision
-	if(address==0) {//Message server
+	//Etape 2 : Decision
+	if(address==0) {//Server message
+		serverMessage(client,buffer,len);
 	}
 	else {//UART
 		muartserver.write(bufferptr,(uint)len);
@@ -64,12 +77,12 @@ void DeamonServer::onConnectionFailed() {
 }
 
 void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
-	//Etape 1 : Analyse de la trame pour récupérer l'adresse
+	//Step 1 : Get the address to know which slot has sent the message
 	int address = 1;
-	//Etape 2 : Redirection du message vers le client
+	//Step 2 : Redirection of the message to the clients concerned
 	//TODO
-	std::vector< TCPSocket* >::const_iterator it = mmapping[address].begin();
-	std::vector< TCPSocket* >::const_iterator end = mmapping[address].end();
+	std::vector< TCPSocket* >::iterator it = mmapping[address].begin();
+	std::vector< TCPSocket* >::iterator end = mmapping[address].end();
 	while(it != end) {
 		(*it)->write(buffer,(uint32_t)len);
 		it++;
@@ -80,4 +93,18 @@ void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 }
 
 void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len) {
+	switch(data[0]){//First byte contains the type of server message
+		case 0 ://Message Slot Mapping
+			onReceivingSlotMapping(client,data+1,len-1);
+			break;
+		default:
+			break;
+	}
 }
+
+void DeamonServer::onReceivingSlotMapping(TCPSocket* client, uint8_t slots[], uint8_t len){
+	for(int i=0 ; i<len ; i++){//Loop on the
+		mmapping[slots[i]].push_back(client);//Add client to the mapping
+	}
+}
+
