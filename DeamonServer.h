@@ -23,6 +23,11 @@ public:
 	virtual void onClientDisconnected(TCPSocket* client) const;
 	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) const;
 private:
+	void serverMessage(TCPSocket* client, uint8_t data[], uint8_t len);
+
+	//Internal events (Server messages)
+	void onReceivingSlotMapping(TCPSocket* client, uint8_t slots[], uint8_t len);
+
 	TCPServer mtcpserver;
 };
 

@@ -34,3 +34,6 @@ void DeamonServer::onClientDisconnected(TCPSocket* client) const {
 void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) const {
 	std::cout << "New message ! Length : " << (int)len << std::endl;
 }
+
+void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len) {
+}
