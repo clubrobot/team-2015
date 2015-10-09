@@ -18,21 +18,11 @@ Parser::~Parser() {
 }
 
 void Parser::putInt(int data){
-	objectList structData;
-	int* ptrdata = nullptr;
-	*ptrdata = data;
-	structData.ptr = ptrdata;
-	structData.nb = sizeof(*ptrdata);
-	mlist.push_front(structData);
+	putData(&data, sizeof(int));
 }
 
 void Parser::putFloat(float data){
-	objectList structData;
-	int* ptrdata = nullptr;
-	*ptrdata = data;
-	structData.ptr = ptrdata;
-	structData.nb = sizeof(*ptrdata);
-	mlist.push_front(structData);
+	putData(&data, sizeof(float));
 }
 
 //
@@ -43,18 +33,18 @@ void Parser::putFloat(float data){
 //
 //}
 
-//void Parser::putData(const void* data, int nb){
-//	objectList structData;
-//	void* ptrcopy = nullptr;
-//	*ptrcopy = &data;
-//	structData.ptr = ptrcopy;
-//	structData.nb = nb;
-//	mlist.push_front(structData);
-//}
-
-void Parser::getData(void*, int){
-
+void Parser::putData(void* data, int nb){
+	ParsingObject structData;
+	structData.ptr = data;
+	structData.nb = nb;
+	mlist.push_front(structData);
 }
+
+void Parser::getData(void* data, int nb){
+	void* datacopy = mmesg->getData();
+	memcpy(data,datacopy,nb);
+}
+
 void Parser::commit(){
 
 }

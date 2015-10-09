@@ -10,10 +10,6 @@
 #include "Message.h"
 #include <list>
 
-struct objectList{
-	void* ptr;
-	int nb;
-};
 
 class Parser{
 public:
@@ -23,14 +19,18 @@ public:
 	void putFloat(float data);
 	int getInt();
 	float getFloat();
-	void putData(const void*, int);
-	void getData(void*, int);
+	void putData(void*, int);
+	void getData(void* data, int nb);
 	void commit();
 	void open(Message* msg);
 
+	struct ParsingObject{
+		void* ptr;
+		int nb;
+	};
 protected:
 	Message* mmesg;
-	std::list<objectList> mlist;//liste d'objecttList
+	std::list<ParsingObject> mlist;//liste d'objecttList
 
 };
 
