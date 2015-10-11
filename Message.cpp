@@ -11,20 +11,18 @@
 Message::Message() {
 
 	// TODO Auto-generated constructor stub
-	mstart =0x55;
+	mstart = START;
 	mdestination=0;
 	memitter=0;
 	mdlc=0;
 	mdata = nullptr;
 	mchecksum=0;
-	mstop = 0xAA;
-
-	moffset = 0;
+	mstop = STOP;
 
 }
 
 Message::~Message() {
-	// TODO Auto-generated destructor stub
+	stopDataAlloc();
 }
 
 
@@ -53,21 +51,9 @@ void Message::convertToRawData(uint8_t* data) {
 	}
 }
 
-int Message::appendRawData(uint8_t* data, int len) {
-	int res = getRawDataSize() - (moffset + len);
-
-	// TODO : Finish that
-
-	if(res < 0) {
-		moffset = getRawDataSize();
-	}
-	else {
-		moffset += len;
-	}
-
-	return res;
-}
-
 bool Message::isComplete() {
-	return mdata != nullptr && moffset == getRawDataSize();
+
+	//TODO: Verify start/stop/checksum
+
+	return true;
 }
