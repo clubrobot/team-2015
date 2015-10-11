@@ -28,19 +28,15 @@ void Parser::putFloat(float data){
 
 
 int Parser::getInt(){
-	int* lastint = nullptr;
-	getData(lastint,1);
-	int result = *(lastint+moffset);
-	moffset++;
-	return result;
+	int res;
+	getData(&res,sizeof(float));
+	return res;
 }
 
 float Parser::getFloat(){
-	float* lastfloat = nullptr;
-	getData(lastfloat,1);
-	float result = *(lastfloat+moffset);
-	moffset++;
-	return result;
+	float res;
+	getData(&res,sizeof(int));
+	return res;
 }
 
 void Parser::putData(void* data, int nb){
@@ -50,14 +46,19 @@ void Parser::putData(void* data, int nb){
 	mlist.push_front(structData);
 }
 
-void Parser::getData(void* data, int nb){
+void Parser::getData(void* data, int len){
 	void* datacopy = mmesg->getData();
-	memcpy(data,datacopy,nb);
-	moffset =0;
+	memcpy(data,datacopy+moffset,len);
+	moffset += len;
 }
+
 
 void Parser::commit(){
 
+}
+
+void Parser::rewind(){
+	moffset =0;
 }
 
 void Parser::open(Message* msg){

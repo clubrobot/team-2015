@@ -23,6 +23,7 @@ public:
 	void getData(void* data, int nb);
 	void commit();
 	void open(Message* msg);
+	void rewind();
 
 	struct ParsingObject{
 		void* ptr;
