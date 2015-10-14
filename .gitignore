@@ -1,0 +1,10 @@
+*
+!.gitignore
+!*.cproject
+!*.project
+!src/Source/*.c
+!src/Header/*.h
+!*/
+*.metadata
+
+
