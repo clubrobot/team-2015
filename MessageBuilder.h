@@ -23,8 +23,8 @@ public:
 	bool newMessagesCompleted() { return mmsgqueue.size() > 0;}
 	Message retrieveMessage();
 private:
-	std::queue<Message> mmsgqueue;
-	Message mcurrentMsg;
+	std::queue<Message*> mmsgqueue;
+	Message* mcurrentMsg;
 	bool mcollecting;
 	int moffset;
 	uint8_t mlsbyte;

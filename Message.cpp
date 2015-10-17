@@ -9,8 +9,6 @@
 
 
 Message::Message() {
-
-	// TODO Auto-generated constructor stub
 	mstart = START;
 	mdestination=0;
 	memitter=0;
@@ -18,13 +16,11 @@ Message::Message() {
 	mdata = nullptr;
 	mchecksum=0;
 	mstop = STOP;
-
 }
 
 Message::~Message() {
-	stopDataAlloc();
+	if(mdata) stopDataAlloc();
 }
-
 
 //uint8_t Message::checksum(uint8_t tab[TAILLEMAX_TRAME]){
 //	int i;
