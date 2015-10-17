@@ -73,6 +73,21 @@ public:
 		return memitter;
 	}
 
+	void setChecksum(uint8_t mchecksum) {
+		this->mchecksum = mchecksum;
+	}
+
+	void setDestination(uint8_t mdestination) {
+		this->mdestination = mdestination;
+	}
+
+	void setDlc(uint8_t mdlc) {
+		this->mdlc = mdlc;
+	}
+
+	void setEmitter(uint8_t memitter) {
+		this->memitter = memitter;
+	}
 };
 
 #endif /* MESSAGE_H_ */
