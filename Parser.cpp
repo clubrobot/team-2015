@@ -54,8 +54,8 @@ void Parser::getData(void* data, int len){
 
 
 void Parser::commit(){
-	uint8_t lenghtdata =0;
-	uint8_t lenghtonedata =0;
+	uint8_t lenghtdata =0;//taille totale des donnees a commit contenues dans la liste.
+	uint8_t lenghtonedata =0;//taille d'une donnee de la liste
 
 	std::list<ParsingObject>::const_iterator iterator;
 
@@ -63,13 +63,14 @@ void Parser::commit(){
 		lenghtdata += iterator->nb;
 	}
 	mmesg->setDlc(lenghtdata);
-	mmesg->startDataAlloc();
+	mmesg->startDataAlloc();//alloc d'un nouveau msg
 	uint8_t* rawListData = mmesg->getData();
 
 	for (iterator = mlist.begin(); iterator != mlist.end(); ++iterator) {
 
 		memcpy((void*)(rawListData+lenghtonedata), iterator->ptr,iterator->nb);
 		lenghtonedata +=iterator->nb;
+		//On rentre toutes les data contenues dans la liste dans le nouveau msg.
 	}
 }
 
