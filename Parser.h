@@ -32,7 +32,7 @@ public:
 protected:
 	Message* mmesg;
 	int moffset;
-	std::list<ParsingObject> mlist;//liste d'objecttList
+	std::list<ParsingObject>mlist;//liste d'objecttList
 
 };
 

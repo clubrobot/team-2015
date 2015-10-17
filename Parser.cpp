@@ -54,7 +54,23 @@ void Parser::getData(void* data, int len){
 
 
 void Parser::commit(){
+	uint8_t lenghtdata =0;
+	uint8_t lenghtonedata =0;
 
+	std::list<ParsingObject>::const_iterator iterator;
+
+	for (iterator = mlist.begin(); iterator != mlist.end(); ++iterator) {
+		lenghtdata += iterator->nb;
+	}
+	mmesg->setDlc(lenghtdata);
+	mmesg->startDataAlloc();
+	uint8_t* rawListData = mmesg->getData();
+
+	for (iterator = mlist.begin(); iterator != mlist.end(); ++iterator) {
+
+		memcpy((void*)(rawListData+lenghtonedata), iterator->ptr,iterator->nb);
+		lenghtonedata +=iterator->nb;
+	}
 }
 
 void Parser::rewind(){
