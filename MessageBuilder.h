@@ -9,7 +9,7 @@
 #define MESSAGEBUILDER_H_
 
 #include <cstring>
-#include <stack>
+#include <queue>
 
 #include "Message.h"
 
@@ -20,10 +20,10 @@ public:
 
 	void appendRawData(uint8_t* data, int len);
 
-	bool newMessagesCompleted() { return mmsgstack.size() > 0;}
+	bool newMessagesCompleted() { return mmsgqueue.size() > 0;}
 	Message retrieveMessage();
 private:
-	std::stack<Message> mmsgstack;
+	std::queue<Message> mmsgqueue;
 	Message mcurrentMsg;
 	bool mcollecting;
 	int moffset;

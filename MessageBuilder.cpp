@@ -10,7 +10,7 @@
 MessageBuilder::MessageBuilder() {
 	moffset = 0;
 	mcollecting = false;
-	mmsgstack = std::stack<Message>();
+	mmsgqueue = std::queue<Message>();
 	mcurrentMsg = Message();
 	mlsbyte = 0;
 }
@@ -70,7 +70,7 @@ void MessageBuilder::appendRawData(uint8_t* data, int len) {
 				mcollecting = false;
 				moffset = 0;
 				if(mcurrentMsg.isComplete()) { //Si le message est conforme on l'ajoute à la pile
-					mmsgstack.push(mcurrentMsg);
+					mmsgqueue.push(mcurrentMsg);
 				}
 				else { //Sinon on libère la data
 					mcurrentMsg.stopDataAlloc();
@@ -83,7 +83,7 @@ void MessageBuilder::appendRawData(uint8_t* data, int len) {
 }
 
 Message MessageBuilder::retrieveMessage() {
-	Message res = mmsgstack.top();
-	mmsgstack.pop();
+	Message res = mmsgqueue.front();
+	mmsgqueue.pop();
 	return res;
 }
