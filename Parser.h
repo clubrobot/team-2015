@@ -15,8 +15,8 @@ class Parser{
 public:
 	Parser();
 	virtual ~Parser();
-	void putInt(int data);
-	void putFloat(float data);
+	void putInt(int & data);
+	void putFloat(float & data);
 	int getInt();
 	float getFloat();
 	void putData(void*, int);

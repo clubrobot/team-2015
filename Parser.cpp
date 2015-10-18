@@ -18,11 +18,11 @@ Parser::~Parser() {
 	// TODO Auto-generated destructor stub
 }
 
-void Parser::putInt(int data){
+void Parser::putInt(int & data){
 	putData(&data, sizeof(int));
 }
 
-void Parser::putFloat(float data){
+void Parser::putFloat(float & data){
 	putData(&data, sizeof(float));
 }
 
