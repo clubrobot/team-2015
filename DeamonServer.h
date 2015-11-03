@@ -12,6 +12,10 @@
 #include <vector>
 #include <arietta-comlib/Serial/UARTServer.h>
 #include <arietta-comlib/Socket/Server/TCPServer.h>
+#include <arietta-robot/MessageBuilder/MessageBuilder.h>
+#include <arietta-robot/Message/Message.h>
+
+
 #define NB_SLOTS 10
 
 class DeamonServer : public FDListener, TCPServer::Events, UARTServer::Events {
@@ -38,6 +42,8 @@ private:
 	TCPServer mtcpserver;
 	UARTServer muartserver;
 	std::vector<TCPSocket*> mmapping[NB_SLOTS] ;//TODO change number of slots
+	MessageBuilder msgbuilder; // in charge of rebuilding msg from raw datas.
+
 };
 
 #endif /* DEAMONSERVER_H_ */

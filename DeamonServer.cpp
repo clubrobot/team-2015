@@ -7,6 +7,7 @@
 
 #include "DeamonServer.h"
 
+
 DeamonServer::DeamonServer() : FDListener() {
 	mtcpserver = TCPServer();
 	mtcpserver.setFDListener(this);
@@ -76,29 +77,35 @@ void DeamonServer::onDisconnected() {
 void DeamonServer::onConnectionFailed() {
 }
 
+//a verifier
 void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
-	int address = 1;
-	//Step 2 : Redirection of the message to the clients concerned
-	//TODO
-	std::vector< TCPSocket* >::iterator it = mmapping[address].begin();
-	std::vector< TCPSocket* >::iterator end = mmapping[address].end();
-	while(it != end) {
-		(*it)->write(buffer,(uint32_t)len);
-		it++;
+	int address;
+	msgbuilder.appendRawData(buffer,len);
+
+	while(msgbuilder.mcollecting){
+		if(msgbuilder.newMessagesCompleted()){
+			Message newmsg = msgbuilder.retrieveMessage();
+			address = newmsg.mdestination;
+		}
+		//Step 2 : Redirection of the message to the clients concerned
+		std::vector< TCPSocket* >::iterator it = mmapping[address].begin();
+		std::vector< TCPSocket* >::iterator end = mmapping[address].end();
+		while(it != end) {
+			(*it)->write(buffer,(uint32_t)len);
+			it++;
+		}
 	}
-
 	delete(buffer);
-
 }
 
 void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len) {
 	switch(data[0]){//First byte contains the type of server message
-		case 0 ://Message Slot Mapping
-			onReceivingSlotMapping(client,data+1,len-1);
-			break;
-		default:
-			break;
+	case 0 ://Message Slot Mapping
+		onReceivingSlotMapping(client,data+1,len-1);
+		break;
+	default:
+		break;
 	}
 }
 
