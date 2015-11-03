@@ -53,21 +53,6 @@ void DeamonServer::onClientDisconnected(TCPSocket* client) {
 	std::cout << "A client has disconnected" << std::endl;
 }
 
-void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
-	std::cout << "New message ! Length : " << (int)len << std::endl;
-
-	const void* bufferptr = buffer;
-	//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
-	int address = 0;
-	//Etape 2 : Decision
-	if(address==0) {//Server message
-		serverMessage(client,buffer,len);
-	}
-	else {//UART
-		muartserver.write(bufferptr,(uint)len);
-	}
-}
-
 void DeamonServer::onConnected() {
 }
 
@@ -77,15 +62,37 @@ void DeamonServer::onDisconnected() {
 void DeamonServer::onConnectionFailed() {
 }
 
+void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
+	std::cout << "New message ! Length : " << (int)len << std::endl;
+
+	int address;
+	msgb_tcp.appendRawData(buffer,len);
+	const void* bufferptr = buffer;
+
+	while(msgb_tcp.mcollecting){
+		if(msgb_tcp.newMessagesCompleted()){
+			Message newmsg = msgb_tcp.retrieveMessage();
+			address = newmsg.mdestination;
+		}
+		//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
+		if(address==0) {//Server message
+			serverMessage(client,buffer,len);
+		}
+		else {//UART
+			muartserver.write(bufferptr,(uint)len);
+		}
+	}
+}
+
 //a verifier
 void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
 	int address;
-	msgbuilder.appendRawData(buffer,len);
+	msgb_uart.appendRawData(buffer,len);
 
-	while(msgbuilder.mcollecting){
-		if(msgbuilder.newMessagesCompleted()){
-			Message newmsg = msgbuilder.retrieveMessage();
+	while(msgb_uart.mcollecting){
+		if(msgb_uart.newMessagesCompleted()){
+			Message newmsg = msgb_uart.retrieveMessage();
 			address = newmsg.mdestination;
 		}
 		//Step 2 : Redirection of the message to the clients concerned

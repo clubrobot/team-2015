@@ -42,7 +42,7 @@ private:
 	TCPServer mtcpserver;
 	UARTServer muartserver;
 	std::vector<TCPSocket*> mmapping[NB_SLOTS] ;//TODO change number of slots
-	MessageBuilder msgbuilder; // in charge of rebuilding msg from raw datas.
+	MessageBuilder msgb_uart, msgb_tcp; // in charge of rebuilding msg from raw datas.
 
 };
 
