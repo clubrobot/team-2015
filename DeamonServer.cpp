@@ -66,40 +66,48 @@ void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 	std::cout << "New message ! Length : " << (int)len << std::endl;
 
 	int address;
-	msgb_tcp.appendRawData(buffer,len);
-	const void* bufferptr = buffer;
+	uint8_t data;
+	uint8_t lenght;
 
-	while(msgb_tcp.mcollecting){
-		if(msgb_tcp.newMessagesCompleted()){
-			Message newmsg = msgb_tcp.retrieveMessage();
-			address = newmsg.mdestination;
-		}
+	msgb_tcp.appendRawData(buffer,len);
+
+	while(msgb_tcp.newMessagesCompleted()){
+		Message newmsg = msgb_tcp.retrieveMessage();
+		address = newmsg.getDestination();
+		data = newmsg.getData();
+		lenght = newmsg.getDataSize();
+
+
 		//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
 		if(address==0) {//Server message
-			serverMessage(client,buffer,len);
+			serverMessage(client,&data,lenght);
 		}
 		else {//UART
-			muartserver.write(bufferptr,(uint)len);
+			muartserver.write(&data,(uint)lenght);
 		}
 	}
 }
+
 
 //a verifier
 void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
 	int address;
+	uint8_t data;
+	uint8_t lenght;
 	msgb_uart.appendRawData(buffer,len);
 
-	while(msgb_uart.mcollecting){
-		if(msgb_uart.newMessagesCompleted()){
-			Message newmsg = msgb_uart.retrieveMessage();
-			address = newmsg.mdestination;
-		}
+	while(msgb_uart.newMessagesCompleted()){
+		Message newmsg = msgb_uart.retrieveMessage();
+		address = newmsg.getDestination();
+		data = newmsg.getData();
+		lenght = newmsg.getRawDataSize();
+
 		//Step 2 : Redirection of the message to the clients concerned
 		std::vector< TCPSocket* >::iterator it = mmapping[address].begin();
 		std::vector< TCPSocket* >::iterator end = mmapping[address].end();
 		while(it != end) {
-			(*it)->write(buffer,(uint32_t)len);
+			(*it)->write(&data,(uint32_t)lenght);
 			it++;
 		}
 	}
