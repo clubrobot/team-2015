@@ -62,6 +62,7 @@ void DeamonServer::onDisconnected() {
 void DeamonServer::onConnectionFailed() {
 }
 
+//communication towards uart
 void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
 	std::cout << "New message ! Length : " << (int)len << std::endl;
 
@@ -88,8 +89,9 @@ void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 	}
 }
 
-
-//a verifier
+/*communication towards clients
+ * a slot can communicate with his clients with the use of this function
+ */
 void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
 	int address;
@@ -99,7 +101,7 @@ void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 
 	while(msgb_uart.newMessagesCompleted()){
 		Message newmsg = msgb_uart.retrieveMessage();
-		address = newmsg.getDestination();
+		address = newmsg.getEmitter();
 		data = newmsg.getData();
 		lenght = newmsg.getRawDataSize();
 
@@ -117,7 +119,7 @@ void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
 void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len) {
 	switch(data[0]){//First byte contains the type of server message
 	case 0 ://Message Slot Mapping
-		onReceivingSlotMapping(client,data+1,len-1);
+		onReceivingSlotMapping(client,data+1,len-1);//From data+1 we have the slots numeros that will allow the new client
 		break;
 	default:
 		break;
@@ -125,7 +127,7 @@ void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len)
 }
 
 void DeamonServer::onReceivingSlotMapping(TCPSocket* client, uint8_t slots[], uint8_t len){
-	for(int i=0 ; i<len ; i++){//Loop on the
+	for(int i=0 ; i<len ; i++){//for each concerned slot
 		mmapping[slots[i]].push_back(client);//Add client to the mapping
 	}
 }
