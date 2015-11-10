@@ -17,6 +17,8 @@
 // The size of a raw message while excluding the size of its data. For instance it's the size needed to store the emitter's id.
 #define METADATA_LENGTH 2
 
+//TODO : Message : one array starting with the 4-bytes usb identifier of the target slot. See : /dev/disk/by-uuid
+
 class Message {
 
 protected:
