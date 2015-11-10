@@ -16,6 +16,8 @@
 #define START 0x55
 #define STOP 0xAA
 
+//TODO : Message : one array starting with the 4-bytes usb identifier of the target slot. See : /dev/disk/by-uuid
+
 class Message {
 protected:
 
