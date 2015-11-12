@@ -16,7 +16,7 @@ Message::Message()
 	mcursor = 0;
 }
 
-Message::Message( const uint8_t* rawData, size_t rawDlc )
+Message::Message( const uint8_t* rawData, uint32_t rawDlc )
 {
 	memitter = rawData[ 0 ];
 	mdestination = rawData[ 1 ];
@@ -60,12 +60,12 @@ void Message::clearData()
 		mdlc = 0;
 }
 
-uint32_t Message::getDataLength()
+uint32_t Message::getDataLength() const
 {
 	return mdlc;
 }
 
-void Message::getData( uint8_t* dst )
+void Message::getData( uint8_t* dst ) const
 {
 	if ( mdata != nullptr )
 		memcpy( dst, mdata, mdlc );
@@ -82,7 +82,7 @@ void Message::setData( const uint8_t data[], uint32_t dlc )
 void Message::appendData( const uint8_t data[], uint32_t dlc )
 {
 	uint32_t newDlc = mdlc + dlc;
-	uint8_t newData[] = new uint8_t[ newDlc ];
+	uint8_t* newData = new uint8_t[ newDlc ];
 	memcpy( newData, mdata, mdlc );
 	memcpy( newData + mdlc, data, dlc );
 	clearData();
@@ -90,12 +90,12 @@ void Message::appendData( const uint8_t data[], uint32_t dlc )
 	mdata = newData;
 }
 
-uint32_t Message::getRawDataSize()
+uint32_t Message::getRawDataSize() const
 {
 	return mdlc + METADATA_LENGTH;
 }
 
-void Message::getRawData( uint8_t* dst )
+void Message::getRawData( uint8_t* dst ) const
 {
 	dst[ 0 ] = memitter;
 	dst[ 1 ] = mdestination;

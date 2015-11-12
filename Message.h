@@ -56,10 +56,10 @@ public:
 	void clearData();
 
 	// Get the length of the message's data.
-	uint32_t getDataLength();
+	uint32_t getDataLength() const;
 
 	// Copy the message's data to another memory location, assuming it has previously been allocated (using getDataLength).
-	void getData( uint8_t* dst );
+	void getData( uint8_t* dst ) const;
 
 	// Set the message's data by erasing the previous one.
 	void setData( const uint8_t data[], uint32_t dlc );
@@ -68,10 +68,10 @@ public:
 	void appendData( const uint8_t data[], uint32_t dlc );
 
 	// Get the size of the message's entire data. This includes metadata like the message's emitter or receiver.
-	uint32_t getRawDataSize();
+	uint32_t getRawDataSize() const;
 
 	// Get the message's raw data (see above).
-	void getRawData( uint8_t* dst );
+	void getRawData( uint8_t* dst ) const;
 
 	// Add a new formatted variable to the message. For example :
 	//
@@ -80,7 +80,7 @@ public:
 	// m::append< float >( pi );
 
 	template< typename T >
-	void append< T >( T data )
+	void append(T data)
 	{
 		appendData( &data, sizeof( T ) );
 	}
@@ -97,7 +97,7 @@ public:
 	// c = m::retrieve< float >();
 
 	template< typename T >
-	T retrieve< T >( void )
+	T retrieve() const
 	{
 		T var;
 		memcpy( &var, mdata + mcursor, sizeof( T ) );
