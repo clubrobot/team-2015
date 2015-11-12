@@ -31,7 +31,7 @@ Message::~Message()
 	clearData();
 }
 
-uint8_t Message::getEmitter()
+uint8_t Message::getEmitter() const
 {
 	return memitter;
 }
@@ -41,7 +41,7 @@ void Message::setEmitter( uint8_t emitter )
 	memitter = emitter;
 }
 
-uint8_t Message::getReceiver()
+uint8_t Message::getReceiver() const
 {
 	return mdestination;
 }
@@ -60,12 +60,12 @@ void Message::clearData()
 		mdlc = 0;
 }
 
-uint32_t Message::getDataLength()
+uint32_t Message::getDataLength() const
 {
 	return mdlc;
 }
 
-void Message::getData( uint8_t* dst )
+void Message::getData( uint8_t* dst ) const
 {
 	if ( mdata != 0 )
 		memcpy( dst, mdata, mdlc );
@@ -90,12 +90,12 @@ void Message::appendData( const uint8_t data[], uint32_t dlc )
 	mdata = newData;
 }
 
-uint32_t Message::getRawDataLength()
+uint32_t Message::getRawDataLength() const
 {
 	return mdlc + METADATA_LENGTH;
 }
 
-void Message::getRawData( uint8_t* dst )
+void Message::getRawData( uint8_t* dst ) const
 {
 	dst[ 0 ] = memitter;
 	dst[ 1 ] = mdestination;
