@@ -11,13 +11,10 @@
 
 #include <stdint.h>
 #include <cstring>
-#include <arietta-comlib/Serial/UARTServer.h>
 #include <vector>
 
 // The size of a raw message while excluding the size of its data. For instance it's the size needed to store the emitter's id.
 #define METADATA_LENGTH 2
-
-//TODO : Message : one array starting with the 4-bytes usb identifier of the target slot. See : /dev/disk/by-uuid
 
 class Message {
 
@@ -56,10 +53,10 @@ public:
 	void clearData();
 
 	// Get the length of the message's data.
-	uint32_t getDataLength() const;
+	uint32_t getDataLength();
 
 	// Copy the message's data to another memory location, assuming it has previously been allocated (using getDataLength).
-	void getData( uint8_t* dst ) const;
+	void getData( uint8_t* dst );
 
 	// Set the message's data by erasing the previous one.
 	void setData( const uint8_t data[], uint32_t dlc );
@@ -67,22 +64,22 @@ public:
 	// Add some new data to the message's one.
 	void appendData( const uint8_t data[], uint32_t dlc );
 
-	// Get the size of the message's entire data. This includes metadata like the message's emitter or receiver.
-	uint32_t getRawDataSize() const;
+	// Get the length of the message's entire data. This includes metadata like the message's emitter or receiver.
+	uint32_t getRawDataLength();
 
 	// Get the message's raw data (see above).
-	void getRawData( uint8_t* dst ) const;
+	void getRawData( uint8_t* dst );
 
 	// Add a new formatted variable to the message. For example :
 	//
 	// float pi = 3.14;
 	// Message m();
-	// m::append< float >( pi );
+	// m.append< float >( pi );
 
 	template< typename T >
-	void append(T data)
+	void append( T data )
 	{
-		appendData( &data, sizeof( T ) );
+		appendData( ( const uint8_t* ) &data, sizeof( T ) );
 	}
 
 	// Get a formatted variable from the message.
@@ -92,12 +89,12 @@ public:
 	// int a, b;
 	// float c;
 	// Message m( receivedRawData ); // The cursor is at position zero.
-	// a = m::retrieve< int >(); // The cursor is incremented by sizeof( int ).
-	// b = m::retrieve< int >(); // Idem.
-	// c = m::retrieve< float >();
+	// a = m.retrieve< int >(); // The cursor is incremented by sizeof( int ).
+	// b = m.retrieve< int >(); // Idem.
+	// c = m.retrieve< float >();
 
 	template< typename T >
-	T retrieve() const
+	T retrieve( void )
 	{
 		T var;
 		memcpy( &var, mdata + mcursor, sizeof( T ) );
