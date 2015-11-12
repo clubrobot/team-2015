@@ -28,8 +28,27 @@ Message::Message( const uint8_t* rawData, size_t rawDlc )
 
 Message::~Message()
 {
-	if( mdata != nullptr )
-		delete[]( mdata );
+	clearData();
+}
+
+uint8_t Message::getEmitter()
+{
+	return memitter;
+}
+
+void Message::setEmitter( uint8_t emitter )
+{
+	memitter = emitter;
+}
+
+uint8_t Message::getReceiver()
+{
+	return mdestination;
+}
+
+void Message::setReceiver( uint8_t destination )
+{
+	mdestination = destination;
 }
 
 void Message::clearData()
