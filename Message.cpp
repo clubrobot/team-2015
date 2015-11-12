@@ -7,49 +7,78 @@
 
 #include "Message.h"
 
-
-Message::Message() {
-	mstart = START;
-	mdestination=0;
-	memitter=0;
-	mdlc=0;
+Message::Message()
+{
+	memitter = 0;
+	mdestination = 0;
+	mdlc = 0;
 	mdata = nullptr;
-	mchecksum=0;
-	mstop = STOP;
+	mcursor = 0;
 }
 
-Message::~Message() {
-	if(mdata) stopDataAlloc();
+Message::Message( const uint8_t* rawData, size_t rawDlc )
+{
+	memitter = rawData[ 0 ];
+	mdestination = rawData[ 1 ];
+	mdlc = 0;
+	mdata = nullptr;
+	setData( rawData + METADATA_LENGTH, rawDlc - METADATA_LENGTH );
+	mcursor = 0;
 }
 
-//uint8_t Message::checksum(uint8_t tab[TAILLEMAX_TRAME]){
-//	int i;
-//	uint8_t somme;
-//	for (i = 0; i < tab[2]; i++) {
-//		somme += tab[3 + i];
-//	}
-//	return somme;
-//}
-
-int Message::getRawDataSize() {
-	return mdlc + 6;
+Message::~Message()
+{
+	if( mdata != nullptr )
+		delete[]( mdata );
 }
 
-void Message::convertToRawData(uint8_t* data) {
-	if(mdlc != 0 && mdata != nullptr) {
-		data[0] = mstart;
-		data[1] = mdestination;
-		data[2] = memitter;
-		data[3] = mdlc;
-		memcpy(data, mdata, getRawDataSize());
-		data[4+mdlc] = mchecksum;
-		data[5+mdlc] = mstop;
-	}
+void Message::clearData()
+{
+	if ( mdata != nullptr )
+		delete[] mdata;
+
+	if ( mdlc > 0 )
+		mdlc = 0;
 }
 
-bool Message::isComplete() {
+uint32_t Message::getDataLength()
+{
+	return mdlc;
+}
 
-	//TODO: Verify start/stop/checksum
+void Message::getData( uint8_t* dst )
+{
+	if ( mdata != nullptr )
+		memcpy( dst, mdata, mdlc );
+}
 
-	return true;
+void Message::setData( const uint8_t data[], uint32_t dlc )
+{
+	clearData();
+	mdata = new uint8_t[ dlc ];
+	memcpy( mdata, data, dlc );
+	mdlc = dlc;
+}
+
+void Message::appendData( const uint8_t data[], uint32_t dlc )
+{
+	uint32_t newDlc = mdlc + dlc;
+	uint8_t newData[] = new uint8_t[ newDlc ];
+	memcpy( newData, mdata, mdlc );
+	memcpy( newData + mdlc, data, dlc );
+	clearData();
+	mdlc = newDlc;
+	mdata = newData;
+}
+
+uint32_t Message::getRawDataSize()
+{
+	return mdlc + METADATA_LENGTH;
+}
+
+void Message::getRawData( uint8_t* dst )
+{
+	dst[ 0 ] = memitter;
+	dst[ 1 ] = mdestination;
+	memcpy( dst + METADATA_LENGTH, mdata, mdlc );
 }
