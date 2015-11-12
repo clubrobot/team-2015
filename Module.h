@@ -9,6 +9,9 @@
 #define MODULE_H_
 
 #include <Socket/Client/TCPClient.h>
+#include <fstream>
+#include <iostream>
+
 #include "Message.h"
 
 //TODO : Add Clock module
@@ -32,12 +35,20 @@ protected:
 
 	//TODO (fun) : Get all slots descriptions.
 
+	//Configuration file functions
+	void loadTCPConfiguration();
+
 private:
 	// TODO : implement these methods
 	void onConnected();
 	void onConnectionFailed();
 	void onDisconnected();
 	void onMessageReceived(uint8_t buffer[], uint8_t len);
+
+	std::string maddress;
+	int mport;
+
+	static const std::string configfilepath;
 };
 
 #endif /* MODULE_H_ */
