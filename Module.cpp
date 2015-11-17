@@ -23,15 +23,15 @@ Module::~Module() {
 }
 
 void Module::send(const Message& msg) {
-	uint8_t* data = new uint8_t[msg.getRawDataSize()];
+	uint8_t* data = new uint8_t[msg.getRawDataLength()];
 	msg.getRawData(data);
-	write(data, msg.getRawDataSize());
+	write(data, msg.getRawDataLength());
 	delete(data);
 }
 
 void Module::uploadSlotMapping(uint8_t slots[], uint8_t numSlots) {
 
-	Message m = new Message();
+	Message m = Message();
 	m.setEmitter( 0 ); // don't care
 	m.setReceiver( 0 ); // server
 	m.append< uint8_t >( 0 ); // slot mapping message

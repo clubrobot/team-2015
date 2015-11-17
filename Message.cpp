@@ -16,7 +16,7 @@ Message::Message()
 	mcursor = 0;
 }
 
-Message::Message( const uint8_t* rawData, size_t rawDlc )
+Message::Message( const uint8_t* rawData, uint32_t rawDlc )
 {
 	memitter = rawData[ 0 ];
 	mdestination = rawData[ 1 ];

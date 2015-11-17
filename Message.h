@@ -80,9 +80,9 @@ public:
 	// m.append< float >( pi );
 
 	template< typename T >
-	void append( T data ) const
+	void append( T data )
 	{
-		appendData( ( const uint8_t* ) &data, sizeof( T ) );
+		appendData( ( const uint8_t* ) &data, (uint32_t)sizeof( T ) );
 	}
 
 	// Get a formatted variable from the message.
