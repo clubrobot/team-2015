@@ -65,7 +65,12 @@ uint32_t Message::getDataLength() const
 	return mdlc;
 }
 
-void Message::getData( uint8_t* dst ) const
+const uint8_t* Message::getData() const
+{
+	return mdata;
+}
+
+void Message::copyData( uint8_t* dst ) const
 {
 	if ( mdata != 0 )
 		memcpy( dst, mdata, mdlc );

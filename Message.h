@@ -55,8 +55,11 @@ public:
 	// Get the length of the message's data.
 	uint32_t getDataLength() const;
 
+	// Get a pointer to the internal data
+	const uint8_t* getData() const;
+
 	// Copy the message's data to another memory location, assuming it has previously been allocated (using getDataLength).
-	void getData( uint8_t* dst ) const;
+	void copyData( uint8_t* dst ) const;
 
 	// Set the message's data by erasing the previous one.
 	void setData( const uint8_t data[], uint32_t dlc );
