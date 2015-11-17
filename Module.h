@@ -31,7 +31,7 @@ protected:
 	virtual void onMessageReceived(Message& msg) = 0;
 
 	//TODO : Server messages
-	void uploadSlotMapping(uint8_t slots[]);
+	void uploadSlotMapping(uint8_t slots[], uint8_t numSlots);
 
 	//TODO (fun) : Get all slots descriptions.
 
