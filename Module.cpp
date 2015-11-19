@@ -55,19 +55,19 @@ void Module::loadTCPConfiguration() {
 	file.close();
 }
 
-void Module::onConnected() {
+void Module::onConnected(TCPClient* client) {
 	std::cout << "Module connected" << std::endl;
 }
 
-void Module::onConnectionFailed() {
+void Module::onConnectionFailed(TCPClient* client) {
 	std::cout << "Connection to server failed" << std::endl;
 }
 
-void Module::onDisconnected() {
+void Module::onDisconnected(TCPClient* client) {
 	std::cout << "Module disconnected" << std::endl;
 }
 
-void Module::onMessageReceived(uint8_t buffer[], uint8_t len) {
+void Module::onMessageReceived(TCPClient* client, uint8_t buffer[], uint8_t len) {
 	Message msg(buffer, len);
 	onMessageReceived(msg);
 }

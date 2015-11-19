@@ -8,7 +8,7 @@
 #ifndef MODULE_H_
 #define MODULE_H_
 
-#include <Socket/Client/TCPClient.h>
+#include <arietta-comlib/Socket/Client/TCPClient.h>
 #include <fstream>
 #include <iostream>
 
@@ -40,10 +40,10 @@ protected:
 
 private:
 	// TODO : implement these methods
-	void onConnected();
-	void onConnectionFailed();
-	void onDisconnected();
-	void onMessageReceived(uint8_t buffer[], uint8_t len);
+	void onConnected(TCPClient* client);
+	void onConnectionFailed(TCPClient* client);
+	void onDisconnected(TCPClient* client);
+	void onMessageReceived(TCPClient* client, uint8_t buffer[], uint8_t len);
 
 	std::string maddress;
 	int mport;
