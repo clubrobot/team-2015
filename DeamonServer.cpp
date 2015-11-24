@@ -18,7 +18,7 @@ DeamonServer::DeamonServer() : FDListener() {
 	muartserver.setEvents(this);
 	muartserver.launch("ttyS0");
 	for(int i=0; i<NB_SLOTS; i++) {
-		mmapping[i] = std::vector< TCPSocket* >();
+		mmappingtcp[i] = std::vector< TCPSocket* >();
 	}
 }
 
@@ -39,84 +39,66 @@ void DeamonServer::onClientConnected(TCPSocket* client) {
 
 void DeamonServer::onClientDisconnected(TCPSocket* client) {
 	for (int i = 0; i < NB_SLOTS ; i++){//Loop on the slots
-		std::vector< TCPSocket* >::iterator it = mmapping[i].begin();
-		std::vector< TCPSocket* >::iterator end = mmapping[i].end();
+		std::vector< TCPSocket* >::iterator it = mmappingtcp[i].begin();
+		std::vector< TCPSocket* >::iterator end = mmappingtcp[i].end();
 		while(it != end) {
 			if(*it != client){//Client not found
 				it++;
 			}
 			else{//Client found : we erase him from the mapping
-				it = mmapping[i].erase(it);
+				it = mmappingtcp[i].erase(it);
 			}
 		}
 	}
 	std::cout << "A client has disconnected" << std::endl;
 }
 
-void DeamonServer::onConnected() {
+void DeamonServer::onConnected(UARTServer* uart) {
 }
 
-void DeamonServer::onDisconnected() {
+void DeamonServer::onDisconnected(UARTServer* uart) {
 }
 
-void DeamonServer::onConnectionFailed() {
+void DeamonServer::onConnectionFailed(UARTServer* uart) {
 }
 
 //communication towards uart
 void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
-	std::cout << "New message ! Length : " << (int)len << std::endl;
+	//std::cout << "New message ! Length : " << (int)len << std::endl;
 
-	int address;
-	uint8_t data;
-	uint8_t lenght;
-
-	msgb_tcp.appendRawData(buffer,len);
-
-	while(msgb_tcp.newMessagesCompleted()){
-		Message newmsg = msgb_tcp.retrieveMessage();
-		address = newmsg.getDestination();
-		data = newmsg.getData();
-		lenght = newmsg.getDataSize();
+	Message newmsg = Message(buffer, len);
+	int address = newmsg.getReceiver();
 
 
-		//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
-		if(address==0) {//Server message
-			serverMessage(client,&data,lenght);
-		}
-		else {//UART
-			muartserver.write(&data,(uint)lenght);
-		}
+	//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
+	if(address==0) {//Server message
+		serverMessage(client, newmsg.getData(), newmsg.getDataLength());
 	}
+	else {//UART
+		//TODO: Apply usb mapping
+		muartserver.write(&buffer,(uint)len);
+	}
+
 }
 
 /*communication towards clients
  * a slot can communicate with his clients with the use of this function
  */
-void DeamonServer::onMessageReceived(uint8_t buffer[], uint8_t len) {
+void DeamonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
-	int address;
-	uint8_t data;
-	uint8_t lenght;
-	msgb_uart.appendRawData(buffer,len);
+	Message newmsg = Message(buffer, len);
+	int address = newmsg.getEmitter();
 
-	while(msgb_uart.newMessagesCompleted()){
-		Message newmsg = msgb_uart.retrieveMessage();
-		address = newmsg.getEmitter();
-		data = newmsg.getData();
-		lenght = newmsg.getRawDataSize();
-
-		//Step 2 : Redirection of the message to the clients concerned
-		std::vector< TCPSocket* >::iterator it = mmapping[address].begin();
-		std::vector< TCPSocket* >::iterator end = mmapping[address].end();
-		while(it != end) {
-			(*it)->write(&data,(uint32_t)lenght);
-			it++;
-		}
+	//Step 2 : Redirection of the message to the clients concerned
+	std::vector< TCPSocket* >::iterator it = mmappingtcp[address].begin();
+	std::vector< TCPSocket* >::iterator end = mmappingtcp[address].end();
+	while(it != end) {
+		(*it)->write(buffer,(uint32_t)len);
+		it++;
 	}
-	delete(buffer);
 }
 
-void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len) {
+void DeamonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len) {
 	switch(data[0]){//First byte contains the type of server message
 	case 0 ://Message Slot Mapping
 		onReceivingSlotMapping(client,data+1,len-1);//From data+1 we have the slots numeros that will allow the new client
@@ -126,9 +108,9 @@ void DeamonServer::serverMessage(TCPSocket* client, uint8_t data[], uint8_t len)
 	}
 }
 
-void DeamonServer::onReceivingSlotMapping(TCPSocket* client, uint8_t slots[], uint8_t len){
+void DeamonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len){
 	for(int i=0 ; i<len ; i++){//for each concerned slot
-		mmapping[slots[i]].push_back(client);//Add client to the mapping
+		mmappingtcp[slots[i]].push_back(client);//Add client to the mapping
 	}
 }
 
