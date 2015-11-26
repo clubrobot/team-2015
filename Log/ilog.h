@@ -13,12 +13,14 @@
 #include <sstream>
 #include <iostream>
 #include <iterator>
+#include <fstream>
 
 class ilog: public std::istream{
 public:
 	ilog();
 	virtual ~ilog();
-	void readFile(const char* filename,char delemiter);
+
+	void readFile(const char* filename,char delim);
 	int getlenght(const char* filename);
 };
 
