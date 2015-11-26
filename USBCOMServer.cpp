@@ -26,7 +26,10 @@ USBCOMServer::~USBCOMServer() {
 }
 
 void USBCOMServer::launch(const std::string& UUID) {
-	//UARTServer.launch(UUID);
+	if(UUID.compare(uuid) == 0)
+	{
+		UARTServer.launch(getTTY());
+	}
 }
 
 string USBCOMServer::getTTY()
