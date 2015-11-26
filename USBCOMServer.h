@@ -14,17 +14,13 @@ using namespace std;
 
 class USBCOMServer: public UARTServer {
 private:
-	string uuid;
-	string numero;
-	string description;
+	string muuid;
 
 public:
-	//file to print the config
-	static const  string PTRFILE;
 	//folder containing all the uuid
 	static const string UUIDFOLDER;
 
-	USBCOMServer(string ui, string num, string desc);
+	USBCOMServer();
 	virtual ~USBCOMServer();
 	string getTTY();
 	void launch(const std::string& UUID);

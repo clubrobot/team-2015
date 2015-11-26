@@ -5,38 +5,44 @@
  *      Author: gabriel
  */
 #include <fstream>
-#include <unistd.h>
+#include <cstdlib>
 #include "USBCOMServer.h"
 
-USBCOMServer::USBCOMServer(string ui, string num, string desc) {
+USBCOMServer::USBCOMServer() {
 	//print in the file referenced by Server.ptrfile
-	fstream outputFile ;
+	/*fstream outputFile ;
 	outputFile.open(USBCOMServer::PTRFILE.c_str(),fstream::out|fstream::app);
 	outputFile << ui+" "+num+" "+desc+"\n";
 	cout << ui+" "+num+" "+desc <<endl;
 	outputFile.close();
 
 	//create the object
-	uuid  = string (ui);
+	muuid  = string (ui);
 	numero = string (num);
-	description = string (desc);
+	description = string (desc);*/
 }
 
 USBCOMServer::~USBCOMServer() {
 }
 
 void USBCOMServer::launch(const std::string& UUID) {
-	if(UUID.compare(uuid) == 0)
-	{
-		UARTServer.launch(getTTY());
-	}
+	muuid = UUID;
+	UARTServer::launch(getTTY());
 }
 
 string USBCOMServer::getTTY()
 {
-	char buf[16];
-	string path = string (USBCOMServer::UUIDFOLDER+uuid);
-	ssize_t len = readlink(path.c_str(),buf,sizeof(buf)-1);
-	buf[len] = '\0';
-	return string(buf);
+	char buf[64];
+	string path = string (USBCOMServer::UUIDFOLDER+muuid);
+	char* res = realpath(path.c_str(),buf);
+	if(res)
+	{
+		return string(buf);
+	}
+	else
+	{
+		perror("realpath");
+		return "";
+	}
+
 }
