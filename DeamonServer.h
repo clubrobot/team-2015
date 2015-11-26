@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include "USBCOMServer.h"
 #include <arietta-comlib/Serial/UARTServer.h>
 #include <arietta-comlib/Socket/Server/TCPServer.h>
 #include <arietta-robot/Message.h>
@@ -39,9 +40,8 @@ private:
 	void onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len);
 
 	TCPServer mtcpserver;
-	UARTServer muartserver;
 
-	//USBCOMServer mmappingusb[NB_SLOTS];
+	USBCOMServer mmappingusb[NB_SLOTS];
 	std::vector<TCPSocket*> mmappingtcp[NB_SLOTS] ;//TODO change number of slots
 
 };

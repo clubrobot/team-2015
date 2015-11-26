@@ -13,10 +13,12 @@ DeamonServer::DeamonServer() : FDListener() {
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
 	mtcpserver.launch(3000, 10);
-	muartserver = UARTServer();
-	muartserver.setFDListener(this);
-	muartserver.setEvents(this);
-	muartserver.launch("ttyS0");
+
+	for(int i=0; i<NB_SLOTS; i++) {
+		mmappingusb[i] = USBCOMServer();
+		mmappingusb[i].setFDListener(this);
+		mmappingusb[i].setEvents(this);
+	}
 	for(int i=0; i<NB_SLOTS; i++) {
 		mmappingtcp[i] = std::vector< TCPSocket* >();
 	}
@@ -29,7 +31,10 @@ void DeamonServer::launch() {
 	for(;;) {
 		listen();
 		mtcpserver.run();
-		muartserver.run();
+
+		for(int i=0; i<NB_SLOTS; i++) {
+			if(!mmappingusb[i].isClosed()) mmappingusb[i].run();
+		}
 	}
 }
 
@@ -54,9 +59,11 @@ void DeamonServer::onClientDisconnected(TCPSocket* client) {
 }
 
 void DeamonServer::onConnected(UARTServer* uart) {
+	addFD(uart);
 }
 
 void DeamonServer::onDisconnected(UARTServer* uart) {
+	remFD(uart);
 }
 
 void DeamonServer::onConnectionFailed(UARTServer* uart) {
@@ -75,8 +82,7 @@ void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 		serverMessage(client, newmsg.getData(), newmsg.getDataLength());
 	}
 	else {//UART
-		//TODO: Apply usb mapping
-		muartserver.write(&buffer,(uint)len);
+		mmappingusb[address-1].write((uint8_t*)buffer,(uint)len);
 	}
 
 }
