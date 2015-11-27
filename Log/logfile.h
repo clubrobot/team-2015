@@ -11,14 +11,14 @@
 
 #include <fstream>
 #include "olog.h"
-
+#include "LogMessage.h"
 
 class LogFile: public olog {
 public:
 	LogFile(char *f);
 	~LogFile();
 
-	void append(const NvjLogSeverity& l, const std::string& m, const std::string& details="");
+	void append(LogMessage);
 
 private:
 	std::string filename;

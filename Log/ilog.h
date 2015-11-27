@@ -14,6 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include "LogMessage.h"
 
 class ilog: public std::istream{
 public:

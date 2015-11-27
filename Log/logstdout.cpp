@@ -17,19 +17,19 @@ logstdout::~logstdout() {
 }
 
 
-void logstdout::append(const NvjLogSeverity& l, const std::string& m,
-		const std::string& details) {
-	switch (l)
-	{
-	case NVJ_DEBUG:
-	case NVJ_WARNING:
-	case NVJ_INFO:
-		fprintf(stdout,"%s\n",m.c_str()); fflush(NULL);
-		break;
-	case NVJ_ERROR:
-	default:
-		fprintf(stderr,"%s\n",m.c_str());
-		break;
-	}
-}
+//void logstdout::append(const NvjLogSeverity& l, const std::string& m,
+//		const std::string& details) {
+//	switch (l)
+//	{
+//	case NVJ_DEBUG:
+//	case NVJ_WARNING:
+//	case NVJ_INFO:
+//		fprintf(stdout,"%s\n",m.c_str()); fflush(NULL);
+//		break;
+//	case NVJ_ERROR:
+//	default:
+//		fprintf(stderr,"%s\n",m.c_str());
+//		break;
+//	}
+//}
 

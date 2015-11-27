@@ -21,9 +21,10 @@ LogFile::LogFile(char *f){
 
 }
 
-void LogFile::append(const NvjLogSeverity& l, const std::string& m,
-		const std::string& details) {
-	if (file!=NULL)
-		(*file) << m << std::endl;
+void LogFile::append(LogMessage message) {
+	//	if (file!=NULL)
+	//		std::string info;
+	//	std::string info = message.getInfo();
+	//	(*file) << info << std::endl;
 }
 

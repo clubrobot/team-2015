@@ -9,13 +9,14 @@
 #define LOG_LOGSTDOUT_H_
 
 #include "olog.h"
+#include "LogMessage.h"
 
 
 class logstdout: public olog {
 public:
 	logstdout();
 	virtual ~logstdout();
-	void append(const NvjLogSeverity& l, const std::string& m, const std::string &details="");
+	void append(LogMessage logMessage);
 };
 #endif /* LOG_LOGSTDOUT_H_ */
 
