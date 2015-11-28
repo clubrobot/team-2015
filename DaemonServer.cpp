@@ -5,10 +5,12 @@
  *      Author: gabriel
  */
 
-#include "DeamonServer.h"
+#include "DaemonServer.h"
 
+const string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
+const string DaemonServer::PTRFILE = "linkrobot";
 
-DeamonServer::DeamonServer() : FDListener() {
+DaemonServer::DaemonServer() : FDListener() {
 	mtcpserver = TCPServer();
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
@@ -24,10 +26,10 @@ DeamonServer::DeamonServer() : FDListener() {
 	}
 }
 
-DeamonServer::~DeamonServer() {
+DaemonServer::~DaemonServer() {
 }
 
-void DeamonServer::launch() {
+void DaemonServer::launch() {
 	for(;;) {
 		listen();
 		mtcpserver.run();
@@ -38,11 +40,34 @@ void DeamonServer::launch() {
 	}
 }
 
-void DeamonServer::onClientConnected(TCPSocket* client) {
+void initAllUSB(){
+	string line;
+	string num; //numero
+	string ui; //uuid
+	ifstream file;
+	int i;
+	file.open(DaemonServer::PTRFILE.c_str(), ifstream::in);
+	while(getline(file,line)){
+		stringstream linestream (line);
+		//consume the first word of the line, which is the uuid
+		linestream >> ui;
+		linestream >> num;
+		i = std::stoi(num);
+		if(i<mmappingtcp.size())
+		{
+			if(!mmappingtcp[i].isConnected())
+			{
+				mmappingtcp[i].launch();
+			}
+		}
+	}
+}
+
+void DaemonServer::onClientConnected(TCPSocket* client) {
 	std::cout << "New client connected" << std::endl;
 }
 
-void DeamonServer::onClientDisconnected(TCPSocket* client) {
+void DaemonServer::onClientDisconnected(TCPSocket* client) {
 	for (int i = 0; i < NB_SLOTS ; i++){//Loop on the slots
 		std::vector< TCPSocket* >::iterator it = mmappingtcp[i].begin();
 		std::vector< TCPSocket* >::iterator end = mmappingtcp[i].end();
@@ -58,19 +83,19 @@ void DeamonServer::onClientDisconnected(TCPSocket* client) {
 	std::cout << "A client has disconnected" << std::endl;
 }
 
-void DeamonServer::onConnected(UARTServer* uart) {
+void DaemonServer::onConnected(UARTServer* uart) {
 	addFD(uart);
 }
 
-void DeamonServer::onDisconnected(UARTServer* uart) {
+void DaemonServer::onDisconnected(UARTServer* uart) {
 	remFD(uart);
 }
 
-void DeamonServer::onConnectionFailed(UARTServer* uart) {
+void DaemonServer::onConnectionFailed(UARTServer* uart) {
 }
 
 //communication towards uart
-void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
+void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
 	//std::cout << "New message ! Length : " << (int)len << std::endl;
 
 	Message newmsg = Message(buffer, len);
@@ -90,7 +115,7 @@ void DeamonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 /*communication towards clients
  * a slot can communicate with his clients with the use of this function
  */
-void DeamonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t len) {
+void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
 	Message newmsg = Message(buffer, len);
 	int address = newmsg.getEmitter();
@@ -104,7 +129,7 @@ void DeamonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t
 	}
 }
 
-void DeamonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len) {
+void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len) {
 	switch(data[0]){//First byte contains the type of server message
 	case 0 ://Message Slot Mapping
 		onReceivingSlotMapping(client,data+1,len-1);//From data+1 we have the slots numeros that will allow the new client
@@ -114,7 +139,7 @@ void DeamonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_
 	}
 }
 
-void DeamonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len){
+void DaemonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len){
 	for(int i=0 ; i<len ; i++){//for each concerned slot
 		mmappingtcp[slots[i]].push_back(client);//Add client to the mapping
 	}

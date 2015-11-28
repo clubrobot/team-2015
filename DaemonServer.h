@@ -5,10 +5,13 @@
  *      Author: gabriel
  */
 
-#ifndef DEAMONSERVER_H_
-#define DEAMONSERVER_H_
+#ifndef DAEMONSERVER_H_
+#define DAEMONSERVER_H_
 
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <fstream>
 #include <vector>
 #include "USBCOMServer.h"
 #include <arietta-comlib/Serial/UARTServer.h>
@@ -18,12 +21,15 @@
 
 #define NB_SLOTS 10
 
-class DeamonServer : public FDListener, TCPServer::Events, UARTServer::Events {
+class DaemonServer : public FDListener, TCPServer::Events, UARTServer::Events {
 public:
-	DeamonServer();
-	virtual ~DeamonServer();
+	static const string UUIDFOLDER;
+	static const  string PTRFILE;
+	DaemonServer();
+	virtual ~DaemonServer();
 
 	void launch();
+	void initAllUSB();
 
 	virtual void onClientConnected(TCPSocket* client);
 	virtual void onClientDisconnected(TCPSocket* client);
@@ -46,4 +52,4 @@ private:
 
 };
 
-#endif /* DEAMONSERVER_H_ */
+#endif /* DAEMONSERVER_H_ */
