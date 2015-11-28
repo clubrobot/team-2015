@@ -28,7 +28,6 @@ public:
 	//virtual functions that will be implemented by both logfile and logstdout
 	virtual void append(LogMessage message) = 0;
 
-	std::string timestamp();
 
 };
 

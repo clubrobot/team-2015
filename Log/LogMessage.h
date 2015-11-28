@@ -9,6 +9,12 @@
 #define LOG_LOGMESSAGE_H_
 
 #include <string>
+#include <time.h>
+#include <ostream>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <stdlib.h>
 
 typedef enum
 {
@@ -22,41 +28,50 @@ class LogMessage {
 
 protected:
 	Tag mtag;//LogMessage's type
-	std::string time;
+	std::string mtime;
 	uint8_t memitter; // The emitter's id.
 	std::string information;
 
 public:
 	LogMessage();
 	virtual ~LogMessage();
-	//	const NvjLogSeverity& l, const std::string& m, const std::string &details
 
-	// Get the log message's TAG
-	Tag getTAG();
+	void setInformation(const std::string& information) {
+		this->information = information;
+	}
 
-	// Set the log message's TAG
-	void setTAG(Tag tag);
+	uint8_t getEmitter() const {
+		return memitter;
+	}
 
-	// Get the log message's emitter.
-	uint8_t getEmitter() const;
+	void setEmitter(uint8_t memitter) {
+		this->memitter = memitter;
+	}
 
-	// Set the log message's emitter.
-	void setEmitter( uint8_t emitter );
+	Tag getTag() const {
+		return mtag;
+	}
+
+	void setTag(Tag mtag) {
+		this->mtag = mtag;
+	}
+
+	const std::string& getTime() const {
+		return mtime;
+	}
+
+
+	std::string timestamp();
 
 	// Set the log message's date of emission.
-	void setTime(std::string time);
+	void setTime();
 
-	// Get the log message's date of emission.
-	std::string getTime();
-
-	// Set the log message's information by erasing the previous one.
-	void setInfo(std::string information);
+	const std::string& getInformation() const {
+		return information;
+	}
 
 	// Add some new information to the message's one.
 	void appendInfo(std::string information);
-
-	// Get the log message's information.
-	std::string getInfo();
 
 	// Get the length of the entire log message.
 	int getLogLength() const;
