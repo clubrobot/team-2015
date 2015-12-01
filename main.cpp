@@ -5,7 +5,11 @@
  *      Author: antoine
  */
 
+#include "DaemonServer.h"
+
 int main(){
+	DaemonServer srv;
+	srv.launch();
 	return 0;
 }
 
