@@ -30,5 +30,6 @@ void LogFile::append(LogMessage message) {
 		(*file) << message.getEmitter() << ":";
 		(*file) << message.getInformation() << std::endl;
 	}
+	file->close();
 }
 

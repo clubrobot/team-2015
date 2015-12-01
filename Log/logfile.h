@@ -22,7 +22,7 @@ public:
 	void append(LogMessage);
 
 private:
-	std::string filename;
+	std::string filename; //path will be /var/log/logdaemon.txt
 	std::ofstream *file;
 
 };

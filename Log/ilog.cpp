@@ -16,23 +16,18 @@ ilog::~ilog() {
 	// TODO Auto-generated destructor stub
 }
 
-void ilog::readFile(const char* filename,char delim){
-	std::ifstream file(filename);
+void ilog::readFile(const char* filename){
+	std::ifstream infile(filename);//chemin ou sauver fichier de log
 
-	std::istream_iterator<char> it(file);
+	std::string ligne;//on lit ligne par ligne
 
-	const int n = 60;
-	char *buffer = new char[n];
+	infile.seekg(std::ios_base::beg);
 
-	file.seekg(ios_base::beg);
-	file.get(buffer, n, delim);
-
-	while (!file.eof()) {
-		std::cout << buffer << std::endl;
-		it++;
-		file.get(buffer, n, delim);
+	while(std::getline(infile,ligne)){
+		std::cout << ligne << std::endl;
 	}
-	file.close();
+
+	infile.close();
 }
 
 int ilog::getlenght(const char* filename) {

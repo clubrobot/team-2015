@@ -21,7 +21,8 @@ public:
 	ilog();
 	virtual ~ilog();
 
-	void readFile(const char* filename,char delim);
+	//this function reads the entire file containing LogMessages.
+	void readFile(const char* filename);// path will be /var/log/logdaemon.txt
 	int getlenght(const char* filename);
 };
 

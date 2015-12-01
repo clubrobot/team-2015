@@ -17,23 +17,23 @@ logstdout::~logstdout() {
 }
 
 
-//void logstdout::append(LogMessage logmsg) {
-//	Tag tag = logmsg.getTag();
-//	std::string info = logmsg.getInformation();
-//	std::string date = logmsg.getTime();
-//	uint8_t emitter = logmsg.getEmitter();
+//void logstdout::append(LogMessage message) {
+//	std::string tag = message.getStringFromTag();
+//	std::string info = message.getInformation();
+//	std::string date = message.getTime();
+//	uint8_t emitter = message.getEmitter();
 //
-//	switch (tag)
+//	switch (message.getTag())
 //	{
-//	case NVJ_DEBUG:
-//	case NVJ_WARNING:
-//	case NVJ_INFO:
-//		fprintf(stdout,"%s\n",info, fflush(NULL));
+//	case DEBUG:
+//	case WARNING:
+//	case INFO:
+//		fprintf(stdout,"%s",info.c_str(),BLUE);
 //		break;
-//		case NVJ_ERROR:
-//		default:
-//			fprintf(stderr,"%s\n",info);
-//			break;
+//	case ERROR:
+//	default:
+//		fprintf(stderr,"%s\n",info, RED);
+//		break;
 //	}
 //}
 
