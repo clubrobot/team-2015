@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include "USBCOMServer.h"
 
+const string USBCOMServer::UUIDFOLDER = "/dev/disk/by-uuid/";
+
 USBCOMServer::USBCOMServer() {
 	//print in the file referenced by Server.ptrfile
 	/*fstream outputFile ;
@@ -27,22 +29,5 @@ USBCOMServer::~USBCOMServer() {
 
 void USBCOMServer::launch(const std::string& UUID) {
 	muuid = UUID;
-	UARTServer::launch(getTTY());
-}
-
-string USBCOMServer::getTTY()
-{
-	char buf[64];
-	string path = string (USBCOMServer::UUIDFOLDER+muuid);
-	char* res = realpath(path.c_str(),buf);
-	if(res)
-	{
-		return string(buf);
-	}
-	else
-	{
-		perror("realpath");
-		return "";
-	}
-
+	UARTServer::launch(UUIDFOLDER+UUID);
 }

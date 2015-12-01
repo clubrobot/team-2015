@@ -22,7 +22,7 @@ public:
 
 	USBCOMServer();
 	virtual ~USBCOMServer();
-	string getTTY();
+
 	void launch(const std::string& UUID);
 };
 
