@@ -41,6 +41,18 @@ void LogMessage::appendInfo(std::string information) {
 	minformation += information;
 }
 
+std::string LogMessage::getStringFromTag() {
+	switch(mtag)
+	{
+	case DEBUG: return "DEBUG";
+	case INFO: return "INFO";
+	case WARNING: return "WARNING";
+	case ERROR: return "ERROR";
+	default: return "the tag isn't correct";
+	}
+}
+
 int LogMessage::getLogLength() const {
 	return sizeof(this);
 }
+

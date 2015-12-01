@@ -25,8 +25,10 @@ LogFile::LogFile(char *f){
 void LogFile::append(LogMessage message) {
 
 	if (file!=NULL){
-		std::string info = message.getInformation();
-		(*file) << info << std::endl;//on recupere que l'info
+		(*file) << message.getStringFromTag() << ":";//add delemiter
+		(*file) << message.getTime() << ":";
+		(*file) << message.getEmitter() << ":";
+		(*file) << message.getInformation() << std::endl;
 	}
 }
 

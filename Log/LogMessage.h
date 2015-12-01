@@ -56,6 +56,8 @@ public:
 		this->mtag = mtag;
 	}
 
+	std::string getStringFromTag();
+
 	const std::string& getTime() const {
 		return mtime;
 	}
