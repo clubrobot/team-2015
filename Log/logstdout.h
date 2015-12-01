@@ -10,6 +10,7 @@
 
 #include "olog.h"
 #include "LogMessage.h"
+#include "Color.h"
 
 
 class logstdout: public olog {
