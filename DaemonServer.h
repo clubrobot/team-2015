@@ -23,13 +23,10 @@
 
 class DaemonServer : public FDListener, TCPServer::Events, UARTServer::Events {
 public:
-	static const string UUIDFOLDER;
-	static const  string PTRFILE;
 	DaemonServer();
 	virtual ~DaemonServer();
 
 	void launch();
-	void initAllUSB();
 
 	virtual void onClientConnected(TCPSocket* client);
 	virtual void onClientDisconnected(TCPSocket* client);
@@ -38,8 +35,10 @@ public:
 	virtual void onConnected(UARTServer* uart);
 	virtual void onDisconnected(UARTServer* uart);
 	virtual void onConnectionFailed(UARTServer* uart);
-	virtual void onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t len);
+	virtual void onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len);
 private:
+	void initAllUSB();
+
 	void serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len);
 
 	//Internal events (Server messages)
@@ -50,6 +49,8 @@ private:
 	USBCOMServer mmappingusb[NB_SLOTS];
 	std::vector<TCPSocket*> mmappingtcp[NB_SLOTS] ;//TODO change number of slots
 
+	static const string UUIDFOLDER;
+	static const  string PTRFILE;
 };
 
 #endif /* DAEMONSERVER_H_ */

@@ -8,7 +8,7 @@
 #include "DaemonServer.h"
 
 const string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
-const string DaemonServer::PTRFILE = "linkrobot";
+const string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
 DaemonServer::DaemonServer() : FDListener() {
 	mtcpserver = TCPServer();
@@ -21,6 +21,8 @@ DaemonServer::DaemonServer() : FDListener() {
 		mmappingusb[i].setFDListener(this);
 		mmappingusb[i].setEvents(this);
 	}
+	initAllUSB();
+
 	for(int i=0; i<NB_SLOTS; i++) {
 		mmappingtcp[i] = std::vector< TCPSocket* >();
 	}
@@ -40,24 +42,24 @@ void DaemonServer::launch() {
 	}
 }
 
-void initAllUSB(){
+void DaemonServer::initAllUSB(){
 	string line;
 	string num; //numero
 	string ui; //uuid
 	ifstream file;
 	int i;
-	file.open(DaemonServer::PTRFILE.c_str(), ifstream::in);
+	file.open(PTRFILE.c_str(), ifstream::in);
 	while(getline(file,line)){
 		stringstream linestream (line);
 		//consume the first word of the line, which is the uuid
 		linestream >> ui;
-		linestream >> num;
-		i = std::stoi(num);
-		if(i<mmappingtcp.size())
+		linestream >> i;
+
+		if(i < NB_SLOTS)
 		{
-			if(!mmappingtcp[i].isConnected())
+			if(!mmappingusb[i].isConnected())
 			{
-				mmappingtcp[i].launch();
+				mmappingusb[i].launch(ui);
 			}
 		}
 	}
@@ -92,6 +94,7 @@ void DaemonServer::onDisconnected(UARTServer* uart) {
 }
 
 void DaemonServer::onConnectionFailed(UARTServer* uart) {
+	std::cout << "Connection to USB slot has failed" << std::endl;
 }
 
 //communication towards uart
@@ -115,7 +118,7 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_
 /*communication towards clients
  * a slot can communicate with his clients with the use of this function
  */
-void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint8_t len) {
+void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len) {
 	//Step 1 : Get the address to know which slot has sent the message
 	Message newmsg = Message(buffer, len);
 	int address = newmsg.getEmitter();
