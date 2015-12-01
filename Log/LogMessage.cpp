@@ -36,3 +36,11 @@ std::string LogMessage::timestamp(){
 void LogMessage::setTime(){
 	mtime = timestamp();
 }
+
+void LogMessage::appendInfo(std::string information) {
+	minformation += information;
+}
+
+int LogMessage::getLogLength() const {
+	return sizeof(this);
+}

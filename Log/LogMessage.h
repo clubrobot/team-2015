@@ -18,10 +18,10 @@
 
 typedef enum
 {
-	NVJ_DEBUG,
-	NVJ_INFO,
-	NVJ_WARNING,
-	NVJ_ERROR,
+	DEBUG,
+	INFO,
+	WARNING,
+	ERROR,
 } Tag;
 
 class LogMessage {

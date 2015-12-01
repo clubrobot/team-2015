@@ -23,9 +23,10 @@ LogFile::LogFile(char *f){
 }
 
 void LogFile::append(LogMessage message) {
-	//	if (file!=NULL)
-	//		std::string info;
-	//	std::string info = message.getInfo();
-	//	(*file) << info << std::endl;
+
+	if (file!=NULL){
+		std::string info = message.getInformation();
+		(*file) << info << std::endl;//on recupere que l'info
+	}
 }
 
