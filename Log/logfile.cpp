@@ -7,12 +7,13 @@
 
 #include "logfile.h"
 
-//open a logfile specified by its name.
+////open a logfile specified by its name.
 LogFile::LogFile(char *f){
-	std::size_t length=filename.copy(f,30,0);
-	f[length]='\0';
+
+	filename = f;
 	file=new std::ofstream;
-	file->open(f);
+	file->open(f,std::ios_base::app);
+
 	if (file->fail())
 	{
 		std::cerr <<"Can't open " << filename << std::endl;

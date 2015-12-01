@@ -30,14 +30,14 @@ protected:
 	Tag mtag;//LogMessage's type
 	std::string mtime;
 	uint8_t memitter; // The emitter's id.
-	std::string information;
+	std::string minformation;
 
 public:
 	LogMessage();
 	virtual ~LogMessage();
 
 	void setInformation(const std::string& information) {
-		this->information = information;
+		this->minformation = information;
 	}
 
 	uint8_t getEmitter() const {
@@ -67,7 +67,7 @@ public:
 	void setTime();
 
 	const std::string& getInformation() const {
-		return information;
+		return minformation;
 	}
 
 	// Add some new information to the message's one.

@@ -9,7 +9,10 @@
 
 LogMessage::LogMessage() {
 	// TODO Auto-generated constructor stub
-
+	mtag = {};
+	minformation = "";
+	memitter=0;
+	mtime ="";
 }
 
 LogMessage::~LogMessage() {

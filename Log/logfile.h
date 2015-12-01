@@ -10,12 +10,13 @@
 
 
 #include <fstream>
+#include <iostream>
 #include "olog.h"
 #include "LogMessage.h"
 
 class LogFile: public olog {
 public:
-	LogFile(char *f);
+	LogFile(char *name);
 	~LogFile();
 
 	void append(LogMessage);
