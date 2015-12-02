@@ -1,17 +1,15 @@
-SRCDIR :=
-
 #All directories that contain sourcefiles
-SUBDIRS := 
+SUBDIRS := Log
 
 #Load all .cpp files in the subdirs
-SRCS := $(wildcard $(SUBDIRS:%=$(SRCDIR)/%/*.cpp))
+SRCS := $(wildcard $(SUBDIRS:%=%/*.cpp))
 SRCS += $(wildcard *.cpp)
 
 OBJS := $(SRCS:.cpp=.o)
 
 INC := $(SRCS:.cpp=.h)
 
-INC_PATH := /usr/include/arietta-comlib/
+INC_PATH := /usr/include/
 
 LIBS := -lpthread -larietta-comlib
 
@@ -39,7 +37,9 @@ clean:
 install:
 	cp $(BINARY) $(LIB_INSTALL_DIR)/$(BINARY)
 	mkdir $(INC_INSTALL_DIR)
+	mkdir $(INC_INSTALL_DIR)/Log
 	cp *.h $(INC_INSTALL_DIR)
+	cp Log/*.h $(INC_INSTALL_DIR)/Log
 	
 uninstall:
 	rm -r $(INC_INSTALL_DIR)
