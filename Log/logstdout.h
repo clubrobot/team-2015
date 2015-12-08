@@ -16,7 +16,6 @@
 class logstdout: public olog {
 public:
 	logstdout();
-	virtual ~logstdout();
 	void append(LogMessage logMessage);
 };
 #endif /* LOG_LOGSTDOUT_H_ */

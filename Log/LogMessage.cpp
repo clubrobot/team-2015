@@ -15,10 +15,6 @@ LogMessage::LogMessage() {
 	mtime ="";
 }
 
-LogMessage::~LogMessage() {
-	// TODO Auto-generated destructor stub
-}
-
 std::string LogMessage::timestamp(){
 
 	std::ostringstream stream;

@@ -20,6 +20,7 @@ BINARY := lib$(LIBNAME).so
 LIB_INSTALL_DIR := /usr/lib
 INC_INSTALL_DIR := /usr/include/$(LIBNAME)
 
+#ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
 	g++ -Wall -c -std=c++11 -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
@@ -40,6 +41,7 @@ install:
 	mkdir $(INC_INSTALL_DIR)/Log
 	cp *.h $(INC_INSTALL_DIR)
 	cp Log/*.h $(INC_INSTALL_DIR)/Log
+
 	
 uninstall:
 	rm -r $(INC_INSTALL_DIR)

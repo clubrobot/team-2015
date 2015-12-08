@@ -39,22 +39,21 @@ class LogMessage {
 protected:
 	Tag mtag;//LogMessage's type
 	std::string mtime;
-	uint8_t memitter; // The emitter's id.
+	int memitter; // The emitter's id.
 	std::string minformation;
 
 public:
 	LogMessage();
-	virtual ~LogMessage();
 
 	void setInformation(const std::string& information) {
 		this->minformation = information;
 	}
 
-	uint8_t getEmitter() const {
+	int getEmitter() const {
 		return memitter;
 	}
 
-	void setEmitter(uint8_t memitter) {
+	void setEmitter(int memitter) {
 		this->memitter = memitter;
 	}
 

@@ -17,7 +17,6 @@
 class LogFile: public olog {
 public:
 	LogFile(char *name);
-	~LogFile();
 
 	void append(LogMessage);
 

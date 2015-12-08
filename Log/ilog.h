@@ -19,7 +19,6 @@
 class ilog: public std::istream{
 public:
 	ilog();
-	virtual ~ilog();
 
 	//this function reads the entire file containing LogMessages.
 	void readFile(const char* filename);// path will be /var/log/logdaemon.txt

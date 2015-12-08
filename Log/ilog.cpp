@@ -12,9 +12,6 @@ ilog::ilog() {
 
 }
 
-ilog::~ilog() {
-	// TODO Auto-generated destructor stub
-}
 
 void ilog::readFile(const char* filename){
 	std::ifstream infile(filename);//chemin ou sauver fichier de log
