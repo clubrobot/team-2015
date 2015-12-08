@@ -23,7 +23,9 @@ LogFile::LogFile(char *f){
 }
 
 void LogFile::append(LogMessage message) {
-
+	if(!file->is_open()){
+		file->open(filename.c_str(),std::ios_base::app);
+	}
 	if (file!=NULL){
 		(*file) << message.getStringFromTag() << ":";//add delemiter
 		(*file) << message.getTime() << ":";
