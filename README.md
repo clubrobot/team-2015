@@ -1,2 +1,7 @@
-# robot-utility
-Shell executable to configure both USB mapping and TCP data
+robot-utility
+=============
+A little utility to assist the robot configuration.
+
+Are currently supported :
+* USB mapping (an UUID, an id and a short description)
+* TCP configuration (an IP address and a port)
