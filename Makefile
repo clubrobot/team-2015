@@ -1,10 +1,10 @@
 CC=gcc
-CFLAGS=-Wall -pedantic -errors
+CFLAGS=-Wall 
 LDFLAGS=
 ifeq ($(DEBUG),yes)
 	CFLAGS+= -g
 endif
-FOLDER_PATH=/home/ulysse/Bureau/robot/
+FOLDER_PATH=/home/amadou/Bureau/robot/
 USB_PATH=$(FOLDER_PATH)usbmapping.cfg
 TCP_PATH=$(FOLDER_PATH)TCP.cfg
 
