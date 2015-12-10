@@ -8,34 +8,34 @@
 #include "logstdout.h"
 
 logstdout::logstdout() {
-	// TODO Auto-generated constructor stub
-
+	this->rdbuf(std::cout.rdbuf());//we choose cout to direct display messages
 }
 
 void logstdout::append(LogMessage message) {
 	std::string tag = message.getStringFromTag();
 	std::string info = message.getInformation();
 	std::string date = message.getTime();
-	uint8_t emitter = message.getEmitter();
+	int emitter = message.getEmitter();
 
 	switch (message.getTag())
 	{
 	case DEBUG:
-		std::cout << Color(FG_BLUE)<< "debug message from:" << emitter;
-		std::cout << ":" << info.c_str() << std::endl;
+		*this <<Color(FG_BLUE)<< "[Debug] from " << emitter << info;
+		*this << "at " << date << "\n";
 		break;
 	case WARNING:
-		std::cerr << Color(FG_RED)<< "Warning!!"<< info.c_str() << std::endl;
+		*this <<Color(FG_RED)<< "[Warning] from " << emitter << info;
+		*this << "at " << date << "\n";
 		break;
-
 	case INFO:
-		std::cout << Color(FG_GREEN)<< emitter << " has sent:";
-		std::cout << info.c_str();
-		std::cout << " at " << date << std::endl;
+		*this <<Color(FG_GREEN)<< emitter << " has sent:";
+		*this <<info;
+		*this << "at " << date << "\n";
 		break;
 	case ERROR:
 	default:
-		std::cerr << Color(FG_RED)<< "ERROR!!"<< info.c_str() << std::endl;
+		*this <<Color(FG_RED)<<"[Error] from "<< emitter << info;
+		*this << "at " << date << "\n";
 		break;
 	}
 }
