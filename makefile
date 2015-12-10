@@ -22,7 +22,7 @@ INC_INSTALL_DIR := /usr/include/$(LIBNAME)
 
 #ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
-	g++ -Wall -c -std=c++11 -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
+	g++ -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
 binary: $(OBJS)
 	g++ -shared -o "$(BINARY)" $(OBJS) $(LIBS)
