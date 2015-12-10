@@ -38,5 +38,7 @@ void logstdout::append(LogMessage message) {
 		*this << "at " << date << "\n";
 		break;
 	}
+	*this <<Color(FG_DEFAULT);
+
 }
 
