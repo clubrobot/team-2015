@@ -20,22 +20,22 @@ void logstdout::append(LogMessage message) {
 	switch (message.getTag())
 	{
 	case DEBUG:
-		*this <<Color(FG_BLUE)<< "[Debug] from " << emitter << info;
-		*this << "at " << date << "\n";
+		*this <<Color(FG_BLUE)<< "[Debug] from " << emitter <<" "<<info;
+		*this << " at " << date << "\n";
 		break;
 	case WARNING:
-		*this <<Color(FG_RED)<< "[Warning] from " << emitter << info;
-		*this << "at " << date << "\n";
+		*this <<Color(FG_RED)<< "[Warning] from " << emitter <<" "<< info;
+		*this << " at " << date << "\n";
 		break;
 	case INFO:
-		*this <<Color(FG_GREEN)<< emitter << " has sent:";
+		*this <<Color(FG_GREEN)<< "[Info] from "<< emitter << " has sent:";
 		*this <<info;
-		*this << "at " << date << "\n";
+		*this << " at " << date << "\n";
 		break;
 	case ERROR:
 	default:
-		*this <<Color(FG_RED)<<"[Error] from "<< emitter << info;
-		*this << "at " << date << "\n";
+		*this <<Color(FG_RED)<<"[Error] from "<< emitter <<" "<< info;
+		*this << " at " << date << "\n";
 		break;
 	}
 	*this <<Color(FG_DEFAULT);
