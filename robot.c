@@ -138,6 +138,10 @@ int removeUSBSlot( USBMapping* mapping, int i )
     }
 }
 
+
+
+
+
 /*///////////////////////////////////////////////////////////////////////////////////////*/
 
 void initTCPConfig( TCPConfig* config )
@@ -198,4 +202,16 @@ void printTCPConfig( TCPConfig* config )
     {
         printf( "NULL\n" );
     }
+}
+
+/*****************************void showHelp()***************************************/
+void showHelp()
+{
+	printf("Usage:\n");
+	printf("1)robot usb list ---pour lister les uuid\n");
+	printf("2) robot usb clear ---pour effacher tous les uuid\n");
+	printf("3) robot usb add id [description] ---pour ajouter un uuid\n");
+	printf("4) robot usb remove id ---pour supprimer un uuid en particulier\n");
+	printf("5) robot tcp show ---affiche l'ip et le port\n");
+	printf("6) robot tcp set ip port ---attribue un nouveau ip et port\n");
 }

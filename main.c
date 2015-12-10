@@ -11,7 +11,8 @@
 int main( int argc, char* argv[] )
 {
     USBMapping map;
-    TCPConfig cfg;
+    TCPConfig config;
+    int help = 0;
 
     createDirectory( FOLDER_PATH );
 
@@ -21,41 +22,79 @@ int main( int argc, char* argv[] )
     {
     	if(strcmp(argv[1],"usb")== 0)
     	{
+    		if(argc > 2)
+    		{
     		if(strcmp(argv[2],"list")== 0)
     		{
     					if(map.numSlots != 0) printUSBMapping(&map);
     					else printf("%s est vide !\n",USB_PATH);
-    		}
+    		}else
     		if(strcmp(argv[2],"add")== 0)
     		{
     		}
-
+    		else
     		if(strcmp(argv[2],"clear")== 0)
     		{
     					initUSBMapping( &map );
     					saveUSBMapping(&map,USB_PATH);
     		}
-
+    		else
     		if(strcmp(argv[2],"remove")== 0)
     		{
-    			int i = -1;
-    					sscanf(argv[3],"%d",&i);printf("-- %d --\n",i);
+    			int i = -1, j=0, v = 0;
+    				if(argc > 3) sscanf(argv[3],"%d",&i);printf("-- %d --\n",i);
     					if(i > -1 )
     					{
-    						removeUSBSlot(&map,i);
+    						for(j=0;j<map.numSlots;++j)
+    						{
+    							if(map.slots[j].id == i)
+    							{
+    							 removeUSBSlot(&map,j);
+    							 v = 1;
+    							}
+    						}
+    						if(v == 1)
     						saveUSBMapping(&map,USB_PATH);
+    						else
+    							printf("l'id est incorrect !\n");
     					}
     					else
     					{
     						printf("le paramettre id est absent !\n");
     						printf("usage:\n robot usb remove id\n");
     					}
-    		}
+    		}else help = 1;
+    	 }else help =1;
+    	}
+    	else
+    	{
+
+    		if(strcmp(argv[1],"tcp")== 0)
+    		{
+
+    			initTCPConfig(&config);
+    			loadTCPConfig(&config,TCP_PATH);
+                if(argc < 3){ showHelp(); return 0;}
+    			if(strcmp(argv[2],"show")== 0)
+    			{
+    				printTCPConfig(&config);
+    			}else
+    			if(strcmp(argv[2],"set")== 0)
+    			{
+    				if(argc > 4)
+    				{
+						int i = -1;
+						sscanf(argv[4],"%d",&i);
+						setTCPConfig(&config, argv[3], i);
+						saveTCPConfig( &config, TCP_PATH );
+    				}else help =1;
+    			}else help =1;
+    		} else help =1;
     	}
     }
+    else help =1;
 
-    printTCPConfig( &cfg );
-    saveTCPConfig( &cfg, TCP_PATH );
+    if(help) showHelp();
 
     return 0;
 }

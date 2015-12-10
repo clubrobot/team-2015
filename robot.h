@@ -69,4 +69,7 @@ void setTCPConfig( TCPConfig* config, char* ip, int port );
 
 void printTCPConfig( TCPConfig* config );
 
+
+/*********************************** void showHelp() ******************************************/
+void showHelp();
 #endif /*__ROBOT_H__ */
