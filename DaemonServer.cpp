@@ -11,21 +11,23 @@ const string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
 const string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
 DaemonServer::DaemonServer() : FDListener() {
-	mtcpserver = TCPServer();
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
+
+	std::cout << "Launching TCP server..." << std::flush;
+
 	mtcpserver.launch(3000, 10);
 
+	std::cout << "done" << std::endl;
+
 	for(int i=0; i<NB_SLOTS; i++) {
-		mmappingusb[i] = USBCOMServer();
 		mmappingusb[i].setFDListener(this);
 		mmappingusb[i].setEvents(this);
 	}
-	initAllUSB();
 
-	for(int i=0; i<NB_SLOTS; i++) {
-		mmappingtcp[i] = std::vector< TCPSocket* >();
-	}
+	std::cout << "Loading mapping configuration" << std::endl;
+
+	initAllUSB();
 }
 
 DaemonServer::~DaemonServer() {
@@ -43,26 +45,36 @@ void DaemonServer::launch() {
 }
 
 void DaemonServer::initAllUSB(){
-	string line;
-	string num; //numero
-	string ui; //uuid
 	ifstream file;
-	int i;
-	file.open(PTRFILE.c_str(), ifstream::in);
+
+	string line;
+
+	string UIID;
+	int address;
+
+	try {
+		file.open(PTRFILE.c_str(), ifstream::in);
+	}
+	catch(std::ifstream::failure &exception) {
+		std::cerr << "Cannot open mapping config file at : " << PTRFILE << std::endl;
+	}
+
 	while(getline(file,line)){
 		stringstream linestream (line);
 		//consume the first word of the line, which is the uuid
-		linestream >> ui;
-		linestream >> i;
+		linestream >> UIID;
+		linestream >> address;
 
-		if(i < NB_SLOTS)
+		if(address < NB_SLOTS)
 		{
-			if(!mmappingusb[i].isConnected())
+			if(!mmappingusb[address].isConnected())
 			{
-				mmappingusb[i].launch(ui);
+				mmappingusb[address].launch(UIID);
 			}
 		}
 	}
+
+	file.close();
 }
 
 void DaemonServer::onClientConnected(TCPSocket* client) {
@@ -98,19 +110,18 @@ void DaemonServer::onConnectionFailed(UARTServer* uart) {
 }
 
 //communication towards uart
-void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len) {
-	//std::cout << "New message ! Length : " << (int)len << std::endl;
-
+void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32_t len) {
+	//Step 1 : Read buffer to get the address (to know if the message is a server message or not)
 	Message newmsg = Message(buffer, len);
 	int address = newmsg.getReceiver();
 
-
-	//Etape 1 : Read buffer to get the address (to know if the message is a server message or not)
 	if(address==0) {//Server message
 		serverMessage(client, newmsg.getData(), newmsg.getDataLength());
 	}
 	else {//UART
-		mmappingusb[address-1].write((uint8_t*)buffer,(uint)len);
+		if(mmappingusb[address-1].isConnected()) {
+			mmappingusb[address-1].write((uint8_t*)buffer,(uint)len);
+		}
 	}
 
 }
@@ -123,16 +134,16 @@ void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_
 	Message newmsg = Message(buffer, len);
 	int address = newmsg.getEmitter();
 
-	//Step 2 : Redirection of the message to the clients concerned
-	std::vector< TCPSocket* >::iterator it = mmappingtcp[address].begin();
-	std::vector< TCPSocket* >::iterator end = mmappingtcp[address].end();
+	//Step 2 : Redirection of the message to the concerned clients
+	std::vector< TCPSocket* >::iterator it = mmappingtcp[address-1].begin();
+	std::vector< TCPSocket* >::iterator end = mmappingtcp[address-1].end();
 	while(it != end) {
 		(*it)->write(buffer,(uint32_t)len);
 		it++;
 	}
 }
 
-void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len) {
+void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len) {
 	switch(data[0]){//First byte contains the type of server message
 	case 0 ://Message Slot Mapping
 		onReceivingSlotMapping(client,data+1,len-1);//From data+1 we have the slots numeros that will allow the new client
@@ -142,9 +153,9 @@ void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint8_
 	}
 }
 
-void DaemonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len){
+void DaemonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint32_t len){
 	for(int i=0 ; i<len ; i++){//for each concerned slot
-		mmappingtcp[slots[i]].push_back(client);//Add client to the mapping
+		mmappingtcp[slots[i]-1].push_back(client);//Add client to the mapping
 	}
 }
 

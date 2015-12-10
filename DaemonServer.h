@@ -30,7 +30,7 @@ public:
 
 	virtual void onClientConnected(TCPSocket* client);
 	virtual void onClientDisconnected(TCPSocket* client);
-	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint8_t len);
+	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32_t len);
 
 	virtual void onConnected(UARTServer* uart);
 	virtual void onDisconnected(UARTServer* uart);
@@ -39,10 +39,10 @@ public:
 private:
 	void initAllUSB();
 
-	void serverMessage(TCPSocket* client, const uint8_t data[], uint8_t len);
+	void serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len);
 
 	//Internal events (Server messages)
-	void onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint8_t len);
+	void onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint32_t len);
 
 	TCPServer mtcpserver;
 
