@@ -20,7 +20,7 @@ BINARY := robot-daemon
 BIN_INSTALL_DIR := /usr/bin
 
 %.o: %.cpp
-	g++ -Wall -c -std=c++11 -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
+	g++ -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
 binary: $(OBJS)
 	g++ -o "$(BINARY)" $(OBJS) $(LIBS)
