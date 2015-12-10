@@ -30,9 +30,9 @@ binary: $(OBJS)
 clean_obj:
 	rm $(OBJS)
 
-all: binary clean_obj
+all: binary
 
-clean:
+clean: clean_obj
 	rm $(BINARY)
 
 install:
