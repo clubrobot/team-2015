@@ -31,6 +31,17 @@ int main( int argc, char* argv[] )
     		}else
     		if(strcmp(argv[2],"add")== 0)
     		{
+    			char *desc = NULL;
+    			int id = -1, i;
+    			char* uuid = "1547-2589";
+    			if(argc > 3)
+    			{
+    			 sscanf(argv[3],"%d",&id);
+    			 if(argc > 4 ){ desc = argv[4];
+    				 for(i=5;i < argc; ++i){ strcat(desc,argv[i]);}}
+    			 if(id > -1 ) addUSBSlot(&map, uuid, id, desc );
+    			 saveUSBMapping(&map,USB_PATH);
+    			}else help =1;
     		}
     		else
     		if(strcmp(argv[2],"clear")== 0)
