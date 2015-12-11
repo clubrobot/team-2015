@@ -8,6 +8,17 @@
 #define USB_PATH FOLDER_PATH "usbmapping.cfg"
 #define TCP_PATH FOLDER_PATH "TCP.cfg"
 
+void showHelp()
+{
+	printf("Usage:\n");
+	printf("1)robot usb list ---pour lister les uuid\n");
+	printf("2) robot usb clear ---pour effacher tous les uuid\n");
+	printf("3) robot usb add id [description] ---pour ajouter un uuid\n");
+	printf("4) robot usb remove id ---pour supprimer un uuid en particulier\n");
+	printf("5) robot tcp show ---affiche l'ip et le port\n");
+	printf("6) robot tcp set ip port ---attribue un nouveau ip et port\n");
+}
+
 int main( int argc, char* argv[] )
 {
     USBMapping map;
@@ -38,7 +49,7 @@ int main( int argc, char* argv[] )
     			{
     			 sscanf(argv[3],"%d",&id);
     			 if(argc > 4 ){ desc = argv[4];
-    				 for(i=5;i < argc; ++i){ strcat(desc,argv[i]);}}
+    				 for(i=5;i < argc; ++i){ strcat( desc," "); strcat(desc,argv[i]);}}
     			 if(id > -1 ) addUSBSlot(&map, uuid, id, desc );
     			 saveUSBMapping(&map,USB_PATH);
     			}else help =1;
