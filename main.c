@@ -2,21 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include "robot.h"
+#include "uuidwatcher.h"
 
-#define FOLDER_PATH "/home/amadou/Bureau/robot/"
-// #define FOLDER_PATH "/etc/robot/"
+#define FOLDER_PATH "/etc/robot/"
 #define USB_PATH FOLDER_PATH "usbmapping.cfg"
 #define TCP_PATH FOLDER_PATH "TCP.cfg"
 
 void showHelp()
 {
 	printf("Usage:\n");
-	printf("1)robot usb list ---pour lister les uuid\n");
-	printf("2) robot usb clear ---pour effacher tous les uuid\n");
+	printf("1) robot usb list ---pour lister les uuid\n");
+	printf("2) robot usb clear ---pour effacer tous les uuid\n");
 	printf("3) robot usb add id [description] ---pour ajouter un uuid\n");
 	printf("4) robot usb remove id ---pour supprimer un uuid en particulier\n");
 	printf("5) robot tcp show ---affiche l'ip et le port\n");
-	printf("6) robot tcp set ip port ---attribue un nouveau ip et port\n");
+	printf("6) robot tcp set ip port ---attribue une nouvelle ip et un port\n");
 }
 
 int main( int argc, char* argv[] )
@@ -44,13 +44,17 @@ int main( int argc, char* argv[] )
     		{
     			char *desc = NULL;
     			int id = -1, i;
-    			char* uuid = "1547-2589";
+    			char uuid[ 20 ];
+    			UUIDWatcher w;
+    			initUUIDWatcher( &w );
     			if(argc > 3)
     			{
     			 sscanf(argv[3],"%d",&id);
     			 if(argc > 4 ){ desc = argv[4];
     				 for(i=5;i < argc; ++i){ strcat( desc," "); strcat(desc,argv[i]);}}
+    			 waitUUID( &w, uuid );
     			 if(id > -1 ) addUSBSlot(&map, uuid, id, desc );
+    			 closeUUIDWatcher( &w );
     			 saveUSBMapping(&map,USB_PATH);
     			}else help =1;
     		}
