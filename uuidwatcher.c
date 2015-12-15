@@ -12,13 +12,13 @@ int initUUIDWatcher( UUIDWatcher* watcher )
 	watcher->fd = inotify_init();
 	if( watcher->fd == -1 )
 	{
-		fprintf( stderr, "initUUIDWatcher: cannot create inotify file descriptor" );
+		fprintf( stderr, "initUUIDWatcher: cannot create inotify file descriptor\n" );
 		return 0;
 	}
 	watcher->wd = inotify_add_watch( watcher->fd, UUID_PATH, IN_CREATE );
 	if( watcher->wd == -1 )
 	{
-		fprintf( stderr, "initUUIDWatcher: cannot add inotify watch descriptor" );
+		fprintf( stderr, "initUUIDWatcher: cannot add inotify watch descriptor\n" );
 		return 0;
 	}
 	return 0;
@@ -32,7 +32,7 @@ int pumpUUIDWatcher( UUIDWatcher* watcher )
 	watcher->len = read( watcher->fd, watcher->buf, EVENT_BUFFER_LENGTH );
 	if( watcher->len == -1 )
 	{
-		fprintf( stderr, "pumpUUIDWatcher: cannot read inotify buffer" );
+		fprintf( stderr, "pumpUUIDWatcher: cannot read inotify buffer\n" );
 		watcher->len = 0;
 		return 0;
 	}
