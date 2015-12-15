@@ -12,7 +12,7 @@
 
 #define LOAD_USB_MAPPING( map )\
 	{ initUSBMapping( &map ); if( !loadUSBMapping( &map, USB_PATH ) )\
-	{ printf( "Can't load USB mapping: %s\n", USB_PATH ); return -1; } }
+	{ printf( "Can't load USB mapping: %s\n", USB_PATH ); } }
 
 #define SAVE_USB_MAPPING( map )\
 	{ if( !saveUSBMapping( &map, USB_PATH ) )\
@@ -20,7 +20,7 @@
 
 #define LOAD_TCP_CONFIG( cfg )\
 	{ initTCPConfig( &cfg ); if( !loadTCPConfig( &cfg, TCP_PATH ) )\
-	{ printf( "Can't load TCP config: %s\n", TCP_PATH ); return -1; } }
+	{ printf( "Can't load TCP config: %s\n", TCP_PATH ); } }
 
 #define SAVE_TCP_CONFIG( cfg )\
 	{ if( !saveTCPConfig( &cfg, TCP_PATH ) )\
@@ -47,7 +47,7 @@ int main( int argc, char* argv[] )
 {
 	if( !createDirectory( FOLDER_PATH ) )
 	{
-		printf( "Can't create directory: %s", FOLDER_PATH );
+		printf( "Can't create directory: %s\n", FOLDER_PATH );
 		return -1;
 	}
 	if( argc > 1 )
