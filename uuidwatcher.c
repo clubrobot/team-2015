@@ -57,7 +57,7 @@ void closeUUIDWatcher( UUIDWatcher* watcher )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int waitUUID( UUIDWatcher* watcher, char* dst )
+int scanUUID( UUIDWatcher* watcher, char* dst )
 {
 	struct inotify_event *event;
 	if( !watcher->len || watcher->i >= watcher->len )
