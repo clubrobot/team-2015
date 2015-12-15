@@ -1,8 +1,8 @@
 # INSA Rennes Robotics club's documentation
 
-## Summary
+## Documentation
 
-(under construction)
+The main documentation is accessible in the [wiki](https://github.com/IR-RC/robot-documentation/wiki).
 
 ## Who are we ?
 
