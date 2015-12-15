@@ -42,6 +42,7 @@ void Module::uploadSlotMapping(uint8_t slots[], uint8_t numSlots) {
 
 void Module::loadTCPConfiguration() {
 	std::ifstream file;
+	std::string port;
 
 	try {
 		file.open(configfilepath.c_str());
@@ -50,7 +51,9 @@ void Module::loadTCPConfiguration() {
 		std::cout << "Cannot open TCP config file at : " << configfilepath << std::endl;
 	}
 
-	file >> maddress >> mport;
+	file >> maddress >> port;
+
+	mport = std::stoi(port);
 
 	file.close();
 }
@@ -67,7 +70,7 @@ void Module::onDisconnected(TCPClient* client) {
 	std::cout << "Module disconnected" << std::endl;
 }
 
-void Module::onMessageReceived(TCPClient* client, uint8_t buffer[], uint8_t len) {
+void Module::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len) {
 	Message msg(buffer, len);
 	onMessageReceived(msg);
 }

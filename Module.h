@@ -11,6 +11,7 @@
 #include <arietta-comlib/Socket/Client/TCPClient.h>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 #include "Message.h"
 
@@ -43,7 +44,7 @@ private:
 	void onConnected(TCPClient* client);
 	void onConnectionFailed(TCPClient* client);
 	void onDisconnected(TCPClient* client);
-	void onMessageReceived(TCPClient* client, uint8_t buffer[], uint8_t len);
+	void onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len);
 
 	std::string maddress;
 	int mport;
