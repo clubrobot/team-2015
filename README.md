@@ -5,4 +5,4 @@ The bridge host a TCP server on which any internal or external client process ca
 
 (schematic under construction)
 
-(wiki under construction)
+[Please see the wiki for more detailed informations](https://github.com/IR-RC/robot-daemon/wiki)
