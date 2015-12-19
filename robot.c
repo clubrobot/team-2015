@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "robot.h"
+#include "error.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +16,7 @@ int createDirectory( char* filename )
     {
         if( mkdir( filename, 0777 ) == -1 )
         {
-            fprintf( stderr, "createDirectory: cannot create directory %s\n", filename );
+            ERROR_ARGS( "cannot create directory %s\n", filename )
             return 0;
         }
     }
@@ -37,7 +38,7 @@ int loadUSBMapping( USBMapping* mapping, char* filename )
     file = fopen( filename, "r" );
     if( file == NULL )
     {
-        fprintf( stderr, "loadUSBMapping: cannot open file %s\n", filename );
+    	ERROR_ARGS( "cannot open file %s\n", filename )
         return 0;
     }
     for( mapping->numSlots = 0; mapping->numSlots < USB_MAX_SLOTS; mapping->numSlots++ )
@@ -63,7 +64,7 @@ int saveUSBMapping( USBMapping* mapping, char* filename )
     file = fopen( filename, "w" );
     if( file == NULL )
     {
-        fprintf( stderr, "saveUSBMapping: cannot open file %s\n", filename );
+    	ERROR_ARGS( "cannot open file %s\n", filename )
         return 0;
     }
     for( i = 0; i < mapping->numSlots; i++ )
@@ -113,7 +114,7 @@ int addUSBSlot( USBMapping* mapping, char* uuid, int id, char* desc )
     }
     else
     {
-        fprintf( stderr, "addUSBSlot: cannot add new USBSlot (%d slots max)\n", USB_MAX_SLOTS );
+    	ERROR_ARGS( "cannot add new USBSlot (%d slots max)\n", USB_MAX_SLOTS )
         return 0;
     }
 }
@@ -133,7 +134,7 @@ int removeUSBSlot( USBMapping* mapping, int i )
     }
     else
     {
-        fprintf( stderr, "removeUSBSlot: cannot remove USBSlot %d (out of range)\n", i );
+    	ERROR_ARGS( "cannot remove USBSlot %d (out of range)\n", i );
         return 0;
     }
 }
@@ -142,8 +143,8 @@ int removeUSBSlot( USBMapping* mapping, int i )
 
 void initTCPConfig( TCPConfig* config )
 {
-    strcpy( config->ip, "" );
-    config->port = 0;
+    strcpy( config->ip, "localhost" );
+    config->port = 3000;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +155,7 @@ int loadTCPConfig( TCPConfig* config, char* filename )
     file = fopen( filename, "r" );
     if( file == NULL )
     {
-        fprintf( stderr, "loadTCPConfig: cannot open file %s\n", filename );
+    	ERROR_ARGS( "cannot open file %s\n", filename )
         return 0;
     }
     fscanf( file, "%s %d", config->ip, &config->port );
@@ -170,7 +171,7 @@ int saveTCPConfig( TCPConfig* config, char* filename )
     file = fopen( filename, "w" );
     if( file == NULL )
     {
-        fprintf( stderr, "saveTCPConfig: cannot open file %s\n", filename );
+    	ERROR_ARGS( "saveTCPConfig: cannot open file %s\n", filename )
         return 0;
     }
     fprintf( file, "%s %d", config->ip, config->port );
