@@ -4,16 +4,17 @@ LDFLAGS=
 ifeq ($(DEBUG),yes)
 	CFLAGS+= -g -DDEBUG
 endif
-INSTALL_PATH=/usr/bin/
-FOLDER_PATH=/etc/robot/
-USB_PATH=$(FOLDER_PATH)usbmapping.cfg
-TCP_PATH=$(FOLDER_PATH)TCP.cfg
+INSTALL_PATH=/usr/bin
+FOLDER_PATH=/etc/robot
+USB_PATH=$(FOLDER_PATH)/usbmapping.cfg
+TCP_PATH=$(FOLDER_PATH)/TCP.cfg
 
 all: robot clean
 
 install: robot clean
 	mv robot $(INSTALL_PATH)
-	chmod 777 $(INSTALL_PATH)
+	mkdir $(FOLDER_PATH)
+	chmod -R 777 $(FOLDER_PATH)
 
 robot: main.o robot.o uuidwatcher.o
 	$(CC) -o $@ $^ $(LDFLAGS)
@@ -31,7 +32,6 @@ clean:
 	rm -rf *.o
 	rm -rf *~
 	
-uninstall: 
-	rm -rf $(INSTALL_PATH)robot
+uninstall:
+	rm -rf $(INSTALL_PATH)/robot
 	rm -rf $(FOLDER_PATH)
-	
