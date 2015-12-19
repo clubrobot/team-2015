@@ -70,10 +70,10 @@ void myPrintUSBMapping( USBMapping* map, int success )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void myPrintTCPConfig( TCPConfig* cfg )
+void myPrintTCPConfig( TCPConfig* cfg, int success )
 {
 	printf( FIELD "IP address\tPort\n" DEFAULT );
-	printf( "%s\t%d\n", cfg->ip, cfg->port );
+	printf( "%s%s\t%d\n" DEFAULT, ( success ) ? SUCCESS : "", cfg->ip, cfg->port );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ int usb_add( int argc, char* argv[] )
 				strcat( desc, argv[ i ] );
 			}
 		}
-		printf( "Please (re-)connect the device to detect its UUID" );
+		printf( "Please (re-)connect the device to detect its UUID..." );
 		fflush( stdout );
 		initUUIDWatcher( &w );
 		scanUUID( &w, uuid );
@@ -170,7 +170,7 @@ int usb_add( int argc, char* argv[] )
 		{
 			addUSBSlot(&map, uuid, id, desc );
 			SAVE_USB_MAPPING( map )
-			printf( SUCCESS "Device has been successfully added\n" DEFAULT );
+			printf( SUCCESS "The device has been successfully added\n" DEFAULT );
 			myPrintUSBMapping( &map, map.numSlots - 1 );
 			return 0;
 		}
@@ -241,7 +241,7 @@ int tcp_show( int argc, char* argv[] )
 {
 	TCPConfig cfg;
 	LOAD_TCP_CONFIG( cfg )
-	myPrintTCPConfig( &cfg );
+	myPrintTCPConfig( &cfg, 0 );
 	return 0;
 }
 
@@ -257,6 +257,8 @@ int tcp_set( int argc, char* argv[] )
 		sscanf( argv[ 4 ], "%d" , &i );
 		setTCPConfig( &cfg, argv[ 3 ], i );
 		SAVE_TCP_CONFIG( cfg )
+		printf( SUCCESS "The TCP path has been successfully set\n" DEFAULT );
+		myPrintTCPConfig( &cfg, 1 );
 		return 0;
 	}
 	return help( argc, argv );
