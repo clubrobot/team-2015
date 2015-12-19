@@ -1,25 +1,28 @@
 CC=gcc
-CFLAGS=-Wall -pedantic -errors
+CFLAGS=-Wall
 LDFLAGS=
 ifeq ($(DEBUG),yes)
-	CFLAGS+= -g
+	CFLAGS+= -g -DDEBUG
 endif
 INSTALL_PATH=/usr/bin/
 FOLDER_PATH=/etc/robot/
 USB_PATH=$(FOLDER_PATH)usbmapping.cfg
 TCP_PATH=$(FOLDER_PATH)TCP.cfg
 
+all: robot clean
+
 install: robot clean
 	mv robot $(INSTALL_PATH)
+	chmod 777 $(INSTALL_PATH)
 
 robot: main.o robot.o uuidwatcher.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 main.o: robot.h uuidwatcher.h
 
-robot.o: robot.h
+robot.o: robot.h error.h
 
-uuidwatcher.o: uuidwatcher.h
+uuidwatcher.o: uuidwatcher.h error.h
 
 %.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
@@ -29,6 +32,6 @@ clean:
 	rm -rf *~
 	
 uninstall: 
-	rm -rf $(INSTALL_PATH)robot/
+	rm -rf $(INSTALL_PATH)robot
 	rm -rf $(FOLDER_PATH)
 	
