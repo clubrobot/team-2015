@@ -8,8 +8,8 @@ It is a simple command line tool which can be used to:
 * Set its IP address and the associated port
 
 The resulting files can be found at :
-- */etc/robot/usbmapping.cfg*
-- */etc/robot/TCP.cfg*
+- /etc/robot/usbmapping.cfg
+- /etc/robot/TCP.cfg
 
 See [Communication protocol](https://github.com/IR-RC/robot-documentation/wiki/Communication-protocol) for more information.
 
