@@ -2,7 +2,7 @@
 
 ## Documentation
 
-The main documentation is accessible in the [wiki](https://github.com/IR-RC/robot-documentation/wiki).
+[**The main documentation is accessible in the wiki**](https://github.com/IR-RC/robot-documentation/wiki).
 
 ## Who are we ?
 
