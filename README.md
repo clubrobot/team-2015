@@ -1,16 +1,17 @@
 # robot-utility
+===============
 
 A little utility to assist the robot configuration. 
 Are currently supported:
 * USB mapping (an UUID, an id and a short description)
 * TCP configuration (an IP address and a port)
 
-# Installation:
+## Installation:
 
 Just clone this repository, open it in a terminal and tip: "sudo make install"
 To uninstall it just tip in the same way: "sudo make uninstall"
 
-# Usage:
+## Usage:
 
 This is a command line tool only
 
