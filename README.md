@@ -33,8 +33,9 @@ You can tip one of the following commands:
 
   Add a new USB slot to the mapping table (up to 20).
   
-  Be careful, `id` is not the Module's UUID but the id which will be used to identify it when receiving a Message ;
-  the UUID is determined automatically by connecting the module when prompted to.
+  Be careful, `id` is not the slot's UUID but the id which will be used to identify it when receiving a message ;
+  the device's UUID is determined automatically by connecting it to any of the USB ports when prompted to.
+  See [USB mapping table](https://github.com/IR-RC/robot-daemon/wiki#usb-mapping-table)
 
 * `robot usb remove id`
 
