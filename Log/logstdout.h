@@ -12,11 +12,20 @@
 #include "LogMessage.h"
 #include "Color.h"
 
+typedef enum
+{
+	ODEBUG,
+	OINFO,
+	OWARNING,
+	OERROR,
+} OutType;
 
 class logstdout: public olog {
 public:
 	logstdout();
 	void append(LogMessage logMessage);
+	void append(const Tag& tag, LogMessage& logMessage);
+
 };
 #endif /* LOG_LOGSTDOUT_H_ */
 

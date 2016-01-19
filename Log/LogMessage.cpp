@@ -52,3 +52,13 @@ int LogMessage::getLogLength() const {
 	return sizeof(this);
 }
 
+void LogMessage::appendData(uint8_t *data, uint8_t size){
+	std::ostringstream ss;//used to retrieve string from uint8_t*
+
+	for( int i=0;i<size;i++ )
+	{
+		ss << std::setw(2) << (unsigned int)data[i];
+	}
+	this->setInformation(ss.str());
+}
+
