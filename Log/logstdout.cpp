@@ -42,3 +42,11 @@ void logstdout::append(LogMessage message) {
 
 }
 
+void logstdout::append(const Tag& tag, LogMessage& logMessage) {
+	if(logMessage.getTag() == tag){
+		this->append(logMessage);
+	}
+}
+
+
+

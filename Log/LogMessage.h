@@ -15,6 +15,7 @@
 #include <sstream>
 #include <fstream>
 #include <stdlib.h>
+#include <iomanip>
 
 #define RED  "\x1B[31m"
 #define GREEN  "\x1B[32m"
@@ -86,6 +87,10 @@ public:
 
 	// Get the length of the entire log message.
 	int getLogLength() const;
+
+	//appendData from a uint8_t tab.
+	void appendData(uint8_t *data, uint8_t size);
+
 
 };
 
