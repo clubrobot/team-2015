@@ -50,16 +50,15 @@ public:
 		this->minformation = information;
 	}
 
-	int getEmitter() const {
-		return memitter;
-	}
+	int getEmitter() const;
+	Tag getTag() const;
+
+	const std::string& getInformation()const;
+
+	const std::string& getTime()const;
 
 	void setEmitter(int memitter) {
 		this->memitter = memitter;
-	}
-
-	Tag getTag() const {
-		return mtag;
 	}
 
 	void setTag(Tag mtag) {
@@ -68,9 +67,6 @@ public:
 
 	std::string getStringFromTag();
 
-	const std::string& getTime() const {
-		return mtime;
-	}
 
 
 	std::string timestamp();
@@ -78,9 +74,6 @@ public:
 	// Set the log message's date of emission.
 	void setTime();
 
-	const std::string& getInformation() const {
-		return minformation;
-	}
 
 	// Add some new information to the message's one.
 	void appendInfo(std::string information);
@@ -93,5 +86,19 @@ public:
 
 
 };
+
+inline Tag LogMessage::getTag()const
+{ return mtag; }
+
+inline int LogMessage::getEmitter() const
+{return memitter;}
+
+inline const std::string& LogMessage::getInformation() const
+{return minformation;}
+
+inline const std::string& LogMessage::getTime() const
+{return mtime;}
+
+
 
 #endif /* LOG_LOGMESSAGE_H_ */
