@@ -7,16 +7,10 @@
 
 #include "Module.h"
 
-const std::string Module::configfilepath = "/etc/robot/TCP.cfg";
 
-Module::Module() : TCPClient(), maddress("127.0.0.1"), mport(3000) {
-	setEvents(this);
 
-	loadTCPConfiguration();
+Module::Module() {
 
-	std::cout << "TCP configuration is :\n\tIP : " << maddress << "\n\tPort : " << mport << std::endl;
-
-	launch(maddress, mport);
 }
 
 Module::~Module() {
@@ -25,7 +19,7 @@ Module::~Module() {
 void Module::send(const Message& msg) {
 	uint8_t* data = new uint8_t[msg.getRawDataLength()];
 	msg.getRawData(data);
-	write(data, msg.getRawDataLength());
+	mclient.write(data, msg.getRawDataLength());
 	delete(data);
 }
 
@@ -40,37 +34,5 @@ void Module::uploadSlotMapping(uint8_t slots[], uint8_t numSlots) {
 	send( m );
 }
 
-void Module::loadTCPConfiguration() {
-	std::ifstream file;
-	std::string port;
 
-	try {
-		file.open(configfilepath.c_str());
-	}
-	catch(std::ifstream::failure &exception) {
-		std::cout << "Cannot open TCP config file at : " << configfilepath << std::endl;
-	}
 
-	file >> maddress >> port;
-
-	mport = std::stoi(port);
-
-	file.close();
-}
-
-void Module::onConnected(TCPClient* client) {
-	std::cout << "Module connected" << std::endl;
-}
-
-void Module::onConnectionFailed(TCPClient* client) {
-	std::cout << "Connection to server failed" << std::endl;
-}
-
-void Module::onDisconnected(TCPClient* client) {
-	std::cout << "Module disconnected" << std::endl;
-}
-
-void Module::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len) {
-	Message msg(buffer, len);
-	onMessageReceived(msg);
-}
