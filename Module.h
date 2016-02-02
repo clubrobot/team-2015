@@ -13,6 +13,7 @@
 #include <arietta-comlib/Socket/Client/TCPClient.h>
 
 #include "Message.h"
+#include "Semaphore.h"
 
 //TODO : Add Clock module
 //TODO : Config file for TCP connection (IP address + port)
@@ -20,7 +21,7 @@
 
 class Module {
 public:
-	Module();
+	Module( uint8_t address, TCPClient& client );
 	virtual ~Module();
 
 	// Stop the module
@@ -30,15 +31,13 @@ public:
 
 	void pushMsg(Message& msg);
 
-	uint8_t getAddress();
-
-	void setClient(TCPClient& client);
+	uint8_t getAddress() const;
 
 protected:
 
 	virtual void run() = 0;
 
-	void wait(uint timeout = 0);
+	bool wait(uint timeout = 0);
 
 	bool requestBoard(Message out, Message& in);
 	//TODO : Server messages
@@ -47,9 +46,10 @@ protected:
 private:
 	uint8_t maddress;
 	TCPClient& mclient;
-	std::thread* mthread;
+	std::thread mthread;
 	bool mrunning;
 	std::queue<Message> mmsgs;
+	Semaphore msem;
 
 	void threadfct();
 	void send(const Message& msg);
