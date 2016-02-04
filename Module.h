@@ -40,8 +40,6 @@ protected:
 	bool wait(uint timeout = 0);
 
 	bool requestBoard(Message out, Message& in);
-	//TODO : Server messages
-	void uploadSlotMapping(uint8_t slots[], uint8_t numSlots);
 
 private:
 	uint8_t maddress;
