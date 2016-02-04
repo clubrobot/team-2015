@@ -39,7 +39,7 @@ public:
 	// Virtual destructor.
 	virtual ~Message();
 
-	void Message::operator=( const Message& msg );
+	void operator=( const Message& msg );
 
 	// Get the message's emitter.
 	uint8_t getEmitter() const;
