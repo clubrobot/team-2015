@@ -15,9 +15,9 @@ class Semaphore {
 public:
     Semaphore (int count_ = 0);
 
-    inline void notify();
+    void notify();
 
-    inline bool wait(uint timeout = 0);
+    bool wait(uint timeout = 0);
 
 private:
     std::mutex mtx;

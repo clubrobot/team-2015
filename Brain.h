@@ -21,7 +21,7 @@ public:
 	virtual ~Brain();
 
 	// Add new module to the brain
-	void addModule(Module& module);
+	void addModule(Module* module);
 
 
 private:

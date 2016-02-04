@@ -13,14 +13,14 @@ Semaphore::Semaphore(int count_ = 0) : count(count_) {
 Semaphore::~Semaphore() {
 }
 
-inline void Semaphore::notify()
+void Semaphore::notify()
 {
     std::unique_lock<std::mutex> lock(mtx);
     count++;
     cv.notify_one();
 }
 
-inline bool Semaphore::wait(uint timeout = 0)
+bool Semaphore::wait(uint timeout = 0)
 {
 	bool res = true;
     std::unique_lock<std::mutex> lock(mtx);

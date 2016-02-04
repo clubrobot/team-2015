@@ -46,8 +46,9 @@ bool Module::requestBoard(Message out, Message& in) {
 	send( out );
 	if( wait( 100 ) ) // in microseconds
 	{
-		in = mmsgs.pop();
-		return true;
+		in = mmsgs.front();
+		mmsgs.pop();
+		return true;;
 	}
 	return false;
 }
