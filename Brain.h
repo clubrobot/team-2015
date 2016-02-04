@@ -21,13 +21,11 @@ public:
 	virtual ~Brain();
 
 	// Add new module to the brain
-	void addModule(Module module);
+	void addModule(Module& module);
 
-	// Launch all the modules
-	void launchModules();
 
 private:
-	std::vector<Module> mmodules;
+	std::vector<Module*> mmodules;
 
 	//Configuration file functions
 	void loadTCPConfiguration();
