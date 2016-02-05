@@ -13,7 +13,7 @@ INC := $(SRCS:.cpp=.h)
 
 INC_PATH := /usr/include/
 
-LIBS := -lpthread -larietta-comlib -larietta-robot
+LIBS := -lpthread -lrobot-comlib -lrobot-robot
 
 BINARY := robot-daemon
 
