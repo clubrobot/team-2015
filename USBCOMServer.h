@@ -17,9 +17,6 @@ private:
 	string muuid;
 
 public:
-	//folder containing all the uuid
-	static const string UUIDFOLDER;
-
 	USBCOMServer();
 	virtual ~USBCOMServer();
 
