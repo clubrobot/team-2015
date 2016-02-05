@@ -242,7 +242,7 @@ int usb_remove( int argc, char* argv[] )
 		}
 		else
 		{
-			printf( ERROR "The specified ID is not valid\n" DEFAULT, i );
+			printf( ERROR "The specified ID is not valid\n" DEFAULT);
 			return -1;
 		}
 	}
