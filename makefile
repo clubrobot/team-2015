@@ -11,14 +11,14 @@ INC := $(SRCS:.cpp=.h)
 
 INC_PATH := /usr/include/
 
-LIBS := -lpthread -larietta-comlib
+LIBS := -lpthread -lrobot-comlib
 
-LIBNAME = arietta-robot
+LIBNAME = robot-robot
 
 BINARY := lib$(LIBNAME).so
 
 LIB_INSTALL_DIR := /usr/lib
-INC_INSTALL_DIR := /usr/include/$(LIBNAME)
+INC_INSTALL_DIR := /usr/include
 
 #ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
