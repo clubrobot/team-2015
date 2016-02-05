@@ -16,7 +16,7 @@ int initUUIDWatcher( UUIDWatcher* watcher )
 		ERROR( "cannot create inotify file descriptor\n" )
 		return 0;
 	}
-	watcher->wd = inotify_add_watch( watcher->fd, UUID_PATH, IN_CREATE );
+	watcher->wd = inotify_add_watch( watcher->fd, TTY_PATH, IN_CREATE );
 	if( watcher->wd == -1 )
 	{
 		ERROR( "cannot add inotify watch descriptor\n" )

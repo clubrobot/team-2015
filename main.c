@@ -145,8 +145,12 @@ int usb_add( int argc, char* argv[] )
 	int id = -1;
 	char desc[ 141 ];
 	char uuid[ 20 ];
+	char tty[16];
+	char cmd[40]="/etc/robot/get_USBidbyTTY.sh ";
 	UUIDWatcher w;
 	int i;
+	FILE *fp;
+
 	LOAD_USB_MAPPING( map )
 	if( argc > 3 )
 	{
@@ -160,12 +164,32 @@ int usb_add( int argc, char* argv[] )
 				strcat( desc, argv[ i ] );
 			}
 		}
-		printf( "Please (re-)connect the device to detect its UUID..." );
+		printf( "Please (re-)connect the device to detect its UUID...\n" );
 		fflush( stdout );
 		initUUIDWatcher( &w );
-		scanUUID( &w, uuid );
+		scanUUID( &w, tty );
 		closeUUIDWatcher( &w );
-		printf( "\n" );
+
+		usleep(100000);
+
+		strcat(cmd, tty);
+
+		printf("Device detected\n\tCOM port on %s\n", tty);
+		/* Open the command for reading. */
+		fp = popen(cmd, "r");
+		if (fp == NULL) {
+			printf("Failed to run command\n" );
+		}
+		/* Read the output a line at a time - output it. */
+		while(fgets(uuid, sizeof(uuid), fp) != NULL) ;
+
+		uuid[9] = 0;
+
+		printf("\tUUID is %s\n", uuid);
+
+		/* close */
+		pclose(fp);
+
 		if( id > -1 )
 		{
 			addUSBSlot(&map, uuid, id, desc );

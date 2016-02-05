@@ -14,8 +14,9 @@ all: robot clean
 install: robot clean
 	mv robot $(INSTALL_PATH)
 	mkdir $(FOLDER_PATH)
-	chmod -R 777 $(FOLDER_PATH)
 	touch $(USB_PATH) $(TCP_PATH)
+	cp get_USBidbyTTY.sh $(FOLDER_PATH)
+	chmod -R 777 $(FOLDER_PATH)
 
 robot: main.o robot.o uuidwatcher.o
 	$(CC) -o $@ $^ $(LDFLAGS)

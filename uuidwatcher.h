@@ -7,7 +7,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define UUID_PATH "/dev/disk/by-uuid/"
+#define TTY_PATH "/dev/"
 
 #define EVENT_SIZE ( sizeof( struct inotify_event ) )
 #define EVENT_BUFFER_LENGTH ( 1024 * ( EVENT_SIZE + 16 ) )
