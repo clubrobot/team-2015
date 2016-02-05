@@ -35,6 +35,7 @@ clean: clean_obj
 
 install:
 	cp $(BINARY) $(BIN_INSTALL_DIR)/$(BINARY)
+	cp --parents get_TTYbyUSBid.sh /etc/robot
 	
 uninstall:
 	rm $(BIN_INSTALL_DIR)/$(BINARY)

@@ -23,7 +23,7 @@ void USBCOMServer::launch(const std::string& UUID) {
 	char tty[16];
 
 	/* Open the command for reading. */
-	fp = popen(("./get_TTYbyUSBid "+UUID).c_str(), "r");
+	fp = popen(("/etc/robot/get_TTYbyUSBid.sh "+UUID).c_str(), "r");
 	if (fp == NULL) {
 		printf("Failed to run command\n" );
 	}
@@ -31,8 +31,10 @@ void USBCOMServer::launch(const std::string& UUID) {
 	/* Read the output a line at a time - output it. */
 	fgets(tty, sizeof(tty)-1, fp);
 
+	tty[strlen(tty)-1] = 0;
+
 	/* close */
 	pclose(fp);
 
-	UARTServer::launch("/dev/"+tty);
+	UARTServer::launch(std::string("/dev/")+tty);
 }

@@ -9,6 +9,7 @@
 #define USBCOMSERVER_H_
 
 #include <string>
+#include <iostream>
 #include <arietta-comlib/Serial/UARTServer.h>
 using namespace std;
 

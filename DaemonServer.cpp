@@ -98,15 +98,13 @@ void DaemonServer::onClientDisconnected(TCPSocket* client) {
 }
 
 void DaemonServer::onConnected(UARTServer* uart) {
+	std::cout << "Device connected" << std::endl;
 	addFD(uart);
 }
 
 void DaemonServer::onDisconnected(UARTServer* uart) {
+	std::cout << "Device disconnected" << std::endl;
 	remFD(uart);
-}
-
-void DaemonServer::onConnectionFailed(UARTServer* uart) {
-	std::cout << "Connection to USB slot has failed" << std::endl;
 }
 
 //communication towards uart

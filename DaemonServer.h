@@ -34,7 +34,10 @@ public:
 
 	virtual void onConnected(UARTServer* uart);
 	virtual void onDisconnected(UARTServer* uart);
-	virtual void onConnectionFailed(UARTServer* uart);
+	virtual void onConnectionFailed(UARTServer* uart) {
+		std::cout << "Connection to USB slot has failed" << std::endl;
+		perror("");
+	}
 	virtual void onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len);
 private:
 	void initAllUSB();
