@@ -10,7 +10,7 @@
 
 #include <string>
 #include <iostream>
-#include <arietta-comlib/Serial/UARTServer.h>
+#include <robot-comlib/Serial/UARTServer.h>
 using namespace std;
 
 class USBCOMServer: public UARTServer {

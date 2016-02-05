@@ -14,9 +14,9 @@
 #include <fstream>
 #include <vector>
 #include "USBCOMServer.h"
-#include <arietta-comlib/Serial/UARTServer.h>
-#include <arietta-comlib/Socket/Server/TCPServer.h>
-#include <arietta-robot/Message.h>
+#include <robot-comlib/Serial/UARTServer.h>
+#include <robot-comlib/Socket/Server/TCPServer.h>
+#include <robot-robot/Message.h>
 
 
 #define NB_SLOTS 10
