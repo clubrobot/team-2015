@@ -58,7 +58,7 @@ void Brain::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len)
 	Message msg(buffer, len);
 	eid = msg.getEmitter();
 	for(std::vector<Module *>::iterator it = mmodules.begin(); it !=mmodules.end(); ++it){
-		if(eid == (*it)->getAddress())  // Aiguillage/Abonnement
+		if((*it)->isWaitingMsg() && eid == (*it)->getAddress())  // Aiguillage/Abonnement
 		{
 			(*it)->pushMsg(msg); //Use pushMsg vers bon module
 			(*it)->wakeup();    //Module.wakeup();

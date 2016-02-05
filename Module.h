@@ -10,14 +10,12 @@
 
 #include <thread>
 #include <queue>
-#include <arietta-comlib/Socket/Client/TCPClient.h>
+#include <robot-comlib/Socket/Client/TCPClient.h>
 
 #include "Message.h"
 #include "Semaphore.h"
 
 //TODO : Add Clock module
-//TODO : Config file for TCP connection (IP address + port)
-//TODO : Add event that give a received Message
 
 class Module {
 public:
@@ -33,6 +31,8 @@ public:
 
 	uint8_t getAddress() const;
 
+	bool isWaitingMsg() const;
+
 protected:
 
 	virtual void run() = 0;
@@ -44,8 +44,10 @@ protected:
 private:
 	uint8_t maddress;
 	TCPClient& mclient;
-	std::thread mthread;
 	bool mrunning;
+	std::thread mthread;
+
+	bool mwaiting;
 	std::queue<Message> mmsgs;
 	Semaphore msem;
 

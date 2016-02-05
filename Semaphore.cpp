@@ -7,10 +7,7 @@
 
 #include "Semaphore.h"
 
-Semaphore::Semaphore(int count_ = 0) : count(count_) {
-}
-
-Semaphore::~Semaphore() {
+Semaphore::Semaphore(int count_) : count(count_) {
 }
 
 void Semaphore::notify()
@@ -20,13 +17,13 @@ void Semaphore::notify()
     cv.notify_one();
 }
 
-bool Semaphore::wait(uint timeout = 0)
+bool Semaphore::wait(uint timeout)
 {
 	bool res = true;
     std::unique_lock<std::mutex> lock(mtx);
 
-    if(timeout > 0) res = cv.wait_for(lck, std::chrono::microseconds(timeout),[this]() { return count > 0; });
-    else cv.wait(lck, [this]() { return count > 0; });
+    if(timeout > 0) res = cv.wait_for(lock, std::chrono::microseconds(timeout),[this]() { return count > 0; });
+    else cv.wait(lock, [this]() { return count > 0; });
 
     count--;
 

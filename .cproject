@@ -53,7 +53,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.2010062999" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug">
 								<option id="gnu.cpp.link.option.libs.2058279809" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="arietta-comlib"/>
+									<listOptionValue builtIn="false" value="robot-comlib"/>
 								</option>
 								<option id="gnu.cpp.link.option.implname.54919969" name="Import Library name (-Wl,--out-implib=)" superClass="gnu.cpp.link.option.implname" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.soname.1780657700" name="Shared object name (-Wl,-soname=)" superClass="gnu.cpp.link.option.soname" value="libarietta-comlib" valueType="string"/>

@@ -10,10 +10,11 @@
 
 
 Module::Module( uint8_t address, TCPClient& client ):
-	maddress( address ),
-	mclient( client ),
-	mthread( Module::threadfct, this ),
-	mrunning( true ) {
+									maddress( address ),
+									mclient( client ),
+									mrunning( true) ,
+									mthread( &Module::threadfct, this ),
+									mwaiting( false ) {
 }
 
 Module::~Module() {
@@ -21,9 +22,11 @@ Module::~Module() {
 }
 
 void Module::close() {
-	wakeup();
-	mrunning = false;
-	mthread.join();
+	if(mrunning) {
+		wakeup();
+		mrunning = false;
+		mthread.join();
+	}
 }
 
 void Module::wakeup() {
@@ -44,13 +47,20 @@ bool Module::wait(uint timeout) {
 
 bool Module::requestBoard(Message out, Message& in) {
 	send( out );
+	mwaiting = true;
 	if( wait( 100 ) ) // in microseconds
 	{
 		in = mmsgs.front();
 		mmsgs.pop();
-		return true;;
+		mwaiting = false;
+		return true;
 	}
+	mwaiting = false;
 	return false;
+}
+
+bool Module::isWaitingMsg() const {
+	return mwaiting;
 }
 
 void Module::send(const Message& msg) {

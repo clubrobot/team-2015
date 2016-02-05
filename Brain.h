@@ -8,7 +8,7 @@
 #ifndef BRAIN_H_
 #define BRAIN_H_
 
-#include <arietta-comlib/Socket/Client/TCPClient.h>
+#include <robot-comlib/Socket/Client/TCPClient.h>
 #include <fstream>
 #include <iostream>
 #include <string>
