@@ -34,8 +34,12 @@ public:
 	// Build a message from its raw data.
 	Message( const uint8_t* rawData, uint32_t rawDlc );
 
+	Message( const Message& msg );
+
 	// Virtual destructor.
 	virtual ~Message();
+
+	void operator=( const Message& msg );
 
 	// Get the message's emitter.
 	uint8_t getEmitter() const;

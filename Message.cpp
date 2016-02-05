@@ -20,10 +20,21 @@ Message::Message( const uint8_t* rawData, uint32_t rawDlc )
 {
 	memitter = rawData[ 0 ];
 	mdestination = rawData[ 1 ];
-	mdlc = 0;
-	mdata = 0;
 	setData( rawData + METADATA_LENGTH, rawDlc - METADATA_LENGTH );
 	mcursor = 0;
+}
+
+Message::Message( const Message& msg )
+{
+	operator=( msg );
+}
+
+void Message::operator=( const Message& msg )
+{
+	memitter = msg.memitter;
+	mdestination = msg.mdestination;
+	setData( msg.mdata, msg.mdlc );
+	mcursor = msg.mcursor;
 }
 
 Message::~Message()
