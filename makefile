@@ -18,7 +18,7 @@ LIBNAME = robot-robot
 BINARY := lib$(LIBNAME).so
 
 LIB_INSTALL_DIR := /usr/lib
-INC_INSTALL_DIR := /usr/include
+INC_INSTALL_DIR := /usr/include/$(LIBNAME)
 
 #ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
