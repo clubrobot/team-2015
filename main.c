@@ -190,7 +190,7 @@ int usb_add( int argc, char* argv[] )
 		/* close */
 		pclose(fp);
 
-		if( id > -1 )
+		if( id > 0 )
 		{
 			addUSBSlot(&map, uuid, id, desc );
 			SAVE_USB_MAPPING( map )
