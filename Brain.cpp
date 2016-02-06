@@ -55,13 +55,24 @@ void Brain::onDisconnected(TCPClient* client) {
 void Brain::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len) {
 	uint8_t eid;
 
+	// Parse in a message
 	Message msg(buffer, len);
+
+	// Get the slot address
 	eid = msg.getEmitter();
+
+	// Find a concerned module
 	for(std::vector<Module *>::iterator it = mmodules.begin(); it !=mmodules.end(); ++it){
-		if((*it)->isWaitingMsg() && eid == (*it)->getAddress())  // Aiguillage/Abonnement
+
+		// if the module is waiting for a message
+		// and it matches the slot emitter address
+		if((*it)->isWaitingMsg() && eid == (*it)->getAddress())
 		{
-			(*it)->pushMsg(msg); //Use pushMsg vers bon module
-			(*it)->wakeup();    //Module.wakeup();
+			// Push the message into the module queue
+			(*it)->pushMsg(msg);
+
+			// Wakeup the module
+			(*it)->wakeup();
 			break;
 		}
 	}

@@ -20,17 +20,17 @@ public:
 	Brain();
 	virtual ~Brain();
 
-	// Add new module to the brain
+	// Add a new module to the brain
 	void addModule(Module* module);
 
 
 private:
 	std::vector<Module*> mmodules;
 
-	//Configuration file functions
+	//Load TCP configuration : connection port and address
 	void loadTCPConfiguration();
 
-	// TODO : implement these methods
+	// TCP events
 	void onConnected(TCPClient* client);
 	void onConnectionFailed(TCPClient* client);
 	void onDisconnected(TCPClient* client);

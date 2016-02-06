@@ -1,2 +1,4 @@
 /Debug/
-/libarietta-robot.so
+/librobot-robot.so
+/*.o
+/Log/*.o

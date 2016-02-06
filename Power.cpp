@@ -20,12 +20,12 @@ bool Power::getBattery(uint16_t &level){
 	Message out;
 
 	out.setEmitter( 0 );
-	out.setReceiver( 0 );
+	out.setReceiver(getAddress() );
 	out.append< uint8_t >( 4 );
 
 	Message in;
 
-	if(requestBoard(out,in)){
+	if(requestSlot(out,in)){
 
 		level = in.retrieve<uint16_t>();
 		return true;

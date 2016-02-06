@@ -23,8 +23,12 @@ Module::~Module() {
 
 void Module::close() {
 	if(mrunning) {
-		wakeup();
 		mrunning = false;
+
+		// Unlock the thread
+		wakeup();
+
+		// Wait that the thread function returns
 		mthread.join();
 	}
 }
@@ -45,16 +49,20 @@ bool Module::wait(uint timeout) {
 	return msem.wait( timeout );
 }
 
-bool Module::requestBoard(Message out, Message& in) {
+bool Module::requestSlot(Message out, Message& in) {
+	// Send the message
 	send( out );
+
+	// Module is now waiting for an answer
 	mwaiting = true;
-	if( wait( 100 ) ) // in microseconds
+	if( wait( 100 ) ) // if the module is woke up by the brain
 	{
 		in = mmsgs.front();
 		mmsgs.pop();
 		mwaiting = false;
 		return true;
 	}
+	// Timeout expired : no answer from the slot
 	mwaiting = false;
 	return false;
 }

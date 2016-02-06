@@ -19,12 +19,12 @@ bool Asservissement::getCodeur(uint32_t &left, uint32_t &right) {
 	Message out;
 
 	out.setEmitter( 0 );
-	out.setReceiver( 0 );
-	out.append< uint8_t >( 1 );
+	out.setReceiver( getAddress() );
+	out.append< uint8_t >( getcodeur );
 
 	Message in;
 
-	if(requestBoard(out,in)){
+	if(requestSlot(out,in)){
 
 		left = in.retrieve<uint32_t>();
 		right = in.retrieve<uint32_t>();
@@ -36,12 +36,12 @@ bool Asservissement::getCodeur(uint32_t &left, uint32_t &right) {
 bool Asservissement::setCodeur(uint32_t left, uint32_t right){
 	Message out, in;
 	out.setEmitter( 0 );
-	out.setReceiver( 0 );
-	out.append< uint8_t >( 2 );
+	out.setReceiver( getAddress() );
+	out.append< uint8_t >( setcodeur );
 	out.append< uint32_t >( left );
 	out.append< uint32_t >( right );
 
-	return requestBoard(out,in);
+	return requestSlot(out,in);
 
 }
 
@@ -51,12 +51,12 @@ void Asservissement::run() {
 bool Asservissement::setPWM(uint16_t leftPWM, uint16_t rightPWM){
 	Message out, in;
 	out.setEmitter( 0 );
-	out.setReceiver( 0 );
-	out.append< uint8_t >( 3 );
+	out.setReceiver( getAddress() );
+	out.append< uint8_t >( setpwm );
 	out.append< uint32_t >( leftPWM );
 	out.append< uint32_t >( rightPWM );
 
-	return requestBoard(out,in);
+	return requestSlot(out,in);
 }
 
 

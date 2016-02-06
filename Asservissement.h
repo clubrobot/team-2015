@@ -36,7 +36,7 @@ protected:
 
 private:
 
-
+	enum Instruction {confirm, getcodeur, setcodeur, setpwm};
 
 
 };
