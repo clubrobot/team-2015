@@ -1,0 +1,19 @@
+#!/bin/bash
+# Author : Gabriel Lucas
+# Install .h header files and binaries
+# Usage : sudo install-tar
+
+directories="bin lib script robot-robot robot-comlib"
+
+tar -xf robot-libraries-package.tar
+
+cp bin/* /usr/bin
+cp lib/* /usr/lib
+cp --parents script/* /etc/robot
+
+cp robot-robot robot-comlib /usr/include
+
+touch /etc/robot/usbmapping.cfg /etc/robot/TCP.cfg
+chmod -R 777 /etc/robot
+
+rm -r $directories
