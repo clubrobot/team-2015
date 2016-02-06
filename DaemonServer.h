@@ -28,16 +28,15 @@ public:
 
 	void launch();
 
+	// TCP Events
 	virtual void onClientConnected(TCPSocket* client);
 	virtual void onClientDisconnected(TCPSocket* client);
 	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32_t len);
 
+	// Serial events
 	virtual void onConnected(UARTServer* uart);
 	virtual void onDisconnected(UARTServer* uart);
-	virtual void onConnectionFailed(UARTServer* uart) {
-		std::cout << "Connection to USB slot has failed" << std::endl;
-		perror("");
-	}
+	virtual void onConnectionFailed(UARTServer* uart);
 	virtual void onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len);
 private:
 	void initAllUSB();
@@ -45,12 +44,11 @@ private:
 	void serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len);
 
 	//Internal events (Server messages)
-	void onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint32_t len);
+	void onReloadUSBDevices(TCPSocket* client);
 
 	TCPServer mtcpserver;
 
 	USBCOMServer mmappingusb[NB_SLOTS];
-	std::vector<TCPSocket*> mmappingtcp[NB_SLOTS] ;//TODO change number of slots
 
 	static const string UUIDFOLDER;
 	static const  string PTRFILE;

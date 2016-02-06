@@ -65,11 +65,11 @@ void DaemonServer::initAllUSB(){
 		linestream >> UIID;
 		linestream >> address;
 
-		if(address < NB_SLOTS)
+		if(address < NB_SLOTS+1)
 		{
-			if(!mmappingusb[address].isConnected())
+			if(!mmappingusb[address-1].isConnected())
 			{
-				mmappingusb[address].launch(UIID);
+				mmappingusb[address-1].launch(UIID);
 			}
 		}
 	}
@@ -82,18 +82,6 @@ void DaemonServer::onClientConnected(TCPSocket* client) {
 }
 
 void DaemonServer::onClientDisconnected(TCPSocket* client) {
-	for (int i = 0; i < NB_SLOTS ; i++){//Loop on the slots
-		std::vector< TCPSocket* >::iterator it = mmappingtcp[i].begin();
-		std::vector< TCPSocket* >::iterator end = mmappingtcp[i].end();
-		while(it != end) {
-			if(*it != client){//Client not found
-				it++;
-			}
-			else{//Client found : we erase him from the mapping
-				it = mmappingtcp[i].erase(it);
-			}
-		}
-	}
 	std::cout << "A client has disconnected" << std::endl;
 }
 
@@ -105,6 +93,11 @@ void DaemonServer::onConnected(UARTServer* uart) {
 void DaemonServer::onDisconnected(UARTServer* uart) {
 	std::cout << "Device disconnected" << std::endl;
 	remFD(uart);
+}
+
+void DaemonServer::onConnectionFailed(UARTServer* uart) {
+	std::cout << "Connection to USB slot has failed" << std::endl;
+	perror("");
 }
 
 //communication towards uart
@@ -128,13 +121,9 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32
  * a slot can communicate with his clients with the use of this function
  */
 void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len) {
-	//Step 1 : Get the address to know which slot has sent the message
-	Message newmsg = Message(buffer, len);
-	int address = newmsg.getEmitter();
-
-	//Step 2 : Redirection of the message to the concerned clients
-	std::vector< TCPSocket* >::iterator it = mmappingtcp[address-1].begin();
-	std::vector< TCPSocket* >::iterator end = mmappingtcp[address-1].end();
+	//Send the message to all the clients
+	std::vector< TCPSocket* >::iterator it = mtcpserver.getClients().begin();
+	std::vector< TCPSocket* >::iterator end = mtcpserver.getClients().end();
 	while(it != end) {
 		(*it)->write(buffer,(uint32_t)len);
 		it++;
@@ -142,18 +131,17 @@ void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_
 }
 
 void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len) {
-	switch(data[0]){//First byte contains the type of server message
-	case 0 ://Message Slot Mapping
-		onReceivingSlotMapping(client,data+1,len-1);//From data+1 we have the slots numeros that will allow the new client
+	// The first byte contains the instruction type of the server message
+	switch(data[0]){
+	case 0 ://Reload USB devices
+		onReloadUSBDevices(client);//From data+1 we have the slots numeros that will allow the new client
 		break;
 	default:
 		break;
 	}
 }
 
-void DaemonServer::onReceivingSlotMapping(TCPSocket* client, const uint8_t slots[], uint32_t len){
-	for(int i=0 ; i<len ; i++){//for each concerned slot
-		mmappingtcp[slots[i]-1].push_back(client);//Add client to the mapping
-	}
+void DaemonServer::onReloadUSBDevices(TCPSocket* client){
+	initAllUSB();
 }
 
