@@ -16,7 +16,7 @@ Asservissement::Asservissement( uint8_t address, TCPClient &client )
 
 Asservissement::~Asservissement() {}
 
-void Asservissement::getWheels( int32_t *leftw, int32_t *rightw )
+void Asservissement::getWheels( int32_t &leftw, int32_t &rightw )
 {
 	if( leftw != nullptr )
 		*leftw = mleftWheel;
@@ -46,7 +46,16 @@ void Asservissement::setPulseWidth( uint16_t leftpw, uint16_t rightpw )
 void Asservissement::run()
 {
 	Clock clk;
-	clk.tic(); // Ethel u're so wonderful <3
+	clk.tic();
+
+	// do something here...
+
+	handleInstructions();
+	wait( 1000 - clk.tac() );
+}
+
+void Asservissement::handleInstructions()
+{
 	if( getInstruction( SET_WHEELS ) )
 		__setWheels(); // request the board to set the wheels value to mleftWheel and mrightWheel
 	else
@@ -54,7 +63,6 @@ void Asservissement::run()
 	if( getInstruction( SET_PWM ) )
 		__setPWM();
 	minstructions = 0x0000; // reset the instructions register because everything has been handled
-	wait( 1000 - clk.tac() );
 }
 
 bool Asservissement::__getWheels()

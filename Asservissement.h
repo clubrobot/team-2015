@@ -17,8 +17,8 @@ public:
 	Asservissement( uint8_t address, TCPClient& client );
 	virtual ~Asservissement();
 
-	// store the value of both wheels in the given addresses
-	void getWheels( int32_t *leftw, int32_t *rightw );
+	// store the value of both wheels in the given references
+	void getWheels( int32_t &leftw, int32_t &rightw );
 
 	// set the value of both wheels to the given ones
 	void setWheels( int32_t leftw, int32_t rightw );
@@ -26,14 +26,18 @@ public:
 	// set the value of both wheels to zero
 	void resetWheels();
 
-	// set the pulse width modulation (PWM) of both motors
-	void setPulseWidth( uint16_t leftpw, uint16_t rightpw );
-
 protected:
 
 	// the main loop
 	// @see Module::threadfct
 	void run();
+
+	// set the pulse width modulation (PWM) of both motors
+	void setPulseWidth( uint16_t leftpw, uint16_t rightpw );
+
+	// do the specified board requests
+	// @see minstructions
+	void handleInstructions();
 
 	// request both wheels value from the board
 	// this is a board request and must only be called in the Module's thread (i.e. in Asservissement::run )
