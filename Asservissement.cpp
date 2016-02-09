@@ -6,6 +6,7 @@
  */
 
 #include "Asservissement.h"
+#include "Clock.h"
 
 Asservissement::Asservissement( uint8_t address, TCPClient &client )
 :	Module( address, client )
@@ -44,6 +45,8 @@ void Asservissement::setPulseWidth( uint16_t leftpw, uint16_t rightpw )
 
 void Asservissement::run()
 {
+	Clock clk;
+	clk.tic(); // Ethel u're so wonderful <3
 	if( getInstruction( SET_WHEELS ) )
 		__setWheels(); // request the board to set the wheels value to mleftWheel and mrightWheel
 	else
@@ -51,7 +54,7 @@ void Asservissement::run()
 	if( getInstruction( SET_PWM ) )
 		__setPWM();
 	minstructions = 0x0000; // reset the instructions register because everything has been handled
-	wait( 1000 );
+	wait( 1000 - clk.tac() );
 }
 
 bool Asservissement::__getWheels()
