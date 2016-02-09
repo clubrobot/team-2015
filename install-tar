@@ -6,7 +6,7 @@
 echo "Uninstalling old install"
 
 rm /usr/lib/librobot-robot.so /usr/lib/librobot-comlib.so /usr/bin/robot /usr/bin/robot-daemon
-rm -r /usr/include/robot-robot /usr/include/robot-comlib
+rm -r /usr/include/robot-robot /usr/include/robot-comlib /etc/robot
 
 echo "Installing..."
 
@@ -16,7 +16,8 @@ tar -xf robot-libraries-package.tar
 
 cp bin/* /usr/bin
 cp lib/* /usr/lib
-cp --parents script/* /etc/robot
+mkdir /etc/robot
+cp script/* /etc/robot
 
 cp -R robot-robot robot-comlib /usr/include/
 
