@@ -3,6 +3,13 @@
 # Install .h header files and binaries
 # Usage : sudo install-tar
 
+echo "Uninstalling old install"
+
+rm /usr/lib/librobot-robot.so /usr/lib/librobot-comlib.so /usr/bin/robot /usr/bin/robot-daemon
+rm -r /usr/include/robot-robot /usr/include/robot-comlib
+
+echo "Installing..."
+
 directories="bin lib script robot-robot robot-comlib"
 
 tar -xf robot-libraries-package.tar
@@ -17,3 +24,5 @@ touch /etc/robot/usbmapping.cfg /etc/robot/TCP.cfg
 chmod -R 777 /etc/robot
 
 rm -r $directories
+
+echo "Finished"
