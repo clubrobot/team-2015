@@ -46,6 +46,11 @@ bool Asservissement::setCodeur(uint32_t left, uint32_t right){
 }
 
 void Asservissement::run() {
+	Clock clk;
+	clk.tic();
+	//insert anything you want
+	wait(1000-clk.tac());
+
 }
 
 bool Asservissement::setPWM(uint16_t leftPWM, uint16_t rightPWM){

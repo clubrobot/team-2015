@@ -7,6 +7,7 @@
 
 #include "Module.h"
 #include "Message.h"
+#include "Clock.h"
 
 
 #ifndef ASSERVISSEMENT_H_
@@ -20,8 +21,8 @@ public:
 protected:
 
 	void run();
-//	uint16_t getCodeur(&int_16 value1, &int_16 value2);
-//
+	//	uint16_t getCodeur(&int_16 value1, &int_16 value2);
+	//
 	bool setCodeur(uint32_t left, uint32_t right);
 	bool getCodeur(uint32_t &left, uint32_t &right);
 	bool setPWM(uint16_t leftPWM, uint16_t rightPWM);
@@ -32,7 +33,7 @@ protected:
 		in on décode : getRawData
 		----> et on récup valeur1 et 2. (2 octets par donnée int 16)
 	}
-*/
+	 */
 
 private:
 
