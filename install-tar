@@ -18,7 +18,7 @@ cp bin/* /usr/bin
 cp lib/* /usr/lib
 cp --parents script/* /etc/robot
 
-cp robot-robot robot-comlib /usr/include
+cp -R robot-robot robot-comlib /usr/include/
 
 touch /etc/robot/usbmapping.cfg /etc/robot/TCP.cfg
 chmod -R 777 /etc/robot
