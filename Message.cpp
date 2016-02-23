@@ -18,6 +18,7 @@ Message::Message()
 
 Message::Message( const uint8_t* rawData, uint32_t rawDlc )
 {
+	mdata = 0;
 	memitter = rawData[ 0 ];
 	mdestination = rawData[ 1 ];
 	setData( rawData + METADATA_LENGTH, rawDlc - METADATA_LENGTH );
