@@ -2,3 +2,4 @@
 /librobot-robot.so
 /*.o
 /Log/*.o
+/Test/
