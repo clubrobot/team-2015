@@ -19,7 +19,7 @@ public:
 
 	void tic();//computes start of duration.
 	double tac();//computes duration and return duration in s.
-	uint utac();//computes duration and return duration in s.
+	double utac();//computes duration and return duration in s.
 
 private:
 	clock_t mtic; //start of duration

@@ -23,7 +23,7 @@ double Clock::tac(){
 	return (clock()-mtic)/(double)(CLOCKS_PER_SEC);//
 }
 
-uint Clock::utac(){
+double Clock::utac(){
 	return (clock()-mtic)/(double)(CLOCKS_PER_US);//
 }
 

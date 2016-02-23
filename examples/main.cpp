@@ -8,8 +8,7 @@
 #include <iostream>
 #include "../Message.h"
 #include "../Log/Color.h"
-#include "../Log/logstdout.h"
-#include "../Log/olog.h"
+
 
 
 
@@ -49,14 +48,7 @@ int main(int argc, char **argv) {
 //
 //	delete[] data;
 //	return 0;
-LogMessage message;
-message.memitter = 5;
-message.minformation = "lolilol";
-Tag tag = WARNING;
-message.mtag = tag;
 
-logstdout out;
-out.append(message);
 
 }
 

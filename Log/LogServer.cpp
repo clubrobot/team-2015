@@ -7,7 +7,10 @@
 
 #include "LogServer.h"
 
-LogServer::LogServer() : TCPServer(), mbuf(this) {
+LogServer::LogServer() : TCPServer(), minfo(mbuf), mbuf(*this){
+	this->launch(3003,1);
+
+
 }
 
 LogServer::~LogServer() {

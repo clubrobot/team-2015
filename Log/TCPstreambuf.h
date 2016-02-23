@@ -9,6 +9,7 @@
 #define LOG_TCPSTREAMBUF_H_
 
 #include <streambuf>
+#include "robot-comlib/Socket/Server/TCPServer.h"
 
 class TCPstreambuf : public std::streambuf {
 public:
