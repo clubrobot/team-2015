@@ -26,14 +26,14 @@ public:
 	// set the value of both wheels to zero
 	void resetWheels();
 
+	// set the pulse width modulation (PWM) of both motors
+	void setPulseWidth( uint16_t leftpw, uint16_t rightpw );
+
 protected:
 
 	// the main loop
 	// @see Module::threadfct
 	void run();
-
-	// set the pulse width modulation (PWM) of both motors
-	void setPulseWidth( uint16_t leftpw, uint16_t rightpw );
 
 	// do the specified board requests
 	// @see minstructions
@@ -55,7 +55,7 @@ private:
 	// the opcodes of the board instructions
 	enum Instruction{ CONFIRM, GET_WHEELS, SET_WHEELS, SET_PWM };
 
-	// does the module
+	// does the module ... ??
 	bool getInstruction( Instruction inst );
 	void setInstruction( Instruction inst, bool b );
 

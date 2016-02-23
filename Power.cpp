@@ -7,39 +7,33 @@
 
 #include "Power.h"
 
-Power::Power(uint8_t address, TCPClient& client) : Module(address,client) {
-	// TODO Auto-generated constructor stub
+Power::Power( uint8_t address, TCPClient& client )
+:	Module( address,client )
+,	mbattery( 0x0000 ) {}
 
+Power::~Power() {}
+
+void Power::run()
+{
+	Clock clk;
+	clk.tic();
+
+	// do something here...
+
+	getBatteryVoltage();
+	wait( 1000 - clk.tac() );
 }
 
-Power::~Power() {
-	// TODO Auto-generated destructor stub
-}
-
-bool Power::getBattery(uint16_t &level){
-	Message out;
-
+bool Power::getBatteryVoltage()
+{
+	Message out, in;
 	out.setEmitter( 0 );
-	out.setReceiver(getAddress() );
-	out.append< uint8_t >( 4 );
-
-	Message in;
-
-	if(requestSlot(out,in)){
-
-		level = in.retrieve<uint16_t>();
+	out.setReceiver( getAddress() );
+	out.append< uint8_t >( GET_BATTERY );
+	if( requestSlot( out, in ) )
+	{
+		mbattery = in.retrieve< uint16_t >();
 		return true;
 	}
 	return false;
-}
-
-
-uint32_t Power::estimateAutonomy(){
-	uint32_t autonomy;
-	uint16_t level;
-	getBattery(level);
-
-	//algo very hard ODE !!! Jean-Louis Merien
-	autonomy = 10000*level; //todo :edit and find better
-	return autonomy;
 }

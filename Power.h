@@ -13,12 +13,25 @@
 
 class Power : public Module{
 public:
+
 	Power(uint8_t address, TCPClient& client);
 	virtual ~Power();
 
-	bool getBattery(uint16_t &level);
-	uint32_t estimateAutonomy();//return autonomy in seconds.
+	// Get an estimation of the robot autonomy (in seconds)
+	int getAutonomy();
 
+	// Set the robot autonomy... Joke people !! =B
+	bool setAutonomy( int autonomy ) { return false; }
+
+protected:
+
+	bool getBatteryVoltage();
+
+private:
+
+	enum Instruction{ CONFIRM, GET_BATTERY };
+
+	uint16_t mbattery;
 };
 
 #endif /* POWER_H_ */

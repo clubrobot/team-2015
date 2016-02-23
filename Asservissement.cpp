@@ -18,10 +18,8 @@ Asservissement::~Asservissement() {}
 
 void Asservissement::getWheels( int32_t &leftw, int32_t &rightw )
 {
-	if( leftw != nullptr )
-		*leftw = mleftWheel;
-	if( rightw != nullptr )
-		*rightw = mrightWheel;
+	leftw = mleftWheel;
+	rightw = mrightWheel;
 }
 
 void Asservissement::setWheels( int32_t leftw, int32_t rightw )
