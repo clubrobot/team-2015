@@ -14,31 +14,63 @@
 
 class Asservissement : public Module {
 public:
-	Asservissement(uint8_t address, TCPClient& client);
+	Asservissement( uint8_t address, TCPClient& client );
 	virtual ~Asservissement();
+
+	// store the value of both wheels in the given references
+	void getWheels( int32_t &leftw, int32_t &rightw );
+
+	// set the value of both wheels to the given ones
+	void setWheels( int32_t leftw, int32_t rightw );
+
+	// set the value of both wheels to zero
+	void resetWheels();
 
 protected:
 
+	// the main loop
+	// @see Module::threadfct
 	void run();
-//	uint16_t getCodeur(&int_16 value1, &int_16 value2);
-//
-	bool setCodeur(uint32_t left, uint32_t right);
-	bool getCodeur(uint32_t &left, uint32_t &right);
-	bool setPWM(uint16_t leftPWM, uint16_t rightPWM);
 
-	/*getcodeur(&int_16 value1, &int_16 value2 ){
-		crée out, in (vide)...
-		requestboard(out,&in)
-		in on décode : getRawData
-		----> et on récup valeur1 et 2. (2 octets par donnée int 16)
-	}
-*/
+	// set the pulse width modulation (PWM) of both motors
+	void setPulseWidth( uint16_t leftpw, uint16_t rightpw );
+
+	// do the specified board requests
+	// @see minstructions
+	void handleInstructions();
+
+	// request both wheels value from the board
+	// this is a board request and must only be called in the Module's thread (i.e. in Asservissement::run )
+	// @see Module::requestBoard
+	bool __getWheels();
+
+	// request the board to set both wheels value
+	bool __setWheels();
+
+	// request the board to set the pulse width modulation (PWM) of both motors
+	bool __setPWM();
 
 private:
 
-	enum Instruction {confirm, getcodeur, setcodeur, setpwm};
+	// the opcodes of the board instructions
+	enum Instruction{ CONFIRM, GET_WHEELS, SET_WHEELS, SET_PWM };
 
+	// does the module
+	bool getInstruction( Instruction inst );
+	void setInstruction( Instruction inst, bool b );
 
+	int32_t mleftWheel;
+	int32_t mrightWheel;
+	uint16_t mleftPWM;
+	uint16_t mrightPWM;
+
+	// This is a 32 bits register that stores which instructions have been requested during the
+	// last cycle (through getWheels() or setPulseWidth()).
+	// For example when making a GET_WHEELS request (within getWheels()), its corresponding bit
+	// ( the 2nd one ) is set to 1.
+	// Then its value is read by run() which will do the corresponding board request (through
+	// __getWheels() in our example)
+	uint32_t minstructions;
 };
 
 #endif /* ASSERVISSEMENT_H_ */
