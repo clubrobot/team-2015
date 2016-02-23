@@ -22,6 +22,9 @@ public:
 	Module( uint8_t address, TCPClient& client );
 	virtual ~Module();
 
+	// Launch the thread
+	void launch();
+
 	// Stop the thread
 	void close();
 
@@ -52,11 +55,14 @@ protected:
 	// Send a request to a slot
 	bool requestSlot(Message out, Message& in);
 
+	// Send a message through the TCP connection
+	void send(const Message& msg);
+
 private:
 	uint8_t maddress;
 	TCPClient& mclient;
 	bool mrunning;
-	std::thread mthread;
+	std::thread *mthread;
 
 	bool mwaiting;
 	std::queue<Message> mmsgs;
@@ -66,9 +72,6 @@ private:
 	// It calls the function run within a loop an
 	// manage thread kill
 	void threadfct();
-
-	// Send a message through the TCP connection
-	void send(const Message& msg);
 };
 
 #endif /* MODULE_H_ */

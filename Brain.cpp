@@ -9,7 +9,7 @@
 
 const std::string Brain::configfilepath = "/etc/robot/TCP.cfg";
 
-Brain::Brain() : TCPClient(), maddress("127.0.0.1"), mport(3000) {
+Brain::Brain() : TCPClient(), maddress("127.0.0.1"), mport(3000), mlaunchwaiting(false) {
 	setEvents(this);
 
 	loadTCPConfiguration();
@@ -42,6 +42,10 @@ void Brain::loadTCPConfiguration() {
 
 void Brain::onConnected(TCPClient* client) {
 	std::cout << "Module connected" << std::endl;
+
+
+	// Launch the modules when connected
+	if(mlaunchwaiting) launchModules();
 }
 
 void Brain::onConnectionFailed(TCPClient* client) {
@@ -80,4 +84,17 @@ void Brain::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len)
 
 void Brain::addModule(Module* module){
 	mmodules.push_back(module);
+}
+
+void Brain::launchModules() {
+	// Launch the modules if connected
+	if(isConnected()) {
+		for(std::vector<Module *>::iterator it = mmodules.begin(); it !=mmodules.end(); ++it) {
+			(*it)->launch();
+		}
+	}
+	// Else launch them when connected
+	else {
+		mlaunchwaiting = true;
+	}
 }

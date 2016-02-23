@@ -13,12 +13,16 @@ Module::Module( uint8_t address, TCPClient& client ):
 									maddress( address ),
 									mclient( client ),
 									mrunning( true) ,
-									mthread( &Module::threadfct, this ),
+									mthread( nullptr ),
 									mwaiting( false ) {
 }
 
 Module::~Module() {
 	close();
+}
+
+void Module::launch() {
+	mthread = new std::thread(&Module::threadfct, this);
 }
 
 void Module::close() {
@@ -29,7 +33,9 @@ void Module::close() {
 		wakeup();
 
 		// Wait that the thread function returns
-		mthread.join();
+		mthread->join();
+
+		delete(mthread);
 	}
 }
 
@@ -81,6 +87,6 @@ void Module::send(const Message& msg) {
 void Module::threadfct() {
 	while( mrunning )
 	{
-		run();
+		this->run();
 	}
 }

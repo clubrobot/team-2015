@@ -22,8 +22,8 @@ bool Semaphore::wait(uint timeout)
 	bool res = true;
     std::unique_lock<std::mutex> lock(mtx);
 
-    if(timeout > 0) res = cv.wait_for(lock, std::chrono::microseconds(timeout),[this]() { return count > 0; });
-    else cv.wait(lock, [this]() { return count > 0; });
+    if(timeout > 0) res = (cv.wait_for(lock, std::chrono::microseconds(timeout)) == std::cv_status::no_timeout);
+    else cv.wait(lock);
 
     count--;
 

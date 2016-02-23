@@ -23,6 +23,7 @@ public:
 	// Add a new module to the brain
 	void addModule(Module* module);
 
+	void launchModules();
 
 private:
 	std::vector<Module*> mmodules;
@@ -38,6 +39,8 @@ private:
 
 	std::string maddress;
 	int mport;
+
+	bool mlaunchwaiting;
 
 	static const std::string configfilepath;
 
