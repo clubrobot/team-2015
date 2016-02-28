@@ -7,11 +7,25 @@
 
 #include "LogServer.h"
 
-LogServer::LogServer() : TCPServer(), minfo(mbuf), mbuf(*this){
-	this->launch(3003,1);
-
-
+LogServer::LogServer() : TCPServer(),
+	minfo(nullptr), mbufinfo(nullptr),
+	mdebug(nullptr), mbufdebug(nullptr),
+	mwarning(nullptr), mbufwarning(nullptr),
+	merr(nullptr), mbuferr(nullptr)
+{
+	mbufinfo = new TCPstreambuf(*this, TCPstreambuf::INFO);
+	minfo.rdbuf(mbufinfo);
+	mbuferr = new TCPstreambuf(*this, TCPstreambuf::ERROR);
+	merr.rdbuf(mbuferr);
+	mbufwarning = new TCPstreambuf(*this, TCPstreambuf::WARNING);
+	mwarning.rdbuf(mbufwarning);
+	mbufdebug = new TCPstreambuf(*this, TCPstreambuf::DEBUG);
+	mdebug.rdbuf(mbufdebug);
 }
 
 LogServer::~LogServer() {
+	delete(mbufinfo);
+	delete(mbuferr);
+	delete(mbufdebug);
+	delete(mbufwarning);
 }

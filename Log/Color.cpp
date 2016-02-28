@@ -7,9 +7,7 @@
 
 #include "Color.h"
 
-Color::Color(Code pCode) {
-	// TODO Auto-generated constructor stub
-	code = pCode;
+Color::Color(Code pCode) : code(pCode) {
 
 }
 

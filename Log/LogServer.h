@@ -13,19 +13,27 @@
 #include <robot-comlib/Socket/Server/TCPServer.h>
 
 #include "TCPstreambuf.h"
-#include "LogStream.h"
 
 class LogServer: public TCPServer {
 public:
 	LogServer();
 	virtual ~LogServer();
 
-//	std::ostream& getInfoStream() {return &minfo;}
+	std::ostream& getInfoStream() {return minfo;}
+	std::ostream& getErrStream() {return merr;}
+	std::ostream& getWarningStream() {return mwarning;}
+	std::ostream& getDebugStream() {return mdebug;}
 
 protected:
 private:
-	LogStream minfo;
-	TCPstreambuf mbuf;
+	std::ostream minfo;
+	TCPstreambuf* mbufinfo;
+	std::ostream mdebug;
+	TCPstreambuf* mbufdebug;
+	std::ostream mwarning;
+	TCPstreambuf* mbufwarning;
+	std::ostream merr;
+	TCPstreambuf* mbuferr;
 };
 
 #endif /* LOG_LOGSERVER_H_ */

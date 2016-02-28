@@ -7,12 +7,28 @@
 
 #include "LogClient.h"
 
-LogClient::LogClient() {
-	// TODO Auto-generated constructor stub
+const Color::Code LogClient::color[4] = {Color::FG_BLUE, Color::FG_GREEN, Color::FG_YELLOW, Color::FG_RED};
 
+LogClient::LogClient() {
+	setEvents(this);
 }
 
 LogClient::~LogClient() {
-	// TODO Auto-generated destructor stub
 }
 
+void LogClient::onConnected(TCPClient* client) {
+	std::cout << "Connection to log server succeeded" << std::endl;
+}
+
+void LogClient::onConnectionFailed(TCPClient* client) {
+	std::cout << "Connection to log server failed" << std::endl;
+}
+
+void LogClient::onDisconnected(TCPClient* client) {
+	std::cout << "Disconnected from log server" << std::endl;
+}
+
+void LogClient::onMessageReceived(TCPClient* client, uint8_t buffer[],
+		uint32_t len) {
+	std::cout << Color(color[buffer[0]-'A']) << buffer+1 << Color(Color::FG_DEFAULT);
+}
