@@ -16,8 +16,8 @@
 // The size of a raw message while excluding the size of its data. For instance it's the size needed to store the emitter's id.
 #define METADATA_LENGTH 2
 
-class Message {
-
+class Message
+{
 protected:
 
 	uint8_t memitter; // The emitter's id.
@@ -107,6 +107,34 @@ public:
 		memcpy( &var, mdata + mcursor, sizeof( T ) );
 		mcursor += sizeof( T );
 		return var;
+	}
+
+	// Overload of operators << and >> for convenience
+
+	template< typename T >
+	Message& operator<<( const T& data )
+	{
+		append( data );
+		return *this;
+	}
+
+	template< typename T >
+	friend Message& operator>>( const T& data, Message& msg )
+	{
+		return msg << data;
+	}
+
+	template< typename T >
+	const Message& operator>>( T& data ) const
+	{
+		data = retrieve< T >();
+		return *this;
+	}
+
+	template< typename T >
+	friend const Message& operator<<( T& data, const Message& msg )
+	{
+		return msg >> data;
 	}
 };
 
