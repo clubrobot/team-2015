@@ -17,6 +17,7 @@
 #include <robot-comlib/Serial/UARTServer.h>
 #include <robot-comlib/Socket/Server/TCPServer.h>
 #include <robot-robot/Message.h>
+#include <robot-robot/Log/LogServer.h>
 
 
 #define NB_SLOTS 10
@@ -27,6 +28,7 @@ public:
 	virtual ~DaemonServer();
 
 	void launch();
+	void close();
 
 	// TCP Events
 	virtual void onClientConnected(TCPSocket* client);
@@ -47,6 +49,8 @@ private:
 	void onReloadUSBDevices(TCPSocket* client);
 
 	TCPServer mtcpserver;
+	LogServer Log;
+	bool mrunning;
 
 	USBCOMServer mmappingusb[NB_SLOTS];
 

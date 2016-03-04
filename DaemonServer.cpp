@@ -10,13 +10,20 @@
 const string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
 const string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
-DaemonServer::DaemonServer() : FDListener() {
+DaemonServer::DaemonServer() : FDListener(), Log(), mrunning(true) {
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
+	Log.setFDListener(this);
 
 	std::cout << "Launching TCP server..." << std::flush;
 
 	mtcpserver.launch(3000, 10);
+
+	std::cout << "done" << std::endl;
+
+	std::cout << "Launching log server..." << std::flush;
+
+	Log.launch(3003, 1);
 
 	std::cout << "done" << std::endl;
 
@@ -34,9 +41,10 @@ DaemonServer::~DaemonServer() {
 }
 
 void DaemonServer::launch() {
-	for(;;) {
+	while(mrunning) {
 		listen();
 		mtcpserver.run();
+		Log.run();
 
 		for(int i=0; i<NB_SLOTS; i++) {
 			if(!mmappingusb[i].isClosed()) mmappingusb[i].run();
@@ -45,7 +53,7 @@ void DaemonServer::launch() {
 }
 
 void DaemonServer::initAllUSB(){
-	ifstream file;
+	/*ifstream file;
 
 	string line;
 
@@ -74,29 +82,32 @@ void DaemonServer::initAllUSB(){
 		}
 	}
 
-	file.close();
+	file.close();*/
+	mmappingusb[0].launch("/dev/ttyUSB0");
+	mmappingusb[1].launch(std::string("/dev/")+"ttyUSB1");
 }
 
 void DaemonServer::onClientConnected(TCPSocket* client) {
-	std::cout << "New client connected" << std::endl;
+	Log.info << "A client connected" << std::endl;
 }
 
 void DaemonServer::onClientDisconnected(TCPSocket* client) {
-	std::cout << "A client has disconnected" << std::endl;
+	Log.info << "disconnected" << std::endl;
 }
 
 void DaemonServer::onConnected(UARTServer* uart) {
-	std::cout << "Device connected" << std::endl;
+	Log.info << "Device connected" << std::endl;
 	addFD(uart);
 }
 
 void DaemonServer::onDisconnected(UARTServer* uart) {
-	std::cout << "Device disconnected" << std::endl;
+	Log.info << "Device disconnected" << std::endl;
 	remFD(uart);
+	uart->close();
 }
 
 void DaemonServer::onConnectionFailed(UARTServer* uart) {
-	std::cout << "Connection to USB slot has failed" << std::endl;
+	Log.info << "Connection to USB slot has failed" << std::endl;
 	perror("");
 }
 
@@ -112,6 +123,7 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32
 	else {//UART
 		if(mmappingusb[address-1].isConnected()) {
 			mmappingusb[address-1].write((uint8_t*)buffer,(uint)len);
+			Log.debug << "writing to address : " << address << std::endl;
 		}
 	}
 
@@ -121,9 +133,11 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32
  * a slot can communicate with his clients with the use of this function
  */
 void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len) {
+	std::vector< TCPSocket* > clients = mtcpserver.getClients();
 	//Send the message to all the clients
-	std::vector< TCPSocket* >::iterator it = mtcpserver.getClients().begin();
-	std::vector< TCPSocket* >::iterator end = mtcpserver.getClients().end();
+	std::vector< TCPSocket* >::iterator it = clients.begin();
+	std::vector< TCPSocket* >::iterator end = clients.end();
+	Log.debug << "writing to clients : " << std::endl;
 	while(it != end) {
 		(*it)->write(buffer,(uint32_t)len);
 		it++;
@@ -145,3 +159,6 @@ void DaemonServer::onReloadUSBDevices(TCPSocket* client){
 	initAllUSB();
 }
 
+void DaemonServer::close() {
+	mrunning = false;
+}
