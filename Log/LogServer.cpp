@@ -8,19 +8,23 @@
 #include "LogServer.h"
 
 LogServer::LogServer() : TCPServer(),
-	minfo(nullptr), mbufinfo(nullptr),
-	mdebug(nullptr), mbufdebug(nullptr),
-	mwarning(nullptr), mbufwarning(nullptr),
-	merr(nullptr), mbuferr(nullptr)
+	info(nullptr),
+	debug(nullptr),
+	warning(nullptr),
+	error(nullptr),
+	mbufinfo(nullptr),
+	mbufdebug(nullptr),
+	mbufwarning(nullptr),
+	mbuferr(nullptr)
 {
 	mbufinfo = new TCPstreambuf(*this, TCPstreambuf::INFO);
-	minfo.rdbuf(mbufinfo);
+	info.rdbuf(mbufinfo);
 	mbuferr = new TCPstreambuf(*this, TCPstreambuf::ERROR);
-	merr.rdbuf(mbuferr);
+	error.rdbuf(mbuferr);
 	mbufwarning = new TCPstreambuf(*this, TCPstreambuf::WARNING);
-	mwarning.rdbuf(mbufwarning);
+	warning.rdbuf(mbufwarning);
 	mbufdebug = new TCPstreambuf(*this, TCPstreambuf::DEBUG);
-	mdebug.rdbuf(mbufdebug);
+	debug.rdbuf(mbufdebug);
 }
 
 LogServer::~LogServer() {

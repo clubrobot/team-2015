@@ -19,20 +19,13 @@ public:
 	LogServer();
 	virtual ~LogServer();
 
-	std::ostream& getInfoStream() {return minfo;}
-	std::ostream& getErrStream() {return merr;}
-	std::ostream& getWarningStream() {return mwarning;}
-	std::ostream& getDebugStream() {return mdebug;}
+	std::ostream info, debug, warning, error;
 
 protected:
 private:
-	std::ostream minfo;
 	TCPstreambuf* mbufinfo;
-	std::ostream mdebug;
 	TCPstreambuf* mbufdebug;
-	std::ostream mwarning;
 	TCPstreambuf* mbufwarning;
-	std::ostream merr;
 	TCPstreambuf* mbuferr;
 };
 
