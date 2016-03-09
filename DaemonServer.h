@@ -9,10 +9,10 @@
 #define DAEMONSERVER_H_
 
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <fstream>
 #include <vector>
+#include <signal.h>
 #include "USBCOMServer.h"
 #include <robot-comlib/Serial/UARTServer.h>
 #include <robot-comlib/Socket/Server/TCPServer.h>
@@ -54,8 +54,8 @@ private:
 
 	USBCOMServer mmappingusb[NB_SLOTS];
 
-	static const string UUIDFOLDER;
-	static const  string PTRFILE;
+	static const std::string UUIDFOLDER;
+	static const std::string PTRFILE;
 };
 
 #endif /* DAEMONSERVER_H_ */

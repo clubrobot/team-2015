@@ -22,15 +22,22 @@ void hdl(int sig)
 	srv.close();
 }
 
-void myterminate2(){
-	signal(SIGTERM, hdl);
-	signal(SIGINT, hdl);
-}
-
-
 int main(){
 	std::set_terminate(myterminate);
-	std::set_terminate(myterminate2);//terminate Ctrl+C and kill sig
+
+	struct sigaction act;
+
+	memset (&act, 0, sizeof(act));
+	act.sa_handler = hdl;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+
+	/* This server should shut down on SIGTERM. */
+	if (sigaction(SIGTERM, &act, 0) < 0 || sigaction(SIGINT, &act, 0)) {
+		perror ("sigaction");
+		return 1;
+	}
+
 	srv.launch();
 	return 0;
 }

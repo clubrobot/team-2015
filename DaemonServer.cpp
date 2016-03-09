@@ -7,25 +7,21 @@
 
 #include "DaemonServer.h"
 
-const string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
-const string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
+const std::string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
+const std::string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
 DaemonServer::DaemonServer() : FDListener(), Log(), mrunning(true) {
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
 	Log.setFDListener(this);
 
-	std::cout << "Launching TCP server..." << std::flush;
+	std::cout << "Launching TCP server" << std::endl;
 
 	mtcpserver.launch(3000, 10);
 
-	std::cout << "done" << std::endl;
-
-	std::cout << "Launching log server..." << std::flush;
+	std::cout << "Launching log server" << std::endl;
 
 	Log.launch(3003, 1);
-
-	std::cout << "done" << std::endl;
 
 	for(int i=0; i<NB_SLOTS; i++) {
 		mmappingusb[i].setFDListener(this);

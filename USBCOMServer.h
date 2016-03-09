@@ -11,11 +11,10 @@
 #include <string>
 #include <iostream>
 #include <robot-comlib/Serial/UARTServer.h>
-using namespace std;
 
 class USBCOMServer: public UARTServer {
 private:
-	string muuid;
+	std::string muuid;
 
 public:
 	USBCOMServer();
