@@ -9,22 +9,19 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include <stdint.h>
-#include <cstring>
-#include <vector>
+#include <cstdint>
 
-// The size of a raw message while excluding the size of its data. For instance it's the size needed to store the emitter's id.
-#define METADATA_LENGTH 2
+#include "UntypedStack.h"
 
-class Message
+// The size of a raw message while excluding the size of its data. For now it's both the emitter's and the receiver's id and the dlc
+#define METADATA_LENGTH 3
+
+class Message : public UntypedStack
 {
 protected:
 
 	uint8_t memitter; // The emitter's id.
 	uint8_t mdestination; // The receiver's id.
-	uint32_t mdlc; // The length of the internal data.
-	uint8_t* mdata; // The internal data.
-	mutable uint8_t mcursor; // The position in the data where to retrieve the current variable. See append and retrieve methods.
 
 public:
 
@@ -36,8 +33,7 @@ public:
 
 	Message( const Message& msg );
 
-	// Virtual destructor.
-	virtual ~Message();
+	~Message();
 
 	void operator=( const Message& msg );
 
@@ -76,66 +72,6 @@ public:
 
 	// Get the message's raw data (see above).
 	void getRawData( uint8_t* dst ) const;
-
-	// Add a new formatted variable to the message. For example :
-	//
-	// float pi = 3.14;
-	// Message m();
-	// m.append< float >( pi );
-
-	template< typename T >
-	void append( T data )
-	{
-		appendData( ( const uint8_t* ) &data, (uint32_t)sizeof( T ) );
-	}
-
-	// Get a formatted variable from the message.
-	// Notice that there is an internal cursor which is incremented every time a variable is retrieved.
-	// For example :
-	//
-	// int a, b;
-	// float c;
-	// Message m( receivedRawData ); // The cursor is at position zero.
-	// a = m.retrieve< int >(); // The cursor is incremented by sizeof( int ).
-	// b = m.retrieve< int >(); // Idem.
-	// c = m.retrieve< float >();
-
-	template< typename T >
-	T retrieve( void ) const
-	{
-		T var;
-		memcpy( &var, mdata + mcursor, sizeof( T ) );
-		mcursor += sizeof( T );
-		return var;
-	}
-
-	// Overload of operators << and >> for convenience
-
-	template< typename T >
-	Message& operator<<( const T& data )
-	{
-		append( data );
-		return *this;
-	}
-
-	template< typename T >
-	friend Message& operator>>( const T& data, Message& msg )
-	{
-		return msg << data;
-	}
-
-	template< typename T >
-	const Message& operator>>( T& data ) const
-	{
-		data = retrieve< T >();
-		return *this;
-	}
-
-	template< typename T >
-	friend const Message& operator<<( T& data, const Message& msg )
-	{
-		return msg >> data;
-	}
 };
 
 #endif /* MESSAGE_H_ */

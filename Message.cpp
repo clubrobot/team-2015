@@ -5,24 +5,21 @@
  *      Author: ethel
  */
 
+#include <cstring>
+
 #include "Message.h"
 
 Message::Message()
 {
 	memitter = 0;
 	mdestination = 0;
-	mdlc = 0;
-	mdata = 0;
-	mcursor = 0;
 }
 
 Message::Message( const uint8_t* rawData, uint32_t rawDlc )
 {
-	mdata = 0;
 	memitter = rawData[ 0 ];
 	mdestination = rawData[ 1 ];
-	setData( rawData + METADATA_LENGTH, rawDlc - METADATA_LENGTH );
-	mcursor = 0;
+	setData( ( uint8_t* ) ( rawData + METADATA_LENGTH ), rawDlc - METADATA_LENGTH );
 }
 
 Message::Message( const Message& msg )
@@ -34,8 +31,7 @@ void Message::operator=( const Message& msg )
 {
 	memitter = msg.memitter;
 	mdestination = msg.mdestination;
-	setData( msg.mdata, msg.mdlc );
-	mcursor = msg.mcursor;
+	setData( getData(), getDataLength() );
 }
 
 Message::~Message()
@@ -65,56 +61,46 @@ void Message::setReceiver( uint8_t destination )
 
 void Message::clearData()
 {
-	if ( mdata != 0 )
-		delete[] mdata;
-
-	if ( mdlc > 0 )
-		mdlc = 0;
+	clear();
 }
 
 uint32_t Message::getDataLength() const
 {
-	return mdlc;
+	return m_size;
 }
 
 const uint8_t* Message::getData() const
 {
-	return mdata;
+	return ( uint8_t* ) m_vector;
 }
 
 void Message::copyData( uint8_t* dst ) const
 {
-	if ( mdata != 0 )
-		memcpy( dst, mdata, mdlc );
+	if ( !empty() )
+	{
+		std::memcpy( dst, getData(), getDataLength() );
+	}
 }
 
 void Message::setData( const uint8_t data[], uint32_t dlc )
 {
 	clearData();
-	mdata = new uint8_t[ dlc ];
-	memcpy( mdata, data, dlc );
-	mdlc = dlc;
+	binary_push( data, dlc );
 }
 
 void Message::appendData( const uint8_t data[], uint32_t dlc )
 {
-	uint32_t newDlc = mdlc + dlc;
-	uint8_t* newData = new uint8_t[ newDlc ];
-	memcpy( newData, mdata, mdlc );
-	memcpy( newData + mdlc, data, dlc );
-	clearData();
-	mdlc = newDlc;
-	mdata = newData;
+	binary_push( data, dlc );
 }
 
 uint32_t Message::getRawDataLength() const
 {
-	return mdlc + METADATA_LENGTH;
+	return getDataLength() + METADATA_LENGTH;
 }
 
 void Message::getRawData( uint8_t* dst ) const
 {
 	dst[ 0 ] = memitter;
 	dst[ 1 ] = mdestination;
-	memcpy( dst + METADATA_LENGTH, mdata, mdlc );
+	std::memcpy( dst + METADATA_LENGTH, getData(), getDataLength() );
 }
