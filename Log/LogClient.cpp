@@ -17,18 +17,18 @@ LogClient::~LogClient() {
 }
 
 void LogClient::onConnected(TCPClient* client) {
-	std::cout << "Connection to log server succeeded" << std::endl;
+	std::cout << Color(Color::FG_DEFAULT) << "Connection to log server succeeded" << std::endl;
 }
 
 void LogClient::onConnectionFailed(TCPClient* client) {
-	std::cout << "Connection to log server failed" << std::endl;
+	std::cout << Color(Color::FG_DEFAULT) << "Connection to log server failed" << std::endl;
 }
 
 void LogClient::onDisconnected(TCPClient* client) {
-	std::cout << "Disconnected from log server" << std::endl;
+	std::cout << Color(Color::FG_DEFAULT) << "Disconnected from log server" << std::endl;
 }
 
 void LogClient::onMessageReceived(TCPClient* client, uint8_t buffer[],
 		uint32_t len) {
-	std::cout << Color(color[buffer[0]-'A']) << buffer+1 << Color(Color::FG_DEFAULT);
+	std::cout << Color(color[buffer[0]-'A']) << buffer+1 << std::endl;
 }
