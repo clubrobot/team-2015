@@ -10,7 +10,7 @@
 const std::string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
 const std::string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
-DaemonServer::DaemonServer() : FDListener(), Log(), mrunning(true) {
+DaemonServer::DaemonServer() : FDListener(), mtcpserver(), Log(), mrunning(true) {
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
 	Log.setFDListener(this);
@@ -79,7 +79,7 @@ void DaemonServer::initAllUSB(){
 	}
 
 	file.close();*/
-	mmappingusb[0].launch("/dev/ttyUSB0");
+	mmappingusb[0].launch("/dev/ttyACM0");
 	mmappingusb[1].launch(std::string("/dev/")+"ttyUSB1");
 }
 
@@ -103,22 +103,21 @@ void DaemonServer::onDisconnected(UARTServer* uart) {
 }
 
 void DaemonServer::onConnectionFailed(UARTServer* uart) {
-	Log.info << "Connection to USB slot has failed" << std::endl;
+	std::cerr << "Connection to USB slot has failed" << std::endl;
 	perror("");
 }
 
 //communication towards uart
 void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32_t len) {
 	//Step 1 : Read buffer to get the address (to know if the message is a server message or not)
-	Message newmsg = Message(buffer, len);
-	int address = newmsg.getReceiver();
+	int address = buffer[0];
 
 	if(address==0) {//Server message
-		serverMessage(client, newmsg.getData(), newmsg.getDataLength());
+		serverMessage(client, buffer+1, len);
 	}
 	else {//UART
 		if(mmappingusb[address-1].isConnected()) {
-			mmappingusb[address-1].write((uint8_t*)buffer,(uint)len);
+			mmappingusb[address-1].write((uint8_t*)(buffer+1),(uint)len);
 			Log.debug << "writing to address : " << address << std::endl;
 		}
 	}
@@ -129,15 +128,20 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32
  * a slot can communicate with his clients with the use of this function
  */
 void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_t len) {
+	uint8_t* data = new uint8_t[len + 1];
+	data[0] = getUARTIndex((USBCOMServer*)uart);
+	memcpy(data+1, buffer, len);
+
 	std::vector< TCPSocket* > clients = mtcpserver.getClients();
 	//Send the message to all the clients
 	std::vector< TCPSocket* >::iterator it = clients.begin();
 	std::vector< TCPSocket* >::iterator end = clients.end();
 	Log.debug << "writing to clients : " << std::endl;
 	while(it != end) {
-		(*it)->write(buffer,(uint32_t)len);
+		(*it)->write(data,(uint32_t)len+1);
 		it++;
 	}
+	delete(data);
 }
 
 void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len) {
@@ -157,4 +161,8 @@ void DaemonServer::onReloadUSBDevices(TCPSocket* client){
 
 void DaemonServer::close() {
 	mrunning = false;
+}
+
+uint8_t DaemonServer::getUARTIndex(USBCOMServer* ptr) {
+	return (ptr - mmappingusb)/sizeof(USBCOMServer);
 }

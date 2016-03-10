@@ -48,6 +48,8 @@ private:
 	//Internal events (Server messages)
 	void onReloadUSBDevices(TCPSocket* client);
 
+	uint8_t getUARTIndex(USBCOMServer* ptr);
+
 	TCPServer mtcpserver;
 	LogServer Log;
 	bool mrunning;
