@@ -13,8 +13,8 @@
 
 #include "UntypedStack.h"
 
-// The size of a raw message while excluding the size of its data. For now it's both the emitter's and the receiver's id and the dlc
-#define METADATA_LENGTH 3
+// The size of a raw message while excluding the size of its data. For instance it's the emitter's id
+#define METADATA_LENGTH 2
 
 class Message : public UntypedStack
 {
