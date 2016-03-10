@@ -27,33 +27,14 @@ public:
 	template< typename T >
 	bool push( T element )
 	{
-		size_t newSize = m_size + sizeof( T );
-		char* newVector = new char[ newSize ];
-		if( newVector != nullptr )
-		{
-			std::memcpy( newVector, m_vector, m_size );
-			std::memcpy( newVector + m_size, &element, sizeof( T ) );
-			clear();
-			m_size = newSize;
-			m_vector = newVector;
-			return true;
-		}
-		return false;
+		return binary_push( &element, sizeof( T ) );
 	}
 
 	template< typename T >
 	T pop( void ) const
 	{
 		T element;
-		if( m_cursor + sizeof( T ) <= m_size )
-		{
-			memcpy( &element, m_vector + m_cursor, sizeof( T ) );
-			m_cursor += sizeof( T );
-		}
-		else
-		{
-			m_cursor = m_size;
-		}
+		binary_pop( &element, sizeof( T ) );
 		return element;
 	}
 
@@ -85,7 +66,11 @@ public:
 
 protected:
 
-	char* m_vector;
+	bool binary_push( const void* src, size_t size );
+
+	bool binary_pop( void* dst, size_t size ) const;
+
+	void* m_vector;
 
 	size_t m_size;
 
