@@ -28,6 +28,10 @@ LogServer::LogServer() : TCPServer(),
 }
 
 LogServer::~LogServer() {
+	info.rdbuf(nullptr);
+	error.rdbuf(nullptr);
+	warning.rdbuf(nullptr);
+	debug.rdbuf(nullptr);
 	delete(mbufinfo);
 	delete(mbuferr);
 	delete(mbufdebug);
