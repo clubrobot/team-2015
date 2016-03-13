@@ -9,12 +9,6 @@
 
 DaemonServer srv;
 
-void myterminate() {
-	std::cout << "Terminate" << std::endl;
-	srv.close();
-	abort();
-}
-
 /* Signal handler. */
 void hdl(int sig)
 {
@@ -22,21 +16,12 @@ void hdl(int sig)
 	srv.close();
 }
 
+
 int main(){
-	std::set_terminate(myterminate);
+	std::cout << "Launching daemon" << std::endl;
 
-	struct sigaction act;
-
-	memset (&act, 0, sizeof(act));
-	act.sa_handler = hdl;
-	sigemptyset(&act.sa_mask);
-	act.sa_flags = 0;
-
-	/* This server should shut down on SIGTERM. */
-	if (sigaction(SIGTERM, &act, 0) < 0 || sigaction(SIGINT, &act, 0)) {
-		perror ("sigaction");
-		return 1;
-	}
+	signal(SIGINT, hdl);
+	signal(SIGTERM, hdl);
 
 	srv.launch();
 	return 0;

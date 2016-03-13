@@ -17,11 +17,11 @@ DaemonServer::DaemonServer() : FDListener(), mtcpserver(), Log(), mrunning(true)
 
 	std::cout << "Launching TCP server" << std::endl;
 
-	//mtcpserver.launch(3000, 10);
+	mtcpserver.launch(3000, 10);
 
 	std::cout << "Launching log server" << std::endl;
 
-	//Log.launch(3003, 1);
+	Log.launch(3003, 1);
 
 	for(int i=0; i<NB_SLOTS; i++) {
 		mmappingusb[i].setFDListener(this);
@@ -39,7 +39,9 @@ DaemonServer::~DaemonServer() {
 void DaemonServer::launch() {
 	while(mrunning) {
 		listen();
-
+		if(errno == EINTR) {
+			break;
+		}
 		mtcpserver.run();
 		Log.run();
 
