@@ -34,6 +34,7 @@ public:
 	virtual void onClientConnected(TCPSocket* client);
 	virtual void onClientDisconnected(TCPSocket* client);
 	virtual void onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32_t len);
+	void onUniqueTCPMessage(TCPSocket* client, uint8_t buffer[], uint32_t len);
 
 	// Serial events
 	virtual void onConnected(UARTServer* uart);
