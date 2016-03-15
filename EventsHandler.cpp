@@ -21,9 +21,13 @@ EventsHandler::~EventsHandler()
 
 }
 
-void EventsHandler::dispatchEvent( EventName name, ... )
+void EventsHandler::dispatchEvent( EventName name )
 {
-	EventParams params = static_cast< EventParams >( ( &name ) + 1 );
+	m_events.push( Event( name, EventParams() ) );
+}
+
+void EventsHandler::dispatchEvent( EventName name, EventParams params )
+{
 	m_events.push( Event( name, params ) );
 }
 

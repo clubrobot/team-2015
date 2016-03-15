@@ -15,11 +15,13 @@
 #include <map>
 #include <queue>
 
+#include "UntypedStack.h"
+
 //
 
 typedef std::string EventName;
 
-typedef void* EventParams;
+typedef UntypedStack EventParams;
 
 typedef std::pair< EventName, EventParams > Event;
 
@@ -35,7 +37,9 @@ public:
 
 	virtual ~EventsHandler();
 
-	void dispatchEvent( EventName name, ... );
+	void dispatchEvent( EventName name );
+
+	void dispatchEvent( EventName name, EventParams params );
 
 	bool addEventListener( EventName name, EventListener listener );
 
@@ -46,14 +50,6 @@ public:
 	void stop( void );
 
 	bool isRunning( void ){ return m_running; }
-
-	template< typename T >
-	static T next( EventParams& params )
-	{
-		T element = *static_cast< T* >( params );
-		params = static_cast< EventParams >( ( &element ) + 1 );
-		return element;
-	}
 
 protected:
 
