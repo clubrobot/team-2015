@@ -8,7 +8,10 @@
 #ifndef UNTYPEDSTACK_H_
 #define UNTYPEDSTACK_H_
 
+#include <iostream>
 #include <cstddef>
+
+#define TELL_WHO std::cout << __PRETTY_FUNCTION__ << std::endl
 
 class UntypedStack
 {
@@ -16,7 +19,11 @@ public:
 
 	UntypedStack();
 
+	UntypedStack( const UntypedStack& stack );
+
 	virtual ~UntypedStack();
+
+	const UntypedStack& operator=( const UntypedStack& stack );
 
 	bool empty( void ) const;
 

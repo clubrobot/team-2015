@@ -18,9 +18,22 @@ UntypedStack::UntypedStack()
 
 }
 
+UntypedStack::UntypedStack( const UntypedStack& stack )
+:	UntypedStack()
+{
+	binary_push( stack.m_vector, stack.m_size );
+}
+
 UntypedStack::~UntypedStack()
 {
 	clear();
+}
+
+const UntypedStack& UntypedStack::operator=( const UntypedStack& stack )
+{
+	clear();
+	binary_push( stack.m_vector, stack.m_size );
+	return *this;
 }
 
 bool UntypedStack::empty( void ) const
@@ -37,7 +50,7 @@ void UntypedStack::clear( void )
 {
 	if( m_vector != nullptr )
 	{
-		std::free( m_vector );
+		free( m_vector );
 	}
 	m_size = 0;
 }
@@ -45,11 +58,11 @@ void UntypedStack::clear( void )
 bool UntypedStack::binary_push( const void* src, size_t size )
 {
 	size_t newSize = m_size + size;
-	void* newVector = std::malloc( newSize );
+	void* newVector = malloc( newSize );
 	if( newVector != nullptr )
 	{
-		std::memcpy( newVector, m_vector, m_size );
-		std::memcpy( ( unsigned char* ) newVector + m_size, src, size );
+		memcpy( newVector, m_vector, m_size );
+		memcpy( ( unsigned char* ) newVector + m_size, src, size );
 		clear();
 		m_size = newSize;
 		m_vector = newVector;
@@ -62,7 +75,7 @@ bool UntypedStack::binary_pop( void* dst, size_t size ) const
 {
 	if( m_cursor + size <= m_size )
 	{
-		std::memcpy( dst, ( unsigned char* ) m_vector + m_cursor, size );
+		memcpy( dst, ( unsigned char* ) m_vector + m_cursor, size );
 		m_cursor += size;
 		return true;
 	}
