@@ -78,7 +78,7 @@ void Message::copyData( uint8_t* dst ) const
 {
 	if ( !empty() )
 	{
-		std::memcpy( dst, getData(), getDataLength() );
+		memcpy( dst, getData(), getDataLength() );
 	}
 }
 
@@ -102,5 +102,5 @@ void Message::getRawData( uint8_t* dst ) const
 {
 	dst[ 0 ] = memitter;
 	dst[ 1 ] = mdestination;
-	std::memcpy( dst + METADATA_LENGTH, getData(), getDataLength() );
+	memcpy( dst + METADATA_LENGTH, getData(), getDataLength() );
 }
