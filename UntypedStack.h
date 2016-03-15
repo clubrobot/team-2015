@@ -8,11 +8,29 @@
 #ifndef UNTYPEDSTACK_H_
 #define UNTYPEDSTACK_H_
 
-#include <iostream>
 #include <cstddef>
 
-#define TELL_WHO std::cout << __PRETTY_FUNCTION__ << std::endl
-
+/**
+ * \class UntypedStack
+ * \brief A container that can stack variables of different types.
+ * UntypedStack can be used to group variables regardless of their types. It can be
+ * used as a parser to compress and uncompress data or as a variable list of arguments.
+ * Usage
+ * Variables can be pushed to the UntypedStack using the shift operator << :
+ * stack << unsigned int( 2016 );
+ * stack << float( 3.141592 );
+ * Or in a more compact way :
+ * stack << int( 1 ) << float( 0.5 ) << double( 0.25 );
+ * Then the variables can be poped in the same order using the shift operator >> :
+ * stack >> year;
+ * stack >> pi;
+ * Or in a more compact way :
+ * stack >> x1 >> x2 >> x3;
+ * \warning You must always pay attention to the types of variables when using the
+ * << and >> operators. For example if you pushed a float( 3.141592 ) like in the
+ * first example, the output variable (pi) must be exactly a float otherwise the
+ * UntypedStack's data will be corrupted.
+ */
 class UntypedStack
 {
 public:
