@@ -17,11 +17,11 @@ void programThreadFunction( EventsHandler* handler )
 	while( true )
 	{
 		std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
-		handler->dispatchEvent( "enslavementEnded", float( 99.0 ), float( 0.01 ) );
+		handler->dispatchEvent( "enslavementEnded", EventParams() << float( 99.0 ) << float( 0.01 ) );
 		std::this_thread::sleep_for( std::chrono::seconds( 2 ) );
-		handler->dispatchEvent( "enslavementEnded", float( -20.0 ), float( 10.0 ) );
+		handler->dispatchEvent( "enslavementEnded", EventParams() << float( -20.0 ) << float( 10.0 ) );
 		std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
-		handler->dispatchEvent( "enslavementEnded", float( 37.3 ), float( -6.75 ) );
+		handler->dispatchEvent( "enslavementEnded", EventParams() << float( 37.3 ) << float( -6.75 ) );
 	}
 }
 
@@ -50,8 +50,8 @@ int main( int argc, char **argv ) {
 
 	EventListener destinationListener = []( EventParams params )
 	{
-		float x = EventsHandler::next< float >( params );
-		float y = EventsHandler::next< float >( params );
+		float x, y;
+		params >> x >> y;
 		cout << "Robot has reached its destination( x = " << x << ", y = " << y << " )" << endl;
 	};
 
