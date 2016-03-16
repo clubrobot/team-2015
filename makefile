@@ -1,3 +1,5 @@
+CC=$(CROSS-COMPILE)g++
+
 #All directories that contain sourcefiles
 SUBDIRS := Log
 
@@ -22,10 +24,10 @@ INC_INSTALL_DIR := /usr/include/$(LIBNAME)
 
 #ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
-	g++ -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
+	$(CC) -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
 binary: $(OBJS)
-	g++ -shared -o "$(BINARY)" $(OBJS) $(LIBS)
+	$(CC) -shared -o "$(BINARY)" $(OBJS) $(LIBS)
 
 clean_obj:
 	rm $(OBJS)
