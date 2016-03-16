@@ -15,25 +15,19 @@ Power::~Power() {}
 
 void Power::run()
 {
-	Clock clk;
-	clk.tic();
 
-	// do something here...
-
-	getBatteryVoltage();
-	wait( 1000 - clk.tac() );
 }
 
 bool Power::getBatteryVoltage()
 {
-	Message out, in;
-	out.setEmitter( 0 );
-	out.setReceiver( getAddress() );
-	out.append< uint8_t >( GET_BATTERY );
-	if( requestSlot( out, in ) )
-	{
-		mbattery = in.retrieve< uint16_t >();
-		return true;
-	}
+//	Message out, in;
+//	out.setEmitter( 0 );
+//	out.setReceiver( getAddress() );
+//	out.append< uint8_t >( GET_BATTERY );
+//	if( requestSlot( out, in ) )
+//	{
+//		mbattery = in.retrieve< uint16_t >();
+//		return true;
+//	}
 	return false;
 }
