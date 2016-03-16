@@ -32,7 +32,7 @@ public:
 	void wakeup();
 
 	// Push a message in the message queue
-	void pushMsg(Message& msg);
+	void pushData(uint8_t buffer[], uint32_t len);
 
 	// Get the associated slot address
 	uint8_t getAddress() const;
@@ -56,17 +56,32 @@ protected:
 	bool requestSlot(Message out, Message& in);
 
 	// Send a message through the TCP connection
-	void send(const Message& msg);
+	void send(uint8_t buffer[], uint32_t len);
+
+	size_t getBufferSize();
+
+	void getBufferData(uint8_t buffer[], uint32_t len);
+
+	void setBufferAllocSize(size_t size);
+
+	// Received data enters in the data buffer
+	inline void startReceiving() {mwaiting = true;}
+
+	// Received date doesn't enter in the data buffer
+	inline void stopReceiving() {mwaiting = false;}
 
 private:
 	uint8_t maddress;
 	TCPClient& mclient;
 	bool mrunning;
 	std::thread *mthread;
+	std::mutex mmutex;
 
-	bool mwaiting;
-	std::queue<Message> mmsgs;
+	std::vector<uint8_t> mmsgs;
+	uint32_t mread, mwrite, msize;
+
 	Semaphore msem;
+	bool mwaiting;
 
 	// Function launched by the thread
 	// It calls the function run within a loop an
