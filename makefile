@@ -1,5 +1,6 @@
-CC=$(CROSS-COMPILE)g++
-
+CC=$(CROSS_COMPILE)g++
+ARCH?=i86
+INSTALL_DIR?=/usr/
 #All directories that contain sourcefiles
 SUBDIRS := Log
 
@@ -19,32 +20,28 @@ LIBNAME = robot-robot
 
 BINARY := lib$(LIBNAME).so
 
-LIB_INSTALL_DIR := /usr/lib
-INC_INSTALL_DIR := /usr/include/$(LIBNAME)
+LIB_INSTALL_DIR = $(INSTALL_DIR)lib
+INC_INSTALL_DIR = $(INSTALL_DIR)include/$(LIBNAME)
 
 #ne cree pas les binaires pour les sous-repertoires
 %.o: %.cpp
 	$(CC) -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
-binary: $(OBJS)
-	$(CC) -shared -o "$(BINARY)" $(OBJS) $(LIBS)
+all: $(OBJS)
+	$(CC) -shared -o "build/$(ARCH)/$(BINARY)" $(OBJS) $(LIBS)
 
-clean_obj:
-	rm $(OBJS)
-
-all: binary
-
-clean: clean_obj
-	rm $(BINARY)
+clean:
+	-rm $(OBJS)
+	-rm build/*/$(BINARY)
 
 install:
-	cp $(BINARY) $(LIB_INSTALL_DIR)/$(BINARY)
-	mkdir $(INC_INSTALL_DIR)
-	mkdir $(INC_INSTALL_DIR)/Log
+	cp build/$(ARCH)/$(BINARY) $(LIB_INSTALL_DIR)/$(BINARY)
+	-mkdir $(INC_INSTALL_DIR)
+	-mkdir $(INC_INSTALL_DIR)/Log
 	cp *.h $(INC_INSTALL_DIR)
 	cp Log/*.h $(INC_INSTALL_DIR)/Log
 
 	
 uninstall:
-	rm -r $(INC_INSTALL_DIR)
-	rm $(LIB_INSTALL_DIR)/$(BINARY)
+	-rm -r $(INC_INSTALL_DIR)
+	-rm $(LIB_INSTALL_DIR)/$(BINARY)
