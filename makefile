@@ -1,7 +1,5 @@
-SRCDIR :=
-
-#All directories that contain sourcefiles
-SUBDIRS := 
+CC=$(CROSS_COMPILE)g++
+ARCH?=i86
 
 #Load all .cpp files in the subdirs
 SRCS := $(wildcard $(SUBDIRS:%=$(SRCDIR)/%/*.cpp))
@@ -20,22 +18,20 @@ BINARY := robot-daemon
 BIN_INSTALL_DIR := /usr/bin
 
 %.o: %.cpp
-	g++ -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
+	$(CC) -Wall -c -std=c++0x -fPIC -pthread -I $(INC_PATH) -o "$@" "$<"
 
 binary: $(OBJS)
-	g++ -o "$(BINARY)" $(OBJS) $(LIBS)
-
-clean_obj:
-	rm $(OBJS)
+	$(CC) -o "build/$(ARCH)/$(BINARY)" $(OBJS) $(LIBS)
 
 all: binary
 
-clean: clean_obj
-	rm $(BINARY)
+clean:
+	-rm $(OBJS)
+	-rm build/*/$(BINARY)
 
 install:
-	cp $(BINARY) $(BIN_INSTALL_DIR)/$(BINARY)
+	cp build/$(ARCH)/$(BINARY) $(BIN_INSTALL_DIR)/$(BINARY)
 	cp --parents get_TTYbyUSBid.sh /etc/robot
 	
 uninstall:
-	rm $(BIN_INSTALL_DIR)/$(BINARY)
+	-rm $(BIN_INSTALL_DIR)/$(BINARY)
