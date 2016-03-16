@@ -37,6 +37,7 @@ DaemonServer::~DaemonServer() {
 }
 
 void DaemonServer::launch() {
+	blocksig();
 	while(mrunning) {
 		listen();
 		if(errno == EINTR) {
@@ -52,22 +53,22 @@ void DaemonServer::launch() {
 }
 
 void DaemonServer::initAllUSB(){
-	/*ifstream file;
+	std::ifstream file;
 
-	string line;
+	std::string line;
 
-	string UIID;
+	std::string UIID;
 	int address;
 
 	try {
-		file.open(PTRFILE.c_str(), ifstream::in);
+		file.open(PTRFILE.c_str(), std::ifstream::in);
 	}
 	catch(std::ifstream::failure &exception) {
 		std::cerr << "Cannot open mapping config file at : " << PTRFILE << std::endl;
 	}
 
 	while(getline(file,line)){
-		stringstream linestream (line);
+		std::stringstream linestream(line);
 		//consume the first word of the line, which is the uuid
 		linestream >> UIID;
 		linestream >> address;
@@ -76,14 +77,13 @@ void DaemonServer::initAllUSB(){
 		{
 			if(!mmappingusb[address-1].isConnected())
 			{
+				std::cout << "Starting device on slot " << address << " : " << std::flush;
 				mmappingusb[address-1].launch(UIID);
 			}
 		}
 	}
 
-	file.close();*/
-	mmappingusb[0].launch("/dev/ttyUSB0");
-	mmappingusb[1].launch(std::string("/dev/")+"ttyUSB1");
+	file.close();
 }
 
 void DaemonServer::onClientConnected(TCPSocket* client) {
