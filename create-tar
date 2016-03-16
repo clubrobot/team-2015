@@ -9,6 +9,12 @@ then
 	exit
 fi
 
+if [ -z "$2" ]
+then
+	echo "No architecture supplied"
+	exit
+fi
+
 directories="bin lib script robot-robot robot-comlib"
 
 mkdir bin
@@ -19,7 +25,7 @@ mkdir script
 
 robot_name="robot-robot"
 robot_source="$1/$robot_name"
-robot_binary="$robot_source/lib$robot_name.so"
+robot_binary="$robot_source/build/$2/lib$robot_name.so"
 
 source=($(find $robot_source -name '*.h' -print))
 
@@ -35,7 +41,7 @@ cp $robot_binary lib
 
 robot_name="robot-comlib"
 robot_source="$1/$robot_name/src"
-robot_binary="$1/$robot_name/lib$robot_name.so"
+robot_binary="$1/$robot_name/build/$2/lib$robot_name.so"
 
 source=($(find $robot_source -name '*.h' -print))
 
@@ -55,7 +61,7 @@ robot_name="robot-daemon"
 robot_path="$1/$robot_name"
 
 cp "$robot_path/get_TTYbyUSBid.sh" script
-cp "$robot_path/$robot_name" bin
+cp "$robot_path/build/$2/$robot_name" bin
 
 ############ robot-utility ############
 
@@ -63,9 +69,9 @@ robot_name="robot-utility"
 robot_path="$1/$robot_name"
 
 cp "$robot_path/get_USBidbyTTY.sh" script
-cp "$robot_path/robot" bin
+cp "$robot_path/build/$2/robot" bin
 
-tar -cf robot-libraries-package.tar $directories
+tar -cf robot-libraries-package-$2.tar $directories
 rm -r $directories
 
 
