@@ -19,19 +19,19 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #define LOAD_USB_MAPPING( map )\
-	{ initUSBMapping( &map ); if( !loadUSBMapping( &map, USB_PATH ) )\
-	{ printf( WARNING "Cannot load USB mapping\nThe file may not exist: %s\n" DEFAULT, USB_PATH ); } }
+		{ initUSBMapping( &map ); if( !loadUSBMapping( &map, USB_PATH ) )\
+		{ printf( WARNING "Cannot load USB mapping\nThe file may not exist: %s\n" DEFAULT, USB_PATH ); } }
 
 #define SAVE_USB_MAPPING( map )\
-	{ if( !saveUSBMapping( &map, USB_PATH ) )\
+		{ if( !saveUSBMapping( &map, USB_PATH ) )\
 	{ printf( ERROR "Cannot save USB mapping\nYou may not have the right permissions: %s\n" DEFAULT, TCP_PATH ); return -1; } }
 
 #define LOAD_TCP_CONFIG( cfg )\
-	{ initTCPConfig( &cfg ); if( !loadTCPConfig( &cfg, TCP_PATH ) )\
-	{ printf( WARNING "Cannot load TCP config\nThe file may not exist: %s\n" DEFAULT, TCP_PATH ); } }
+		{ initTCPConfig( &cfg ); if( !loadTCPConfig( &cfg, TCP_PATH ) )\
+		{ printf( WARNING "Cannot load TCP config\nThe file may not exist: %s\n" DEFAULT, TCP_PATH ); } }
 
 #define SAVE_TCP_CONFIG( cfg )\
-	{ if( !saveTCPConfig( &cfg, TCP_PATH ) )\
+		{ if( !saveTCPConfig( &cfg, TCP_PATH ) )\
 	{ printf( ERROR "Cannot save TCP config\nYou may not have the right permissions: %s\n" DEFAULT, TCP_PATH ); return -1; } }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,6 @@ int usb_add( int argc, char* argv[] )
 	char tty[16];
 	char cmd[40]="/etc/robot/get_USBidbyTTY.sh ";
 	UUIDWatcher w;
-	int i;
 	FILE *fp;
 
 	LOAD_USB_MAPPING( map )
@@ -157,24 +156,25 @@ int usb_add( int argc, char* argv[] )
 		sscanf( argv[ 3 ], "%d", &id );
 		if( argc > 4 )
 		{
-			strcpy( desc, argv[ 4 ] );
-			for( i = 5; i < argc; i++ )
-			{
-				strcat( desc, " " );
-				strcat( desc, argv[ i ] );
-			}
+			strcpy( desc, argv[ argc-1] );
 		}
-		printf( "Please (re-)connect the device to detect its UUID...\n" );
-		fflush( stdout );
-		initUUIDWatcher( &w );
-		scanUUID( &w, tty );
-		closeUUIDWatcher( &w );
 
-		usleep(100000);
+		if(argc == 5) {
+			printf( "Please (re-)connect the device to detect its UUID...\n" );
+			fflush( stdout );
+			initUUIDWatcher( &w );
+			scanUUID( &w, tty );
+			closeUUIDWatcher( &w );
+
+			printf("Device detected\n\tCOM port on %s\n", tty);
+		}
+		else if(argc == 6) {
+			strcpy(tty, argv[ 4 ]);
+		}
+
+		usleep(500000);
 
 		strcat(cmd, tty);
-
-		printf("Device detected\n\tCOM port on %s\n", tty);
 		/* Open the command for reading. */
 		fp = popen(cmd, "r");
 		if (fp == NULL) {
@@ -183,25 +183,32 @@ int usb_add( int argc, char* argv[] )
 		/* Read the output a line at a time - output it. */
 		while(fgets(uuid, sizeof(uuid), fp) != NULL) ;
 
-		uuid[9] = 0;
-
-		printf("\tUUID is %s\n", uuid);
+		uuid[strlen(uuid)-1] = 0;
 
 		/* close */
 		pclose(fp);
 
-		if( id > 0 )
+		printf("\tUUID is %s\n", uuid);
+
+		// UUID invalid
+		if(strcmp(":", uuid)==0) {
+			printf( ERROR "UIID %s is invalid\n" DEFAULT, uuid );
+			return -1;
+		}
+		// ID invalid
+		else if( id <= 0 )
+		{
+			printf( ERROR "ID %d is invalid\n" DEFAULT, id );
+			return -1;
+		}
+		// Valid
+		else
 		{
 			addUSBSlot(&map, uuid, id, desc );
 			SAVE_USB_MAPPING( map )
 			printf( SUCCESS "The device has been successfully added\n" DEFAULT );
 			myPrintUSBMapping( &map, map.numSlots - 1 );
 			return 0;
-		}
-		else
-		{
-			printf( ERROR "ID %d is invalid\n" DEFAULT, id );
-			return -1;
 		}
 	}
 	return help( argc, argv );
@@ -232,7 +239,7 @@ int usb_remove( int argc, char* argv[] )
 			if( found )
 			{
 				SAVE_USB_MAPPING( map )
-				return 0;
+						return 0;
 			}
 			else
 			{
@@ -297,6 +304,7 @@ int help( int argc, char* argv[] )
 			"  \t\tlist\n"
 			"  \t\tclear\n"
 			"  \t\tadd\tid\tdescription\n"
+			"  \t\tadd\tid\ttty\tdescription\n"
 			"  \t\tremove\tid\n"
 			"  robot\ttcp\t\n"
 			"  \t\tshow\n"
