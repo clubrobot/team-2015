@@ -65,39 +65,39 @@ void Asservissement::handleInstructions()
 
 bool Asservissement::__getWheels()
 {
-	Message out, in;
-	out.setEmitter( 0 );
-	out.setReceiver( getAddress() );
-	out.append< uint8_t >( GET_WHEELS );
-	if( requestSlot( out, in ) )
-	{
-		mleftWheel = in.retrieve< uint32_t >();
-		mrightWheel = in.retrieve< uint32_t >();
-		return true;
-	}
-	return false;
+//	Message out, in;
+//	out.setEmitter( 0 );
+//	out.setReceiver( getAddress() );
+//	out.append< uint8_t >( GET_WHEELS );
+//	if( requestSlot( out, in ) )
+//	{
+//		mleftWheel = in.retrieve< uint32_t >();
+//		mrightWheel = in.retrieve< uint32_t >();
+//		return true;
+//	}
+//	return false;
 }
 
 bool Asservissement::__setWheels()
 {
-	Message out, in;
-	out.setEmitter( 0 );
-	out.setReceiver( getAddress() );
-	out.append< uint8_t >( SET_WHEELS );
-	out.append< uint32_t >( mleftWheel );
-	out.append< uint32_t >( mrightWheel );
-	return requestSlot( out, in );
+//	Message out, in;
+//	out.setEmitter( 0 );
+//	out.setReceiver( getAddress() );
+//	out.append< uint8_t >( SET_WHEELS );
+//	out.append< uint32_t >( mleftWheel );
+//	out.append< uint32_t >( mrightWheel );
+//	return requestSlot( out, in );
 }
 
 bool Asservissement::__setPWM()
 {
-	Message out, in;
-	out.setEmitter( 0 );
-	out.setReceiver( getAddress() );
-	out.append< uint8_t >( SET_PWM );
-	out.append< uint32_t >( mleftPWM );
-	out.append< uint32_t >( mrightPWM );
-	return requestSlot( out, in );
+//	Message out, in;
+//	out.setEmitter( 0 );
+//	out.setReceiver( getAddress() );
+//	out.append< uint8_t >( SET_PWM );
+//	out.append< uint32_t >( mleftPWM );
+//	out.append< uint32_t >( mrightPWM );
+//	return requestSlot( out, in );
 }
 
 bool Asservissement::getInstruction( Instruction inst )

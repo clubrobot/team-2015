@@ -25,6 +25,8 @@ public:
 
 protected:
 
+	virtual void run();
+
 	bool getBatteryVoltage();
 
 private:

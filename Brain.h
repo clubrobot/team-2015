@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include "Module.h"
+#include "Clock.h"
 
 class Brain : public TCPClient, private TCPClient::Events {
 public:
@@ -37,10 +38,16 @@ private:
 	void onDisconnected(TCPClient* client);
 	void onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len);
 
+	void computeBitrate(uint32_t count);
+
 	std::string maddress;
 	int mport;
 
 	bool mlaunchwaiting;
+
+	// For bitrate
+	uint32_t mcount;
+	Clock mclock;
 
 	static const std::string configfilepath;
 

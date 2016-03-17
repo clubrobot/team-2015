@@ -9,7 +9,7 @@
 
 const std::string Brain::configfilepath = "/etc/robot/TCP.cfg";
 
-Brain::Brain() : TCPClient(), maddress("127.0.0.1"), mport(3000), mlaunchwaiting(false) {
+Brain::Brain() : TCPClient(), maddress("127.0.0.1"), mport(3000), mlaunchwaiting(false), mcount(0) {
 	setEvents(this);
 
 	loadTCPConfiguration();
@@ -17,6 +17,8 @@ Brain::Brain() : TCPClient(), maddress("127.0.0.1"), mport(3000), mlaunchwaiting
 	std::cout << "TCP configuration is :\n\tIP : " << maddress << "\n\tPort : " << mport << std::endl;
 
 	launch(maddress, mport);
+
+	mclock.tic();
 }
 
 Brain::~Brain() {
@@ -54,16 +56,16 @@ void Brain::onConnectionFailed(TCPClient* client) {
 
 void Brain::onDisconnected(TCPClient* client) {
 	std::cout << "Module disconnected" << std::endl;
+	exit(0);
 }
 
 void Brain::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len) {
+	computeBitrate(len);
+
 	uint8_t eid;
 
-	// Parse in a message
-	Message msg(buffer, len);
-
 	// Get the slot address
-	eid = msg.getEmitter();
+	eid = buffer[0];
 
 	// Find a concerned module
 	for(std::vector<Module *>::iterator it = mmodules.begin(); it !=mmodules.end(); ++it){
@@ -73,7 +75,7 @@ void Brain::onMessageReceived(TCPClient* client, uint8_t buffer[], uint32_t len)
 		if((*it)->isWaitingMsg() && eid == (*it)->getAddress())
 		{
 			// Push the message into the module queue
-			(*it)->pushMsg(msg);
+			(*it)->pushData(buffer, len);
 
 			// Wakeup the module
 			(*it)->wakeup();
@@ -96,5 +98,16 @@ void Brain::launchModules() {
 	// Else launch them when connected
 	else {
 		mlaunchwaiting = true;
+	}
+}
+
+void Brain::computeBitrate(uint32_t count) {
+	mcount += count;
+
+	if(mcount > 620000) {
+		if((double)mcount/mclock.tac() > 1.0e+05)
+			std::cout << "Warning : high bitrate !" << std::endl;
+		mcount = 0;
+		mclock.tic();
 	}
 }
