@@ -144,7 +144,7 @@ void Module::getBufferData( uint8_t buffer[], uint32_t len )
 
 	//Prevent underflow
 	len = ( msize - len > 0 ) ? len : msize;
-	uint32_t step1 = ( len < mmsgs.size() - mread ) ? len : mmsgs.size() - mread;
+	uint32_t step1 = ( len < mmsgs.capacity() - mread ) ? len : mmsgs.capacity() - mread;
 	memcpy( buffer, &mmsgs[ mread ], step1 );
 	if( len != step1 )
 	{
