@@ -30,14 +30,18 @@ void Brain::loadTCPConfiguration() {
 
 	try {
 		file.open(configfilepath.c_str());
+		file >> maddress >> port;
+
+		mport = std::stoi(port);
 	}
 	catch(std::ifstream::failure &exception) {
 		std::cout << "Cannot open TCP config file at : " << configfilepath << std::endl;
 	}
+	catch(std::invalid_argument &exception) {
+		std::cout << "Config file at : " << configfilepath << "is invalid\n"
+				"Switching to default config" << std::endl;
+	}
 
-	file >> maddress >> port;
-
-	mport = std::stoi(port);
 
 	file.close();
 }
