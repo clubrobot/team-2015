@@ -22,6 +22,8 @@ public:
 	Module( uint8_t address, TCPClient& client );
 	virtual ~Module();
 
+protected:
+
 	// Launch the thread
 	void launch();
 
@@ -31,19 +33,17 @@ public:
 	// Unlock the thread
 	void wakeup();
 
-	// Push a message in the message queue
-	void pushData(uint8_t buffer[], uint32_t len);
-
 	// Get the associated slot address
 	uint8_t getAddress() const;
 
 	// Return true if the module is waiting for a message
 	bool isWaitingMsg() const;
 
-protected:
-
 	// Unimplement thread routine
 	virtual void run() = 0;
+
+	// Push a message in the message queue
+	void pushData(uint8_t buffer[], uint32_t len);
 
 	// Get the thread to sleep until wakeup() is called or
 	// until the specified timeout in microseconds
@@ -87,6 +87,8 @@ private:
 	// It calls the function run within a loop an
 	// manage thread kill
 	void threadfct();
+
+	friend class Brain;
 };
 
 #endif /* MODULE_H_ */
