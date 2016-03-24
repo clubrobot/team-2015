@@ -1,0 +1,22 @@
+#!/bin/bash
+# Author : Gabriel Lucas
+# Process all makefile for i86 and armv7
+# Usage : make-all SOURCE_PATH ARCHITECTURE
+
+if [ -z "$1" ]
+then
+	echo "No source path supplied"
+	exit
+fi
+
+make -C "$1/robot-comlib" clean all install
+make -C "$1/robot-comlib" clean all install ARCH=armv7 CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_DIR=/usr/arm-linux-gnueabihf 
+
+make -C "$1/robot-robot" clean all install
+make -C "$1/robot-robot" clean all install ARCH=armv7 CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_DIR=/usr/arm-linux-gnueabihf
+
+make -C "$1/robot-daemon" clean all
+make -C "$1/robot-daemon" clean all ARCH=armv7 CROSS_COMPILE=arm-linux-gnueabihf-
+
+make -C "$1/robot-utility" clean all
+make -C "$1/robot-utility" clean all ARCH=armv7 CROSS_COMPILE=arm-linux-gnueabihf-
