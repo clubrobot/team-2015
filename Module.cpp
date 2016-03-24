@@ -16,12 +16,11 @@ Module::Module( uint8_t address, TCPClient& client )
 ,	mclient( client )
 ,	mrunning( true )
 ,	mthread( nullptr )
-,	mmsgs() // reserve( 256 ) is called in the constructor's body
+,	mmsgs(256)
 ,	mread( 0 ), mwrite( 0 )
 ,	msize( 0 )
 ,	mwaiting( false )
 {
-	mmsgs.reserve( 256 );
 }
 
 Module::~Module()
@@ -157,7 +156,7 @@ void Module::getBufferData( uint8_t buffer[], uint32_t len )
 
 void Module::setBufferAllocSize(size_t size)
 {
-	mmsgs.reserve( size );
+	mmsgs.resize( size );
 }
 
 void Module::threadfct()
