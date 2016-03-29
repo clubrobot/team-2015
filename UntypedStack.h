@@ -9,6 +9,7 @@
 #define UNTYPEDSTACK_H_
 
 #include <cstddef>
+#include <cstring>
 
 /**
  * \class UntypedStack

@@ -5,6 +5,7 @@
  *      Author: ulysse
  */
 
+#include <iostream>
 #include <cstdlib>
 #include <cstring>
 
@@ -52,6 +53,7 @@ void UntypedStack::clear( void )
 	{
 		free( m_vector );
 	}
+	m_vector = nullptr;
 	m_size = 0;
 }
 
