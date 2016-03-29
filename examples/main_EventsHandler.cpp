@@ -92,6 +92,10 @@ int main( int argc, char **argv ) {
 
 	cout << "Program ended. Congratulations !" << endl;
 
+	programThread.join();
+	timingThread.join();
+	batteryThread.join();
+
 	return 0;
 }
 
