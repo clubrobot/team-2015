@@ -29,6 +29,7 @@ void EventsHandler::dispatchEvent( EventName name )
 void EventsHandler::dispatchEvent( EventName name, EventParams params )
 {
 	m_events.push( Event( name, params ) );
+	m_sem.notify();
 }
 
 bool EventsHandler::addEventListener( EventName name, EventListener listener )
@@ -54,7 +55,7 @@ void EventsHandler::run( void )
 	{
 		EventName name;
 		EventParams params;
-		while( pollEvent( name, params ) )
+		while( m_running && pollEvent( name, params ) )
 		{
 			if( m_listeners.count( name ) )
 			{
@@ -62,13 +63,14 @@ void EventsHandler::run( void )
 				listener( params );
 			}
 		}
-		std::this_thread::sleep_for( std::chrono::milliseconds( 16 ) ); // Sleep for a while...
-	};
+		m_sem.wait( 0 );
+	}
 }
 
 void EventsHandler::stop( void )
 {
 	m_running = false;
+	m_sem.notify();
 }
 
 bool EventsHandler::pollEvent( EventName& name, EventParams& params )

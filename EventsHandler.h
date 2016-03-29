@@ -16,6 +16,7 @@
 #include <queue>
 
 #include "UntypedStack.h"
+#include "Semaphore.h"
 
 //
 
@@ -62,6 +63,8 @@ protected:
 	std::queue< Event > m_events;
 
 	bool m_running;
+
+	Semaphore m_sem;
 
 	friend int main( int argc, char **argv );
 };
