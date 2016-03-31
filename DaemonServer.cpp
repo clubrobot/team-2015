@@ -168,6 +168,9 @@ void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32
 	case 0 ://Reload USB devices
 		onReloadUSBDevices(client);//From data+1 we have the slots numeros that will allow the new client
 		break;
+	case 1 ://Call commande on robot app
+		onRemoteCmd(client, data+1);
+		break;
 	default:
 		break;
 	}
@@ -175,6 +178,29 @@ void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32
 
 void DaemonServer::onReloadUSBDevices(TCPSocket* client){
 	initAllUSB();
+}
+
+void DaemonServer::onRemoteCmd(TCPSocket* client, const uint8_t command[]) {
+
+	auto run = [client, command]() {
+		FILE *fp;
+		char c;
+
+		/* Open the command for reading. */
+		fp = popen((std::string("robot ")+ (char*)command).c_str(), "r");
+		if (fp == NULL) {
+			//Log.error << "Failed to run command" << std::endl;
+		}
+		/* Read the output a line at a time - output it. */
+		while((c = fgetc(fp)) != EOF) {
+			client->write(&c, 1);
+		}
+
+		/* close */
+		pclose(fp);
+	};
+	std::thread exec(run);
+	//mcmdthreads.push_back(new std::thread(run));
 }
 
 void DaemonServer::close() {

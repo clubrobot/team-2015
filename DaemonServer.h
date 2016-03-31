@@ -13,6 +13,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <thread>
 #include <signal.h>
 #include "USBCOMServer.h"
 #include <robot-comlib/Serial/UARTServer.h>
@@ -49,6 +50,8 @@ private:
 
 	//Internal events (Server messages)
 	void onReloadUSBDevices(TCPSocket* client);
+	std::vector<std::thread*> mcmdthreads;
+	void onRemoteCmd(TCPSocket* client, const uint8_t command[]);
 
 	uint8_t getUARTIndex(USBCOMServer* ptr);
 
