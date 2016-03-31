@@ -78,7 +78,7 @@ void DaemonServer::initAllUSB(){
 			if(!mmappingusb[address-1].isConnected())
 			{
 				std::cout << "Starting device on slot " << address << " : " << std::flush;
-				mmappingusb[address-1].launch(UIID);
+				mmappingusb[address-1].launchbyUUID(UIID);
 
 				Log.info << "Slot " << address << " : Starting" << std::endl;
 			}

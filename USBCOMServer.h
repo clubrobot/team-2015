@@ -20,7 +20,7 @@ public:
 	USBCOMServer();
 	virtual ~USBCOMServer();
 
-	void launch(const std::string& UUID);
+	void launchbyUUID(const std::string& UUID);
 };
 
 #endif /* USBCOMSERVER_H_ */

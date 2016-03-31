@@ -16,7 +16,7 @@ USBCOMServer::USBCOMServer() {
 USBCOMServer::~USBCOMServer() {
 }
 
-void USBCOMServer::launch(const std::string& UUID) {
+void USBCOMServer::launchbyUUID(const std::string& UUID) {
 	muuid = UUID;
 
 	FILE *fp;
