@@ -79,6 +79,11 @@ void DaemonServer::initAllUSB(){
 			{
 				std::cout << "Starting device on slot " << address << " : " << std::flush;
 				mmappingusb[address-1].launch(UIID);
+
+				Log.info << "Slot " << address << " : Starting" << std::endl;
+			}
+			else {
+				Log.info << "Slot " << address << " : Connected" << std::endl;
 			}
 		}
 	}
@@ -95,18 +100,18 @@ void DaemonServer::onClientDisconnected(TCPSocket* client) {
 }
 
 void DaemonServer::onConnected(UARTServer* uart) {
-	std::cout << "Device connected" << std::endl;
+	Log.info << "Device connected" << std::endl;
 	addFD(uart);
 }
 
 void DaemonServer::onDisconnected(UARTServer* uart) {
-	std::cout << "Device disconnected" << std::endl;
+	Log.info << "Device disconnected" << std::endl;
 	remFD(uart);
 	uart->close();
 }
 
 void DaemonServer::onConnectionFailed(UARTServer* uart) {
-	std::cerr << "Connection to USB slot has failed" << std::endl;
+	Log.error << "Connection to USB slot has failed" << std::endl;
 	perror("");
 }
 
