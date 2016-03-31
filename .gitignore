@@ -48,6 +48,7 @@ Temporary Items
 
 
 # Files deals with projects
+
 *.zip
 .metadata
 *.mxproject
@@ -57,5 +58,4 @@ Debug
 RemoteSystemsTempFiles
 *.xml
 *.ioc
-*.ld
 .gitattribute
