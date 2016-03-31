@@ -48,15 +48,14 @@ Temporary Items
 
 
 # Files deals with projects
-*.cproject
-*.project
+*.zip
 .metadata
 *.mxproject
 *.dfu
-SW4STM32/Com/Debug/*
-SW4STM32/Com/.settings/*
-Drivers/*
-Middlewares/*
+Debug
+.settings
+RemoteSystemsTempFiles
 *.xml
 *.ioc
 *.ld
+.gitattribute
