@@ -96,7 +96,7 @@ void DaemonServer::onClientConnected(TCPSocket* client) {
 }
 
 void DaemonServer::onClientDisconnected(TCPSocket* client) {
-	Log.info << "disconnected" << std::endl;
+	Log.info << "A client has disconnected" << std::endl;
 }
 
 void DaemonServer::onConnected(UARTServer* uart) {
@@ -163,6 +163,7 @@ void DaemonServer::onMessageReceived(UARTServer* uart, uint8_t buffer[], uint32_
 }
 
 void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32_t len) {
+	Log.info << "Server message : " << std::flush;
 	// The first byte contains the instruction type of the server message
 	switch(data[0]){
 	case 0 ://Reload USB devices
@@ -174,6 +175,7 @@ void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32
 }
 
 void DaemonServer::onReloadUSBDevices(TCPSocket* client){
+	Log.info << "Reloading devices" << std::endl;
 	initAllUSB();
 }
 
