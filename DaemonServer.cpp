@@ -122,6 +122,10 @@ void DaemonServer::onMessageReceived(TCPSocket* client, uint8_t buffer[], uint32
 
 	while(len > 0) {
 		uint32_t sublen = buffer[0];
+		if(sublen > len) {
+			Log.warning << "Length error" << std::endl;
+			break;
+		}
 		onUniqueTCPMessage(client, buffer+1, sublen+1);
 		translate(sublen+2);
 	}
@@ -183,26 +187,32 @@ void DaemonServer::onReloadUSBDevices(TCPSocket* client){
 }
 
 void DaemonServer::onRemoteCmd(TCPSocket* client, const uint8_t command[]) {
+	std::string cmd((const char*)command);
 
-	auto run = [client, command]() {
+	Log.info << "Remote command :\n"  "robot " + cmd
+ << std::endl;
+	auto run = [client, cmd]() {
 		FILE *fp;
-		char c;
+		char buffer[128];
 
 		/* Open the command for reading. */
-		fp = popen((std::string("robot ")+ (char*)command).c_str(), "r");
+		fp = popen(("robot "+ cmd).c_str(), "r");
 		if (fp == NULL) {
 			//Log.error << "Failed to run command" << std::endl;
+			return;
 		}
 		/* Read the output a line at a time - output it. */
-		while((c = fgetc(fp)) != EOF) {
-			client->write(&c, 1);
+		while(fgets(buffer, 128, fp)) {
+			client->write(buffer, strlen(buffer));
 		}
+		char eof = 0;
+		client->write(&eof, 1);
 
 		/* close */
 		pclose(fp);
 	};
-	std::thread exec(run);
-	//mcmdthreads.push_back(new std::thread(run));
+	//std::thread exec(run);
+	mcmdthreads.push_back(new std::thread(run));
 }
 
 void DaemonServer::close() {
