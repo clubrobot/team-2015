@@ -9,7 +9,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int createDirectory( char* filename )
+int createDirectory( const char* filename )
 {
     struct stat st;
     if( stat( filename, &st ) == -1 )
@@ -32,7 +32,7 @@ void initUSBMapping( USBMapping* mapping )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int loadUSBMapping( USBMapping* mapping, char* filename )
+int loadUSBMapping( USBMapping* mapping, const char* filename )
 {
     FILE* file;
     file = fopen( filename, "r" );
@@ -57,10 +57,10 @@ int loadUSBMapping( USBMapping* mapping, char* filename )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int saveUSBMapping( USBMapping* mapping, char* filename )
+int saveUSBMapping( USBMapping* mapping, const char* filename )
 {
     FILE* file;
-    int i;
+    size_t i;
     file = fopen( filename, "w" );
     if( file == NULL )
     {
@@ -82,7 +82,7 @@ int saveUSBMapping( USBMapping* mapping, char* filename )
 
 void printUSBMapping( USBMapping* mapping )
 {
-    int i;
+	size_t i;
     if( mapping != NULL )
     {
         for( i = 0; i < mapping->numSlots; i++ )
@@ -123,9 +123,9 @@ int addUSBSlot( USBMapping* mapping, char* uuid, int id, char* desc )
 
 int removeUSBSlot( USBMapping* mapping, int i )
 {
-    if( i >= 0 && i < mapping->numSlots )
+    if( i >= 0 && i < (int)mapping->numSlots )
     {
-        for( ; i < mapping->numSlots - 1; i++ )
+        for( ; i < (int)mapping->numSlots - 1; i++ )
         {
             mapping->slots[ i ] = mapping->slots[ i + 1 ];
         }
@@ -149,7 +149,7 @@ void initTCPConfig( TCPConfig* config )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int loadTCPConfig( TCPConfig* config, char* filename )
+int loadTCPConfig( TCPConfig* config, const char* filename )
 {
     FILE* file;
     file = fopen( filename, "r" );
@@ -165,7 +165,7 @@ int loadTCPConfig( TCPConfig* config, char* filename )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int saveTCPConfig( TCPConfig* config, char* filename )
+int saveTCPConfig( TCPConfig* config, const char* filename )
 {
     FILE* file;
     file = fopen( filename, "w" );

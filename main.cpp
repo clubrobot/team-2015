@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
+#include <fstream>
+#include <robot-comlib/Socket/TCPSocket.h>
+#include <robot-robot/Log/LogClient.h>
 #include "robot.h"
 #include "uuidwatcher.h"
 
@@ -36,15 +40,28 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+// TCPSocket
+TCPSocket socket_socket;
+int socket_port;
+std::string socket_address;
+int load_tcp_config();
+int open_socket();
+void close_socket();
+
 // USB mapping related commands
 int usb_list( int argc, char* argv[] );
 int usb_add( int argc, char* argv[] );
 int usb_remove( int argc, char* argv[] );
 int usb_clear( int argc, char* argv[] );
+int usb_reload( int argc, char* argv[] );
 
 // TCP config related commands
 int tcp_show( int argc, char* argv[] );
 int tcp_set( int argc, char* argv[] );
+int tcp_log( int argc, char* argv[] );
+
+// TCP remote command
+int rmt_cmd( int argc, char* argv[] );
 
 // Miscellaneous commands
 int help( int argc, char* argv[] );
@@ -60,7 +77,7 @@ void myPrintUSBSlot( USBSlot* slot, int success )
 
 void myPrintUSBMapping( USBMapping* map, int success )
 {
-	int i;
+	size_t i;
 	printf( FIELD "ID\tUUID\t\tDescription\n" DEFAULT );
 	for( i = 0; i < map->numSlots; i++ )
 	{
@@ -107,6 +124,10 @@ int main( int argc, char* argv[] )
 				{
 					return usb_clear( argc, argv );
 				}
+				else if( strcmp( argv[ 2 ], "reload" ) == 0 )
+				{
+					return usb_reload( argc, argv );
+				}
 			}
 		}
 		else if( strcmp( argv[ 1 ], "tcp" ) == 0 )
@@ -121,14 +142,65 @@ int main( int argc, char* argv[] )
 				{
 					return tcp_set( argc, argv );
 				}
+				else if( strcmp( argv[ 2 ], "log" ) == 0 )
+				{
+					return tcp_log( argc, argv );
+				}
 			}
+		}
+		else if( strcmp( argv[ 1 ], "remote" ) == 0 )
+		{
+			return rmt_cmd( argc, argv );
 		}
 	}
 	return help( argc, argv );
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+int load_tcp_config() {
+	int ret = 0;
+	std::ifstream file;
+	std::string port, configfilepath = "/etc/robot/TCP.cfg";
 
+	try {
+		file.open(configfilepath);
+		file >> socket_address >> port;
+
+		socket_port = std::stoi(port);
+	}
+	catch(std::ifstream::failure &exception) {
+		std::cerr << "Cannot open TCP config file at : " << configfilepath << std::endl;
+		ret = -1;
+	}
+	catch(std::invalid_argument &exception) {
+		std::cerr << "Config file at : " << configfilepath << "is invalid\n"
+				"Switching to default config" << std::endl;
+		ret = -1;
+	}
+	file.close();
+
+	return ret;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+int open_socket() {
+	int ret = 0;
+	try {
+		socket_socket.connect(socket_address, socket_port);
+	}
+	catch(SocketException &exception) {
+		std::cerr << exception.what() << std::endl;
+		ret = -1;
+	}
+
+	return ret;
+}
+
+void close_socket() {
+	socket_socket.close();
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 int usb_list( int argc, char* argv[] )
 {
 	USBMapping map;
@@ -228,7 +300,7 @@ int usb_remove( int argc, char* argv[] )
 		sscanf( argv[ 3 ], "%d", &i );
 		if( i > -1 )
 		{
-			for( j = 0; j < map.numSlots; j++ )
+			for( j = 0; j < (int)map.numSlots; j++ )
 			{
 				if( map.slots[ j ].id == i )
 				{
@@ -239,7 +311,7 @@ int usb_remove( int argc, char* argv[] )
 			if( found )
 			{
 				SAVE_USB_MAPPING( map )
-						return 0;
+								return 0;
 			}
 			else
 			{
@@ -264,6 +336,29 @@ int usb_clear( int argc, char* argv[] )
 	initUSBMapping( &map );
 	SAVE_USB_MAPPING( map )
 	return 0;
+}
+
+int usb_reload( int argc, char* argv[] )
+{
+	int ret;
+	if(!(ret = load_tcp_config())) {
+
+		printf( SUCCESS "The config file has been loaded\n" DEFAULT );
+
+		ret = open_socket();
+		uint8_t cmd[] = {1, 0, 0};
+
+
+		if(!ret) {
+			printf( SUCCESS "Connection done\n" DEFAULT );
+			socket_socket.write(cmd, 3);
+		}
+
+		printf( SUCCESS "Command sent\n" DEFAULT );
+		close_socket();
+	}
+
+	return ret;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -295,20 +390,87 @@ int tcp_set( int argc, char* argv[] )
 	return help( argc, argv );
 }
 
+int tcp_log( int argc, char* argv[] ) {
+	int ret;
+	if(!(ret = load_tcp_config())) {
+
+		socket_port = 3003;
+
+		printf( SUCCESS "The config file has been loaded\n" DEFAULT );
+
+		LogClient log;
+
+		log.launch(socket_address, socket_port);
+
+		log.join();
+
+	}
+
+	return ret;
+}
+
+int rmt_cmd( int argc, char* argv[] ) {
+		int ret;
+		if(!(ret = load_tcp_config())) {
+
+			printf( SUCCESS "The config file has been loaded\n" DEFAULT );
+
+			ret = open_socket();
+
+			if(!ret) {
+				printf( SUCCESS "Connection done\n" DEFAULT );
+				std::string cmd;
+
+				for(int i=2; i<argc; i++) {
+					cmd += std::string(argv[i]) + " ";
+				}
+
+				uint8_t* command = new uint8_t[3+cmd.size()+1];
+				command[0] = cmd.size()+2;
+				command[1] = 0;
+				command[2] = 1;
+				memcpy(command+3, cmd.c_str(), cmd.size()+1);
+
+				socket_socket.write((uint8_t*)command, cmd.size()+4);
+
+				delete(command);
+
+				char c;
+				while(socket_socket.read(&c, 1)) {
+					std::cout << c << std::flush;
+					if(c == 0) break;
+				}
+
+				close_socket();
+			}
+
+		}
+
+		return ret;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 int help( int argc, char* argv[] )
 {
+	for(int i=0; i<argc; i++) {
+		printf("%s ", argv[i]);
+	}
+	printf("\n\n");
+
 	printf( "Usage:\n"
 			"  robot\tusb\t\n"
 			"  \t\tlist\n"
 			"  \t\tclear\n"
-			"  \t\tadd\tid\tdescription\n"
-			"  \t\tadd\tid\ttty\tdescription\n"
-			"  \t\tremove\tid\n"
+			"  \t\tadd\t<id>\t<description>\n"
+			"  \t\tadd\t<id>\t<tty device>\t<description>\n"
+			"  \t\tremove\t<id>\n"
+			"  \t\treload\n"
 			"  robot\ttcp\t\n"
 			"  \t\tshow\n"
-			"  \t\tset\tip\tport\n"
+			"  \t\tset\t<ip>\t<port>\n"
+			"  \t\tlog\n"
+			"  robot\tremote\t<command>\n"
 			"  robot help\n" );
 	return -1;
 }

@@ -12,7 +12,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-int createDirectory( char* filename );
+int createDirectory( const char* filename );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,9 +38,9 @@ typedef struct USBMapping USBMapping;
 
 void initUSBMapping( USBMapping* mapping );
 
-int loadUSBMapping( USBMapping* mapping, char* filename );
+int loadUSBMapping( USBMapping* mapping, const char* filename );
 
-int saveUSBMapping( USBMapping* mapping, char* filename );
+int saveUSBMapping( USBMapping* mapping, const char* filename );
 
 int addUSBSlot( USBMapping* mapping, char* uuid, int id, char* desc );
 
@@ -61,9 +61,9 @@ typedef struct TCPConfig TCPConfig;
 
 void initTCPConfig( TCPConfig* config ); // useless at the moment
 
-int loadTCPConfig( TCPConfig* config, char* filename );
+int loadTCPConfig( TCPConfig* config, const char* filename );
 
-int saveTCPConfig( TCPConfig* config, char* filename );
+int saveTCPConfig( TCPConfig* config, const char* filename );
 
 void setTCPConfig( TCPConfig* config, char* ip, int port );
 

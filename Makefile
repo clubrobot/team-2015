@@ -1,4 +1,4 @@
-CC=$(CROSS_COMPILE)gcc
+CC=$(CROSS_COMPILE)g++
 ARCH?=i86
 
 CFLAGS=-Wall
@@ -11,21 +11,21 @@ FOLDER_PATH=/etc/robot
 USB_PATH=$(FOLDER_PATH)/usbmapping.cfg
 TCP_PATH=$(FOLDER_PATH)/TCP.cfg
 
-SRCS := $(wildcard *.c)
+SRCS := $(wildcard *.cpp)
 
 BUILD_DIR := build/$(ARCH)
 
-OBJS := $(SRCS:.c=.o)
+OBJS := $(SRCS:.cpp=.o)
 
 OBJS_LINK := $(addprefix $(BUILD_DIR)/,$(OBJS))
 
 BINARY := robot
 
 all: create_dir $(OBJS_LINK)
-	$(CC) -o $(BUILD_DIR)/$(BINARY) $(OBJS_LINK) $(LDFLAGS)
+	$(CC) -o $(BUILD_DIR)/$(BINARY) $(OBJS_LINK) $(LDFLAGS) -lpthread -lrobot-comlib -lrobot-robot
 
-$(BUILD_DIR)/%.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+$(BUILD_DIR)/%.o: %.cpp
+	$(CC) -o $@ -c -std=c++0x $< $(CFLAGS) 
 
 clean:
 	-rm -r build/$(ARCH)/*
@@ -34,8 +34,8 @@ clean:
 create_dir:
 	-@mkdir build $(BUILD_DIR) 2> /dev/null || true
 
-install: robot clean
-	mv robot $(INSTALL_PATH)
+install:
+	mv $(BUILD_DIR)/robot $(INSTALL_PATH)
 	-mkdir $(FOLDER_PATH)
 	touch $(USB_PATH) $(TCP_PATH)
 	echo "127.1.1.0 3000" > $(TCP_PATH)
