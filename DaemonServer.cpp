@@ -10,7 +10,8 @@
 const std::string DaemonServer::UUIDFOLDER = "/dev/disk/by-uuid/";
 const std::string DaemonServer::PTRFILE = "/etc/robot/usbmapping.cfg";
 
-DaemonServer::DaemonServer() : FDListener(), mtcpserver(), Log(), mrunning(true) {
+DaemonServer::DaemonServer() : FDListener(), mcmdthread(nullptr), mcmdthreaddone(false),
+				 mtcpserver(), Log(), mrunning(true) {
 	mtcpserver.setFDListener(this);
 	mtcpserver.setEvents(this);
 	Log.setFDListener(this);
@@ -34,6 +35,7 @@ DaemonServer::DaemonServer() : FDListener(), mtcpserver(), Log(), mrunning(true)
 }
 
 DaemonServer::~DaemonServer() {
+    exitCmdThread();
 }
 
 void DaemonServer::launch() {
@@ -48,6 +50,10 @@ void DaemonServer::launch() {
 
 		for(int i=0; i<NB_SLOTS; i++) {
 			if(!mmappingusb[i].isClosed()) mmappingusb[i].run();
+		}
+
+                if(mcmdthreaddone) {
+                    exitCmdThread();
 		}
 	}
 }
@@ -186,33 +192,47 @@ void DaemonServer::onReloadUSBDevices(TCPSocket* client){
 	initAllUSB();
 }
 
+void DaemonServer::exitCmdThread() {
+    mcmdthread->join();
+    mcmdthreaddone = false;
+    delete(mcmdthread);
+    mcmdthread = nullptr;
+}
+
 void DaemonServer::onRemoteCmd(TCPSocket* client, const uint8_t command[]) {
 	std::string cmd((const char*)command);
 
-	Log.info << "Remote command :\n"  "robot " + cmd
- << std::endl;
-	auto run = [client, cmd]() {
-		FILE *fp;
-		char buffer[128];
+	Log.info << "Remote command :\n"  "robot " + cmd << std::endl;
 
-		/* Open the command for reading. */
-		fp = popen(("robot "+ cmd).c_str(), "r");
-		if (fp == NULL) {
-			//Log.error << "Failed to run command" << std::endl;
-			return;
-		}
-		/* Read the output a line at a time - output it. */
-		while(fgets(buffer, 128, fp)) {
-			client->write(buffer, strlen(buffer));
-		}
-		char eof = 0;
-		client->write(&eof, 1);
+	if(mcmdthread == nullptr) {
 
-		/* close */
-		pclose(fp);
-	};
-	//std::thread exec(run);
-	mcmdthreads.push_back(new std::thread(run));
+            bool* threaddone = &mcmdthreaddone;
+
+            auto run = [client, cmd, threaddone]() {
+                    FILE *fp;
+                    char buffer[128];
+
+                    /* Open the command for reading. */
+                    fp = popen(("robot "+ cmd).c_str(), "r");
+                    if (fp == NULL) {
+                            //Log.error << "Failed to run command" << std::endl;
+                            return;
+                    }
+                    /* Read the output a line at a time - output it. */
+                    while(fgets(buffer, 128, fp)) {
+                            client->write(buffer, strlen(buffer));
+                    }
+                    char eof = 0;
+                    client->write(&eof, 1);
+
+                    /* close */
+                    pclose(fp);
+
+                    *threaddone = true;
+            };
+            mcmdthreaddone = false;
+            mcmdthread = new std::thread(run);
+	}
 }
 
 void DaemonServer::close() {

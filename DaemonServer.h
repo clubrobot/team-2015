@@ -50,7 +50,12 @@ private:
 
 	//Internal events (Server messages)
 	void onReloadUSBDevices(TCPSocket* client);
-	std::vector<std::thread*> mcmdthreads;
+
+        //Remote commands : The daemon can execute a command
+        //requested by a client on the robot tool
+	std::thread* mcmdthread;
+	bool mcmdthreaddone;
+        void exitCmdThread();
 	void onRemoteCmd(TCPSocket* client, const uint8_t command[]);
 
 	uint8_t getUARTIndex(USBCOMServer* ptr);
