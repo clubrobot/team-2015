@@ -14,9 +14,11 @@
 
 #include <map>
 #include <queue>
+#include <list>
 
 #include "UntypedStack.h"
 #include "Semaphore.h"
+#include "Timer.h"
 
 //
 
@@ -61,6 +63,8 @@ protected:
 	std::map< EventName, EventListener > m_listeners;
 
 	std::queue< Event > m_events;
+
+        std::list< Timer > m_timers;
 
 	bool m_running;
 
