@@ -1,6 +1,6 @@
 #include "Ultrason.h"
 
-const uint8_t Ultrason::order_open = 'F';
+const uint8_t Ultrason::order_open = 'g';
 const uint8_t Ultrason::order_init = 'F';
 
 Ultrason::Ultrason( uint8_t address, TCPClient& client ) : Module (address, client)

@@ -19,6 +19,9 @@ private:
     Brain mbrain;
     EventsHandler mhandler;
 
+    // Modules
+    Ultrason multrason;
+
     void initAllModules();
     void initAllActions();
     void initStrategy();

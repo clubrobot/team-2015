@@ -1,11 +1,11 @@
 #include "Strategy.h"
 
 Strategy::Strategy()
+    : multrason(1, mbrain)
 {
     Startup::initHardware();
     initAllModules();
     initAllActions();
-    initStrategy();
 }
 
 Strategy::~Strategy()
@@ -15,8 +15,9 @@ Strategy::~Strategy()
 
 void Strategy::launch()
 {
-    mhandler.run();
     mbrain.launchModules();
+    initStrategy();
+    mhandler.run();
 }
 
 void Strategy::initAllModules()
@@ -32,5 +33,6 @@ void Strategy::initAllActions()
 void Strategy::initStrategy()
 {
     Startup::readyAction();
+    multrason.openParasol();
 }
 
