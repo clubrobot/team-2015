@@ -12,7 +12,8 @@
 
 
 Module::Module( uint8_t address, TCPClient& client )
-:	maddress( address )
+:	mhandler( nullptr )
+,	maddress( address )
 ,	mclient( client )
 ,	mrunning( true )
 ,	mthread( nullptr )
@@ -52,6 +53,25 @@ void Module::close()
 void Module::wakeup()
 {
 	msem.notify();
+}
+
+void Module::plugEventsHandler( EventsHandler &handler )
+{
+	mhandler = &handler;
+}
+
+void Module::dispatchEvent( EventName name, EventParams params ) const
+{
+	if( mhandler != nullptr )
+	{
+		mhandler->dispatchEvent( name, params );
+	}
+	else
+	{
+		std::cerr << "warning: Module::dispatchEvent" << std::endl;
+		std::cerr << "         > trying to dispatch an event but no EventsHandler was set" << std::endl;
+		std::cerr << "         > see Module::plugEventsHandler for more information" << std::endl;
+	}
 }
 
 void Module::pushData( uint8_t buffer[], uint32_t len )

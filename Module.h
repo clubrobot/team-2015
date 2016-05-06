@@ -14,6 +14,7 @@
 
 #include "Message.h"
 #include "Semaphore.h"
+#include "EventsHandler.h"
 
 //TODO : Add Clock module
 
@@ -32,6 +33,10 @@ protected:
 
 	// Unlock the thread
 	void wakeup();
+
+	void plugEventsHandler( EventsHandler &handler );
+
+	void dispatchEvent( EventName name, EventParams params ) const;
 
 	// Get the associated slot address
 	uint8_t getAddress() const;
@@ -69,6 +74,10 @@ protected:
 
 	// Received date doesn't enter in the data buffer
 	inline void stopReceiving() {mwaiting = false;}
+
+protected:
+
+	EventsHandler* mhandler;
 
 private:
 	uint8_t maddress;
