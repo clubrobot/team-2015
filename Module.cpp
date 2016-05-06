@@ -16,11 +16,11 @@ Module::Module( uint8_t address, TCPClient& client )
 ,	mclient( client )
 ,	mrunning( true )
 ,	mthread( nullptr )
-,	mmsgs(256)
 ,	mread( 0 ), mwrite( 0 )
 ,	msize( 0 )
 ,	mwaiting( false )
 {
+	setBufferAllocSize(256);
 }
 
 Module::~Module()
