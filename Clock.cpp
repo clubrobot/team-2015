@@ -7,7 +7,7 @@
 
 #include "Clock.h"
 
-Clock::Clock(): mtic(0){
+Clock::Clock() {
 
 }
 
@@ -16,15 +16,19 @@ Clock::~Clock() {
 }
 
 void Clock::tic(){
-	mtic =clock();
+    clock_gettime(CLOCK_REALTIME, &mtic);
 }
 
 double Clock::tac(){
-	return (clock()-mtic)/(double)(CLOCKS_PER_SEC);//
+    timespec tac;
+    clock_gettime(CLOCK_REALTIME, &tac);
+    return (double)(tac.tv_sec-mtic.tv_sec)+(double)(tac.tv_nsec-mtic.tv_nsec)*1e-9;
 }
 
 double Clock::utac(){
-	return (clock()-mtic)/(double)(CLOCKS_PER_US);//
+    timespec tac;
+    clock_gettime(CLOCK_REALTIME, &tac);
+    return (double)(tac.tv_sec-mtic.tv_sec)*1e6+(double)(tac.tv_nsec-mtic.tv_nsec)*1e-3;
 }
 
 
