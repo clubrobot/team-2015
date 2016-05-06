@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <thread>
+#include <cmath>
 
 #include "EventsHandler.h"
 
@@ -21,11 +22,6 @@ EventsHandler::~EventsHandler()
 
 }
 
-void EventsHandler::dispatchEvent( EventName name )
-{
-	m_events.push( Event( name, EventParams() ) );
-}
-
 void EventsHandler::dispatchEvent( EventName name, EventParams params )
 {
 	m_events.push( Event( name, params ) );
@@ -35,6 +31,14 @@ void EventsHandler::dispatchEvent( EventName name, EventParams params )
 bool EventsHandler::addEventListener( EventName name, EventListener listener )
 {
 	m_listeners[ name ] = listener; // Erase previous listener
+	return true;
+}
+
+bool EventsHandler::performWithDelay( double time, EventListener listener, unsigned int repeat )
+{
+	Timer timer;
+	timer.setDuration( (time_t)floor( time ), (long)(modf( time, nullptr ) * 1e9) );
+	m_timers.push_back( std::pair< Timer, EventListener >( timer, listener ) );
 	return true;
 }
 
@@ -53,6 +57,16 @@ void EventsHandler::run( void )
 	m_running = true;
 	while( m_running )
 	{
+		for( auto it = m_timers.begin(); it != m_timers.end(); it++ )
+		{
+		    Timer timer = it->first;
+		    EventListener listener = it->second;
+		    if( timer.isOver() )
+		    {
+		    	listener( EventParams() );
+		    }
+		}
+
 		EventName name;
 		EventParams params;
 		while( m_running && pollEvent( name, params ) )
@@ -63,7 +77,7 @@ void EventsHandler::run( void )
 				listener( params );
 			}
 		}
-		m_sem.wait( 0 );
+		m_sem.wait( 100 );	// Wait 100 ms before executing the new cycle
 	}
 }
 

@@ -40,11 +40,11 @@ public:
 
 	virtual ~EventsHandler();
 
-	void dispatchEvent( EventName name );
-
-	void dispatchEvent( EventName name, EventParams params );
+	void dispatchEvent( EventName name, EventParams params = EventParams() );
 
 	bool addEventListener( EventName name, EventListener listener );
+
+	bool performWithDelay( double time, EventListener listener, unsigned int repeat = 0 );
 
 	bool removeEventListener( EventName name );
 
@@ -64,7 +64,7 @@ protected:
 
 	std::queue< Event > m_events;
 
-        std::list< Timer > m_timers;
+	std::list< std::pair< Timer, EventListener > > m_timers;
 
 	bool m_running;
 
