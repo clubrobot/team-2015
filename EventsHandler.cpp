@@ -37,6 +37,7 @@ bool EventsHandler::addEventListener( EventName name, EventListener listener )
 
 bool EventsHandler::performWithDelay( double time, EventListener listener, unsigned int repeat )
 {
+	m_mutex.lock();
 	Timer timer;
 	double sec, nsec;
 	nsec = modf( time, &sec );
@@ -44,6 +45,7 @@ bool EventsHandler::performWithDelay( double time, EventListener listener, unsig
 	timer.setCount( repeat );
 	timer.start();
 	m_timers.push_back( std::pair< Timer, EventListener >( timer, listener ) );
+	m_mutex.unlock();
 	return true;
 }
 
@@ -94,13 +96,16 @@ void EventsHandler::stop( void )
 
 bool EventsHandler::pollEvent( EventName& name, EventParams& params )
 {
+	m_mutex.lock();
 	if( !m_events.empty() )
 	{
 		Event event = m_events.front();
 		name = event.first;
 		params = event.second;
 		m_events.pop();
+		m_mutex.unlock();
 		return true;
 	}
+	m_mutex.unlock();
 	return false;
 }

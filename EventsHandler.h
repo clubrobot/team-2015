@@ -15,6 +15,7 @@
 #include <map>
 #include <queue>
 #include <list>
+#include <mutex>
 
 #include "UntypedStack.h"
 #include "Semaphore.h"
@@ -69,6 +70,8 @@ protected:
 	bool m_running;
 
 	Semaphore m_sem;
+
+	std::mutex m_mutex;
 
 	friend int main( int argc, char **argv );
 };
