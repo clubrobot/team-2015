@@ -22,7 +22,7 @@ public:
 	double utac();//computes duration and return duration in s.
 
 private:
-	clock_t mtic; //start of duration
+        timespec mtic; //start of duration
 
 };
 
