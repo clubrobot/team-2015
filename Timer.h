@@ -6,20 +6,27 @@
 class Timer
 {
 public:
+
     Timer();
 
-    bool isStopped();
+    void setDuration( time_t sec, long nsec );
 
-    void setTime(time_t sec, long nanosec);
+    void setCount( unsigned int count );
 
     void start();
 
     void stop();
 
-    friend bool operator>(const Timer &t1, const struct timespec &curtime);
+    bool isOver();
 
-    struct timespec t1, t2;
-    std::string eventName;
+private:
+
+    struct timespec m_start;
+    struct timespec m_delta;
+
+    unsigned int m_count;
+
+    bool m_active;
 };
 
 #endif // TIMER_H
