@@ -15,7 +15,7 @@ INC := $(SRCS:.cpp=.h)
 
 INC_PATH := /usr/include/
 
-LIBS := -lpthread -lrobot-comlib -lrobot-robot
+LIBS := -lpthread -lrobot-comlib -lrobot-robot -lrt
 
 BINARY := robot-daemon
 

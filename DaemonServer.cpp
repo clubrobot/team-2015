@@ -183,6 +183,7 @@ void DaemonServer::serverMessage(TCPSocket* client, const uint8_t data[], uint32
 		onRemoteCmd(client, data+1);
 		break;
 	default:
+		Log.info << "Unknown : " << (int) data[0] << std::endl;
 		break;
 	}
 }
