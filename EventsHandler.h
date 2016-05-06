@@ -44,7 +44,7 @@ public:
 
 	bool addEventListener( EventName name, EventListener listener );
 
-	bool performWithDelay( double time, EventListener listener, unsigned int repeat = 0 );
+	bool performWithDelay( double time, EventListener listener, unsigned int repeat = 1 ); // repeat = 0 means the timer will loop forever
 
 	bool removeEventListener( EventName name );
 

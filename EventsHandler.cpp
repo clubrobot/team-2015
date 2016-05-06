@@ -5,6 +5,7 @@
  *      Author: ulysse
  */
 
+#include <iostream>
 #include <chrono>
 #include <thread>
 #include <cmath>
@@ -37,7 +38,11 @@ bool EventsHandler::addEventListener( EventName name, EventListener listener )
 bool EventsHandler::performWithDelay( double time, EventListener listener, unsigned int repeat )
 {
 	Timer timer;
-	timer.setDuration( (time_t)floor( time ), (long)(modf( time, nullptr ) * 1e9) );
+	double sec, nsec;
+	nsec = modf( time, &sec );
+	timer.setDuration( (time_t)sec, (long)(nsec * 1e9) );
+	timer.setCount( repeat );
+	timer.start();
 	m_timers.push_back( std::pair< Timer, EventListener >( timer, listener ) );
 	return true;
 }
@@ -59,8 +64,8 @@ void EventsHandler::run( void )
 	{
 		for( auto it = m_timers.begin(); it != m_timers.end(); it++ )
 		{
-		    Timer timer = it->first;
-		    EventListener listener = it->second;
+		    Timer& timer = it->first;
+		    EventListener& listener = it->second;
 		    if( timer.isOver() )
 		    {
 		    	listener( EventParams() );

@@ -25,22 +25,6 @@ void programThreadFunction( EventsHandler* handler )
 	}
 }
 
-void timingThreadFunction( EventsHandler* handler )
-{
-	std::this_thread::sleep_for( std::chrono::seconds( 6 ) );
-	handler->dispatchEvent( "30secondsLeft" );
-	std::this_thread::sleep_for( std::chrono::seconds( 3 ) );
-	handler->dispatchEvent( "timeIsOver" );
-}
-
-void batteryThreadFunction( EventsHandler* handler )
-{
-	std::srand( std::time( 0 ) );
-	std::this_thread::sleep_for( std::chrono::seconds( std::rand() % 20 ) );
-	cout << "Battery is low" << endl;
-	handler->dispatchEvent( "batteryIsLow" );
-}
-
 int main( int argc, char **argv ) {
 
 	EventsHandler handler;
@@ -75,14 +59,10 @@ int main( int argc, char **argv ) {
 	// Les threads sont ici juste pour simuler le fonctionnement des différents
 	// modules.
 
-	handler.addEventListener( "enslavementEnded",	destinationListener	);
-	handler.addEventListener( "30secondsLeft",		parasolListener		);
-	handler.addEventListener( "timeIsOver",			turnOffListener		);
-	handler.addEventListener( "batteryIsLow",		turnOffListener		);
+	handler.addEventListener( "enslavementEnded", destinationListener );
+	handler.performWithDelay( 6.0, parasolListener );
 
 	std::thread programThread( programThreadFunction, &handler );
-	std::thread timingThread( timingThreadFunction, &handler );
-	std::thread batteryThread( batteryThreadFunction, &handler );
 
 	// Main loop
 
@@ -93,8 +73,6 @@ int main( int argc, char **argv ) {
 	cout << "Program ended. Congratulations !" << endl;
 
 	programThread.join();
-	timingThread.join();
-	batteryThread.join();
 
 	return 0;
 }
