@@ -1,22 +1,33 @@
-#ifndef ULTRASON_H
-#define ULTRASON_H
+/*
+ * Ultrason.h
+ *
+ *  Created on: 6 mai 2016
+ *      Author: ethel
+ */
+
+#ifndef ULTRASON_H_
+#define ULTRASON_H_
 
 #include <robot-robot/Module.h>
 
-class Ultrason : public Module
-{
+
+class Ultrason : public Module{
+
 public:
-    Ultrason( uint8_t address, TCPClient& client );
+	Ultrason(uint8_t address, TCPClient& client);
+	virtual ~Ultrason();
 
-    virtual void run();
+	virtual void run();
 
-    void initParasol();
-    void openParasol();
+	void initUltrason();
+	void disableUltrason();
+	void enableUltrason();
 
-    enum Order {INIT, OPEN};
-    Order morder;
+	enum Order {INIT, STOP, DISABLE, ENABLE};
+	Order morder;
 
-    static const uint8_t order_open, order_init;
+	static const uint8_t order_stop, order_disable ,order_enable;
+
 };
 
-#endif // ULTRASON_H
+#endif /* ULTRASON_H_ */

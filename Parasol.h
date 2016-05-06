@@ -12,11 +12,12 @@ public:
 
     void initParasol();
     void openParasol();
+    void closeParasol();
 
-    enum Order {INIT, OPEN};
+    enum Order {INIT, OPEN, CLOSE};
     Order morder;
 
-    static const uint8_t order_open, order_init;
+    static const uint8_t order_open, order_init, order_close;
 };
 
 #endif // ULTRASON_H
