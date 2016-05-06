@@ -8,6 +8,8 @@
 #include "RPI.h"
 #endif
 
+#include <iostream>
+
 class Startup
 {
 public:

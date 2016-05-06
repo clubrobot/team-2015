@@ -27,7 +27,7 @@
 
 #define GPIO_READ(g)  *(gpio.addr + 13) &= (1<<(g))
 
-#define LED_OK 16;
+#define LED_OK 16
 
 #define DEPART_IN 0
 #define DEPART_OUT 1
@@ -40,7 +40,7 @@ struct bcm2835_peripheral {
     volatile unsigned int *addr;
 };
 
-struct bcm2835_peripheral gpio = {GPIO_BASE};
+extern struct bcm2835_peripheral gpio;
 
 int map_peripheral(struct bcm2835_peripheral *p);
 void unmap_peripheral(struct bcm2835_peripheral *p);

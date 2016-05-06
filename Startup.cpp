@@ -1,5 +1,9 @@
 #include "Startup.h"
 
+#ifdef __arm__
+struct bcm2835_peripheral gpio = {GPIO_BASE};
+#endif
+
 void Startup::initHardware()
 {
 #ifdef __arm__
