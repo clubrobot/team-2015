@@ -29,8 +29,8 @@
 
 #define LED_OK 16
 
-#define DEPART_IN 0
-#define DEPART_OUT 1
+#define DEPART_IN 2
+#define DEPART_OUT 3
 
 // IO Acces
 struct bcm2835_peripheral {

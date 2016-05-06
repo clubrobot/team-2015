@@ -23,6 +23,7 @@ void Strategy::launch()
 void Strategy::initAllModules()
 {
     // Add all modules to the brain
+    mbrain.addModule(&multrason);
 }
 
 void Strategy::initAllActions()
@@ -33,6 +34,9 @@ void Strategy::initAllActions()
 void Strategy::initStrategy()
 {
     Startup::readyAction();
+
+    while(!Startup::startCondition());
+    std::cout << "Open parasol" << std::endl;
     multrason.openParasol();
 }
 
