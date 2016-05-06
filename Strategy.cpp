@@ -32,11 +32,11 @@ void Strategy::initAllActions()
 {
 	// Add event listeners
 
-	mhandler.addEventListener("chrono90" ,[this](EventParams params) {
+	mhandler.performWithDelay(90 ,[this](EventParams params) {
 		this->mparasol.openParasol();
 	});
 
-	mhandler.addEventListener("chronoFin", [this](EventParams params) {
+	mhandler.performWithDelay(120, [this](EventParams params) {
 		this->mparasol.closeParasol();
 	});
 
