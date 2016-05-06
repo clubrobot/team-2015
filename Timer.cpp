@@ -2,37 +2,57 @@
 
 Timer::Timer()
 {
-    t1.tv_sec = 0;
-    t2.tv_sec = 0;
-    t1.tv_nsec = 0;
-    t2.tv_nsec = 0;
+	m_start.tv_sec = 0;
+	m_start.tv_nsec = 0;
+    m_delta.tv_sec = 0;
+    m_delta.tv_nsec = 0;
+    m_count = 0;
+    m_active = false;
 }
 
-bool Timer::isStopped()
+void Timer::setDuration( time_t sec, long nsec )
 {
-    return t1.tv_sec == 0 && t1.tv_nsec == 0;
+    m_delta.tv_sec = sec;
+    m_delta.tv_nsec = nsec;
 }
 
-void Timer::setTime(time_t sec, long nanosec)
+void Timer::setCount(unsigned int count)
 {
-    t2.tv_sec = sec;
-    t2.tv_nsec = nanosec;
+	m_count = count;
 }
 
 void Timer::start()
 {
-    clock_gettime(CLOCK_REALTIME, &t1);
+    clock_gettime(CLOCK_REALTIME, &m_start);
+    m_active = true;
 }
 
 void Timer::stop()
 {
-    t1.tv_sec = 0;
-    t1.tv_nsec = 0;
+	if( m_active )
+	{
+		struct timespec curtime;
+	    clock_gettime( CLOCK_REALTIME, &curtime );
+		m_delta.tv_sec -= curtime.tv_sec - m_start.tv_sec;
+		m_delta.tv_nsec -= curtime.tv_nsec - m_start.tv_nsec;
+	}
+	m_active = false;
 }
 
-bool Timer::operator>(const Timer &t1, const struct timespec &curtime)
+bool Timer::isOver()
 {
-    return (t1.tv_sec + t2.tv_sec > curtime.tv_sec) &&
-            (t1.tv_nsec + t2.tv_nsec > curtime.tv_nsec);
+	struct timespec curtime;
+    clock_gettime( CLOCK_REALTIME, &curtime );
+	if( m_active && curtime.tv_sec >= m_start.tv_sec + m_delta.tv_sec && curtime.tv_nsec >= m_start.tv_nsec + m_delta.tv_nsec )
+	{
+		m_start.tv_sec += m_delta.tv_sec;
+		m_start.tv_nsec += m_delta.tv_nsec;
+		if( m_count-- > 0 && m_count == 0 )
+		{
+			m_active = false;
+		}
+		return true;
+	}
+	return false;
 }
 
