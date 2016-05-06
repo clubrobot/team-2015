@@ -56,6 +56,9 @@ void Brain::onConnected(TCPClient* client) {
 
 void Brain::onConnectionFailed(TCPClient* client) {
 	std::cout << "Connection to server failed" << std::endl;
+
+        usleep(10000);
+        launch(maddress, mport);
 }
 
 void Brain::onDisconnected(TCPClient* client) {
