@@ -1,8 +1,9 @@
+build
 Debug
+Release
+Test
 *.so
 *.o
-Test
-build
 
 # Windows image file caches
 Thumbs.db
