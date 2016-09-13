@@ -1,0 +1,35 @@
+#!/bin/bash
+# Author : Gabriel Lucas
+# Install .h header files and binaries
+# Usage : sudo install-tar
+
+if [ -z "$1" ]
+then
+	echo "No architecture supplied, choose i86 or armv7"
+	exit
+fi
+
+echo "Uninstalling old install"
+
+rm /usr/lib/librobot-robot.so /usr/lib/librobot-comlib.so /usr/bin/robot /usr/bin/robot-daemon
+rm -r /usr/include/robot-robot /usr/include/robot-comlib /etc/robot
+
+echo "Installing..."
+
+directories="bin lib script robot-robot robot-comlib"
+
+tar -xf robot-libraries-package-$1.tar
+
+cp bin/* /usr/bin
+cp lib/* /usr/lib
+mkdir /etc/robot
+cp script/* /etc/robot
+
+cp -R robot-robot robot-comlib /usr/include/
+
+touch /etc/robot/usbmapping.cfg /etc/robot/TCP.cfg
+chmod -R 777 /etc/robot
+
+rm -r $directories
+
+echo "Finished"
